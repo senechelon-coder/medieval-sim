@@ -345,6 +345,63 @@ layout_mode = 2
 text = "MARTIAL TRAINING"
 metadata/path = "martial"
 
+[node name="OccupationPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/OccupationPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/OccupationPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Title" type="Label" parent="SafeArea/Center/Composition/OccupationPanel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "CHOOSE YOUR OCCUPATION"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="SafeArea/Center/Composition/OccupationPanel/Margin/Content"]
+layout_mode = 2
+text = "Your first adult work will provide a yearly income."
+horizontal_alignment = 1
+
+[node name="FarmerOccupationButton" type="Button" parent="SafeArea/Center/Composition/OccupationPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "FARMER  •  6 WEALTH / YEAR"
+metadata/occupation_id = "farmer"
+
+[node name="ArtisanOccupationButton" type="Button" parent="SafeArea/Center/Composition/OccupationPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "ARTISAN  •  8 WEALTH / YEAR"
+metadata/occupation_id = "artisan"
+
+[node name="TraderOccupationButton" type="Button" parent="SafeArea/Center/Composition/OccupationPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "TRADER  •  10 WEALTH / YEAR"
+metadata/occupation_id = "trader"
+
+[node name="SoldierOccupationButton" type="Button" parent="SafeArea/Center/Composition/OccupationPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SOLDIER  •  7 WEALTH / YEAR"
+metadata/occupation_id = "soldier"
+
+[node name="ScholarOccupationButton" type="Button" parent="SafeArea/Center/Composition/OccupationPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SCHOLAR  •  5 WEALTH / YEAR"
+metadata/occupation_id = "scholar"
+
 [node name="AdvanceButton" type="Button" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -366,6 +423,7 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "WORLD"
 [node name="Activities" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
+unique_name_in_owner = true
 layout_mode = 2
 disabled = true
 text = "ACTIVITIES"
@@ -586,6 +644,19 @@ text = "No known routes"
 horizontal_alignment = 1
 autowrap_mode = 2
 
+[node name="MarketTitle" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "LOCAL MARKET PRICES"
+horizontal_alignment = 1
+
+[node name="WorldMarketValue" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "No market data"
+horizontal_alignment = 1
+autowrap_mode = 2
+
 [node name="ActionsTitle" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
@@ -680,6 +751,104 @@ horizontal_alignment = 1
 autowrap_mode = 2
 
 [node name="CloseCharacterButton" type="Button" parent="CharacterOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+text = "BACK TO LIFE"
+
+[node name="ActivitiesOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shade" type="ColorRect" parent="ActivitiesOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.01, 0.008, 0.012, 0.94)
+
+[node name="Center" type="CenterContainer" parent="ActivitiesOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="ActivitiesOverlay/Center"]
+custom_minimum_size = Vector2(820, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="ActivitiesOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 32
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 32
+theme_override_constants/margin_bottom = 30
+
+[node name="Content" type="VBoxContainer" parent="ActivitiesOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="Brand" type="Label" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+text = "WORLDLY LIFE"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "MARKET"
+horizontal_alignment = 1
+
+[node name="MarketSummary" type="Label" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "LOCAL MARKET"
+horizontal_alignment = 1
+
+[node name="RegionalTitle" type="Label" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "REGIONAL PRICE GUIDE  •  LOW → HIGH"
+horizontal_alignment = 1
+
+[node name="RegionalPrices" type="Label" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "No regional prices"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="MarketScroll" type="ScrollContainer" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
+custom_minimum_size = Vector2(0, 430)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="MarketRows" type="VBoxContainer" parent="ActivitiesOverlay/Center/Panel/Margin/Content/MarketScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="MarketMessage" type="Label" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "Choose a market action."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseActivitiesButton" type="Button" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 76)
 layout_mode = 2

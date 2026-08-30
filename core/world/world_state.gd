@@ -81,6 +81,7 @@ func seed_local_world() -> void:
 	settlement.province_id = province.id
 	settlement.population = 4200 if settlement.type == "city" else 1300
 	settlement.prosperity = 58.0
+	_seed_market_prices(settlement)
 	settlements[settlement.id] = settlement
 	player.location_id = settlement.id
 	_seed_neighboring_places(realm, province)
@@ -163,6 +164,7 @@ func _seed_neighboring_places(realm: Kingdom, home_province: Province) -> void:
 		settlement.province_id = province_id
 		settlement.population = 3200
 		settlement.prosperity = 52.0
+		_seed_market_prices(settlement)
 		settlements[settlement_id] = settlement
 		province.settlement_ids.append(settlement_id)
 
@@ -196,6 +198,11 @@ func load_world(data: Dictionary) -> void:
 			_seed_neighboring_places(realm, home_province)
 		if dynasties.is_empty():
 			_seed_player_dynasty()
+		for settlement: Settlement in settlements.values():
+			if settlement.goods_prices.is_empty():
+				_seed_market_prices(settlement)
+			elif settlement.goods_stock.is_empty():
+				_seed_market_stock(settlement)
 
 
 func _registry_to_dict(registry: Dictionary) -> Dictionary:
@@ -228,7 +235,11 @@ func get_home_context() -> Dictionary:
 		if other.id != settlement.id:
 			var other_province: Province = provinces.get(other.province_id)
 			nearby_places.append("%s — %s" % [other.name, other_province.name])
-	return {"kingdom": kingdom.name, "province": province.name, "settlement": settlement.name, "type": settlement.type.capitalize(), "population": settlement.population, "prosperity": roundi(settlement.prosperity), "residents": residents, "reports": settlement.recent_reports.duplicate(), "nearby_places": nearby_places}
+	var market: Array[String] = []
+	for good_id in settlement.goods_prices:
+		var stock := int(settlement.goods_stock.get(good_id, 0))
+		market.append("%s — %d Wealth • %s" % [GoodData.get_good(good_id).name, settlement.goods_prices[good_id], MarketService.stock_condition(stock)])
+	return {"kingdom": kingdom.name, "province": province.name, "settlement": settlement.name, "type": settlement.type.capitalize(), "population": settlement.population, "prosperity": roundi(settlement.prosperity), "residents": residents, "reports": settlement.recent_reports.duplicate(), "nearby_places": nearby_places, "market": market}
 
 
 func get_character_context() -> Dictionary:
@@ -288,6 +299,7 @@ func advance_local_year(current_year: int) -> Array[String]:
 			local_news.append("%s, the %s, has died at age %d." % [character.full_name, character.role.to_lower(), character.age])
 	for settlement: Settlement in settlements.values():
 		settlement.prosperity = clampf(settlement.prosperity + randf_range(-1.0, 1.0), 0.0, 100.0)
+		_update_market_prices(settlement)
 		if current_year % 5 == 0:
 			settlement.prosperity = clampf(settlement.prosperity - 6.0, 0.0, 100.0)
 			settlement.population = maxi(settlement.population - 18, 0)
@@ -300,6 +312,9 @@ func advance_local_year(current_year: int) -> Array[String]:
 			_record_settlement_report(settlement, "%d AD — A prosperous caravan brought goods and travelers." % current_year)
 			if settlement.id == player.location_id:
 				local_news.append("A prosperous caravan has arrived in %s." % settlement.name)
+	var trade_news := _simulate_background_trade(current_year)
+	if trade_news != "":
+		local_news.append(trade_news)
 	if current_year % 6 == 0:
 		var marriage_news := _attempt_local_marriage(current_year)
 		if marriage_news != "":
@@ -384,3 +399,79 @@ func _mortality_chance(age: int) -> float:
 	if age < 75: return 0.065
 	if age < 85: return 0.14
 	return 0.28
+
+
+func _seed_market_prices(settlement: Settlement) -> void:
+	for good_id in GoodData.GOODS:
+		var good := GoodData.get_good(good_id)
+		var variation := absi((settlement.id + good_id).hash()) % 7 - 3
+		settlement.goods_prices[good_id] = clampi(int(good.base_price) + variation, int(good.minimum), int(good.maximum))
+	_seed_market_stock(settlement)
+
+
+func _seed_market_stock(settlement: Settlement) -> void:
+	for good_id in GoodData.GOODS:
+		settlement.goods_stock[good_id] = 8 + absi((good_id + settlement.id).hash()) % 13
+
+
+func _update_market_prices(settlement: Settlement) -> void:
+	for good_id in settlement.goods_prices:
+		var good := GoodData.get_good(good_id)
+		var stock_change := randi_range(-2, 2)
+		settlement.goods_stock[good_id] = maxi(int(settlement.goods_stock.get(good_id, 10)) + stock_change, 0)
+		var prosperity_pressure := -1 if settlement.prosperity > 65.0 else (1 if settlement.prosperity < 40.0 else 0)
+		var stock_pressure := 1 if int(settlement.goods_stock[good_id]) <= 4 else (-1 if int(settlement.goods_stock[good_id]) >= 16 else 0)
+		var movement := randi_range(-1, 1) + prosperity_pressure + stock_pressure
+		settlement.goods_prices[good_id] = clampi(int(settlement.goods_prices[good_id]) + movement, int(good.minimum), int(good.maximum))
+
+
+func _simulate_background_trade(current_year: int) -> String:
+	if current_year % 2 != 0 or settlements.size() < 2:
+		return ""
+	var good_ids := GoodData.GOODS.keys()
+	var good_id: String = good_ids[current_year % good_ids.size()]
+	var source: Settlement
+	var destination: Settlement
+	for settlement: Settlement in settlements.values():
+		if source == null or int(settlement.goods_stock.get(good_id, 0)) > int(source.goods_stock.get(good_id, 0)):
+			source = settlement
+		if destination == null or int(settlement.goods_stock.get(good_id, 0)) < int(destination.goods_stock.get(good_id, 0)):
+			destination = settlement
+	if source == null or destination == null or source == destination:
+		return ""
+	var stock_difference := int(source.goods_stock[good_id]) - int(destination.goods_stock[good_id])
+	if stock_difference < 4:
+		return ""
+	var amount := mini(3, int(source.goods_stock[good_id]))
+	source.goods_stock[good_id] = int(source.goods_stock[good_id]) - amount
+	destination.goods_stock[good_id] = int(destination.goods_stock[good_id]) + amount
+	_reprice_after_shipment(source, good_id)
+	_reprice_after_shipment(destination, good_id)
+	var good_name: String = GoodData.get_good(good_id).name
+	_record_settlement_report(source, "%d AD — Merchants carried %s toward %s." % [current_year, good_name, destination.name])
+	_record_settlement_report(destination, "%d AD — A shipment of %s arrived from %s." % [current_year, good_name, source.name])
+	if source.id == player.location_id or destination.id == player.location_id:
+		return "Merchants moved %s from %s to %s, changing local supply." % [good_name, source.name, destination.name]
+	return ""
+
+
+func _reprice_after_shipment(settlement: Settlement, good_id: String) -> void:
+	var good := GoodData.get_good(good_id)
+	var condition := MarketService.stock_condition(int(settlement.goods_stock[good_id]))
+	var adjustment := 1 if condition == "SHORTAGE" else (-1 if condition == "SURPLUS" else 0)
+	settlement.goods_prices[good_id] = clampi(int(settlement.goods_prices[good_id]) + adjustment, int(good.minimum), int(good.maximum))
+
+
+func get_regional_price_comparison() -> Array[String]:
+	var comparison: Array[String] = []
+	for good_id in GoodData.GOODS:
+		var cheapest: Settlement
+		var dearest: Settlement
+		for settlement: Settlement in settlements.values():
+			if cheapest == null or int(settlement.goods_prices[good_id]) < int(cheapest.goods_prices[good_id]):
+				cheapest = settlement
+			if dearest == null or int(settlement.goods_prices[good_id]) > int(dearest.goods_prices[good_id]):
+				dearest = settlement
+		var good_name: String = GoodData.get_good(good_id).name
+		comparison.append("%s: %s %d  →  %s %d" % [good_name, cheapest.name, cheapest.goods_prices[good_id], dearest.name, dearest.goods_prices[good_id]])
+	return comparison

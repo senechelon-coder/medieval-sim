@@ -22,6 +22,9 @@ var wealth := 10
 var standing := "Unknown"
 var primary_trait := "Undeveloped"
 var apprenticeship := "None"
+var occupation_id := ""
+var occupation_experience := 0
+var trade_reputation := 0
 var pending_event := ""
 
 @onready var background: TextureRect = %Background
@@ -59,11 +62,26 @@ var pending_event := ""
 	%TradeApprenticeshipButton,
 	%MartialApprenticeshipButton,
 ]
+@onready var occupation_panel: PanelContainer = %OccupationPanel
+@onready var occupation_buttons: Array[Button] = [
+	%FarmerOccupationButton,
+	%ArtisanOccupationButton,
+	%TraderOccupationButton,
+	%SoldierOccupationButton,
+	%ScholarOccupationButton,
+]
 @onready var more_button: Button = %More
 @onready var character_button: Button = %Character
 @onready var character_overlay: Control = %CharacterOverlay
 @onready var character_details_value: Label = %CharacterDetailsValue
 @onready var close_character_button: Button = %CloseCharacterButton
+@onready var activities_button: Button = %Activities
+@onready var activities_overlay: Control = %ActivitiesOverlay
+@onready var market_summary: Label = %MarketSummary
+@onready var regional_prices: Label = %RegionalPrices
+@onready var market_rows: VBoxContainer = %MarketRows
+@onready var market_message: Label = %MarketMessage
+@onready var close_activities_button: Button = %CloseActivitiesButton
 @onready var world_button: Button = %World
 @onready var world_overlay: Control = %WorldOverlay
 @onready var world_realm_value: Label = %WorldRealmValue
@@ -74,6 +92,7 @@ var pending_event := ""
 @onready var world_residents_value: Label = %WorldResidentsValue
 @onready var world_reports_value: Label = %WorldReportsValue
 @onready var world_nearby_value: Label = %WorldNearbyValue
+@onready var world_market_value: Label = %WorldMarketValue
 @onready var world_action_message: Label = %WorldActionMessage
 @onready var visit_family_button: Button = %VisitFamilyButton
 @onready var help_trader_button: Button = %HelpTraderButton
@@ -104,9 +123,13 @@ func _ready() -> void:
 	keep_purse_button.pressed.connect(_resolve_decision.bind(1))
 	for button in apprenticeship_buttons:
 		button.pressed.connect(_choose_apprenticeship.bind(button))
+	for button in occupation_buttons:
+		button.pressed.connect(_choose_occupation.bind(button))
 	more_button.pressed.connect(_open_pause_menu)
 	character_button.pressed.connect(_open_character)
 	close_character_button.pressed.connect(func(): character_overlay.hide())
+	activities_button.pressed.connect(_open_activities)
+	close_activities_button.pressed.connect(func(): activities_overlay.hide())
 	world_button.pressed.connect(_open_world)
 	visit_family_button.pressed.connect(_perform_local_action.bind("family"))
 	help_trader_button.pressed.connect(_perform_local_action.bind("trader"))
@@ -128,6 +151,7 @@ func _advance_year() -> void:
 	occupation_value.text = _starting_occupation()
 	for news in local_news:
 		_append_chronicle("Local news, %s\n%s" % [TimeManager.year_label(), news])
+	_apply_annual_income()
 	if character_age == 5:
 		_append_chronicle("Age 5, %s\nYour early upbringing can now be chosen." % TimeManager.year_label())
 		upbringing_panel.show()
@@ -135,6 +159,10 @@ func _advance_year() -> void:
 	elif character_age == 12:
 		_append_chronicle("Age 12, %s\nChildhood gives way to responsibility. Your household must decide how you will be trained." % TimeManager.year_label())
 		apprenticeship_panel.show()
+		advance_button.disabled = true
+	elif character_age == 16 and occupation_id == "":
+		_append_chronicle("Age 16, %s\nYour apprenticeship gives way to adult work. You must choose how to earn your living." % TimeManager.year_label())
+		occupation_panel.show()
 		advance_button.disabled = true
 	else:
 		var event := EventResolver.event_for_age(character_age, WorldState.player.completed_events)
@@ -151,6 +179,7 @@ func _refresh_character_display() -> void:
 	era_label.text = TimeManager.year_label()
 	birthplace_label.text = "%s  •  %s" % [birthplace, TimeManager.year_label()]
 	age_value.text = str(character_age)
+	activities_button.disabled = character_age < 16
 
 
 func _choose_upbringing(button: Button) -> void:
@@ -233,6 +262,9 @@ func _scroll_chronicle_to_bottom() -> void:
 
 
 func _starting_occupation() -> String:
+	if occupation_id != "":
+		var occupation := OccupationData.get_occupation(occupation_id)
+		return occupation.get("name", "Worker")
 	if apprenticeship != "None":
 		return apprenticeship
 	if character_age < 5 or upbringing == "Undetermined":
@@ -274,6 +306,36 @@ func _choose_apprenticeship(button: Button) -> void:
 	_sync_character_state()
 
 
+func _choose_occupation(button: Button) -> void:
+	occupation_id = str(button.get_meta("occupation_id", ""))
+	occupation_experience = 0
+	var occupation := OccupationData.get_occupation(occupation_id)
+	if occupation.is_empty():
+		return
+	standing = occupation.standing
+	occupation_panel.hide()
+	advance_button.disabled = false
+	occupation_value.text = occupation.name
+	_refresh_stats()
+	_append_chronicle("You begin work as a %s.\n%s • Annual wage: %d Wealth" % [occupation.name, occupation.description, occupation.annual_wage])
+	_sync_character_state()
+
+
+func _apply_annual_income() -> void:
+	if occupation_id == "":
+		return
+	var occupation := OccupationData.get_occupation(occupation_id)
+	if occupation.is_empty():
+		return
+	occupation_experience += 1
+	var rank := OccupationData.rank_for_experience(occupation_experience)
+	var wage := int(occupation.annual_wage) + int(rank.wage_bonus)
+	wealth += wage
+	_refresh_stats()
+	_sync_character_state()
+	_append_chronicle("Work, %s\nYour year as a %s earns %d Wealth.\nExperience: %d • Rank: %s" % [TimeManager.year_label(), occupation.name, wage, occupation_experience, rank.name])
+
+
 func _load_character_state() -> void:
 	if not WorldState.has_player():
 		WorldState.create_player({})
@@ -296,6 +358,9 @@ func _load_character_state() -> void:
 	upbringing = state.upbringing
 	primary_trait = state.primary_trait
 	apprenticeship = state.apprenticeship
+	occupation_id = state.occupation_id
+	occupation_experience = state.occupation_experience
+	trade_reputation = state.trade_reputation
 
 
 func _sync_character_state() -> void:
@@ -309,6 +374,9 @@ func _sync_character_state() -> void:
 	state.upbringing = upbringing
 	state.primary_trait = primary_trait
 	state.apprenticeship = apprenticeship
+	state.occupation_id = occupation_id
+	state.occupation_experience = occupation_experience
+	state.trade_reputation = trade_reputation
 	SaveManager.save_game()
 
 
@@ -318,6 +386,9 @@ func _restore_pending_milestone() -> void:
 		advance_button.disabled = true
 	elif character_age == 12 and apprenticeship == "None":
 		apprenticeship_panel.show()
+		advance_button.disabled = true
+	elif character_age == 16 and occupation_id == "":
+		occupation_panel.show()
 		advance_button.disabled = true
 	else:
 		var event := EventResolver.event_for_age(character_age, WorldState.player.completed_events)
@@ -355,6 +426,7 @@ func _open_world() -> void:
 	world_residents_value.text = "\n".join(context.residents)
 	world_reports_value.text = "No major developments yet." if context.reports.is_empty() else "\n".join(context.reports)
 	world_nearby_value.text = "\n".join(context.nearby_places)
+	world_market_value.text = "\n".join(context.market)
 	world_action_message.text = "You may spend time on each local activity once per year."
 	visit_family_button.disabled = int(WorldState.player.local_action_years.get("family", 0)) == TimeManager.current_date.year
 	help_trader_button.disabled = int(WorldState.player.local_action_years.get("trader", 0)) == TimeManager.current_date.year
@@ -365,6 +437,58 @@ func _open_character() -> void:
 	var context := WorldState.get_character_context()
 	character_details_value.text = "LINEAGE\n%s\n\nDYNASTY\n%s  •  PRESTIGE %d\n\nPARENTS\n%s\n%s\n\nCULTURE\n%s\n\nFAITH\n%s\n\nBORN\n%s  •  %s" % [context.lineage, context.dynasty, context.prestige, context.father, context.mother, context.culture, context.faith, context.birth_season, context.family_origin]
 	character_overlay.show()
+
+
+func _open_activities() -> void:
+	_rebuild_market_rows()
+	market_message.text = "Buy locally now; future travel will let you seek better selling prices."
+	activities_overlay.show()
+
+
+func _rebuild_market_rows() -> void:
+	for child in market_rows.get_children():
+		market_rows.remove_child(child)
+		child.queue_free()
+	var settlement: Settlement = WorldState.settlements.get(WorldState.player.location_id)
+	if settlement == null:
+		return
+	var occupation := OccupationData.get_occupation(WorldState.player.occupation_id)
+	var rank := OccupationData.rank_for_experience(WorldState.player.occupation_experience)
+	var work_text := "No occupation" if occupation.is_empty() else "%s %s" % [rank.name, occupation.name]
+	market_summary.text = "%s MARKET\nWealth: %d  •  Cargo: %d / %d\nWork: %s  •  Trade Reputation: %d" % [settlement.name.to_upper(), WorldState.player.wealth, MarketService.inventory_count(), WorldState.player.cargo_capacity, work_text, WorldState.player.trade_reputation]
+	regional_prices.text = "\n".join(WorldState.get_regional_price_comparison())
+	for good_id in GoodData.GOODS:
+		var good := GoodData.get_good(good_id)
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 8)
+		var details := Label.new()
+		details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var stock := int(settlement.goods_stock.get(good_id, 0))
+		details.text = "%s  •  %d Wealth  •  %s  •  Owned %d" % [good.name, settlement.goods_prices[good_id], MarketService.stock_condition(stock), int(WorldState.player.inventory.get(good_id, 0))]
+		var buy_button := Button.new()
+		buy_button.text = "BUY"
+		buy_button.custom_minimum_size = Vector2(110, 58)
+		buy_button.disabled = stock <= 0
+		buy_button.pressed.connect(_trade_good.bind(good_id, true))
+		var sell_button := Button.new()
+		sell_button.text = "SELL"
+		sell_button.custom_minimum_size = Vector2(110, 58)
+		sell_button.disabled = int(WorldState.player.inventory.get(good_id, 0)) <= 0
+		sell_button.pressed.connect(_trade_good.bind(good_id, false))
+		row.add_child(details)
+		row.add_child(buy_button)
+		row.add_child(sell_button)
+		market_rows.add_child(row)
+
+
+func _trade_good(good_id: String, buying: bool) -> void:
+	var result := MarketService.buy_good(good_id) if buying else MarketService.sell_good(good_id)
+	market_message.text = result.message
+	wealth = WorldState.player.wealth
+	trade_reputation = WorldState.player.trade_reputation
+	_refresh_stats()
+	SaveManager.save_game()
+	_rebuild_market_rows()
 
 
 func _perform_local_action(action_id: String) -> void:

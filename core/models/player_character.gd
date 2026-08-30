@@ -21,6 +21,11 @@ var standing := "Unknown"
 var upbringing := "Undetermined"
 var primary_trait := "Undeveloped"
 var apprenticeship := "None"
+var occupation_id := ""
+var occupation_experience := 0
+var trade_reputation := 0
+var inventory: Dictionary = {}
+var cargo_capacity := 10
 var chronicle: Array[String] = []
 var completed_events: Array[String] = []
 var local_action_years: Dictionary = {}
@@ -35,7 +40,7 @@ func to_dict() -> Dictionary:
 		"birth_season": birth_season, "appearance_seed": appearance_seed,
 		"health": health, "wealth": wealth, "standing": standing,
 		"upbringing": upbringing, "primary_trait": primary_trait,
-		"apprenticeship": apprenticeship, "chronicle": chronicle.duplicate(),
+		"apprenticeship": apprenticeship, "occupation_id": occupation_id, "occupation_experience": occupation_experience, "trade_reputation": trade_reputation, "inventory": inventory.duplicate(), "cargo_capacity": cargo_capacity, "chronicle": chronicle.duplicate(),
 		"completed_events": completed_events.duplicate(),
 		"local_action_years": local_action_years.duplicate(),
 	}
@@ -62,6 +67,13 @@ func apply_dict(data: Dictionary) -> void:
 	upbringing = str(data.get("upbringing", upbringing))
 	primary_trait = str(data.get("primary_trait", primary_trait))
 	apprenticeship = str(data.get("apprenticeship", apprenticeship))
+	occupation_id = str(data.get("occupation_id", occupation_id))
+	occupation_experience = int(data.get("occupation_experience", occupation_experience))
+	trade_reputation = int(data.get("trade_reputation", trade_reputation))
+	inventory.clear()
+	for good_id in data.get("inventory", {}):
+		inventory[str(good_id)] = int(data.inventory[good_id])
+	cargo_capacity = int(data.get("cargo_capacity", cargo_capacity))
 	chronicle.clear()
 	for entry in data.get("chronicle", []):
 		chronicle.append(str(entry))
