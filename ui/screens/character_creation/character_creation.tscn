@@ -1,0 +1,290 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://ui/screens/character_creation/character_creation.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="3_divider"]
+[ext_resource type="Script" path="res://ui/screens/character_creation/nation_emblem.gd" id="4_emblem"]
+[ext_resource type="AudioStream" path="res://audio/ui/soft_ui_click.mp3" id="5_click"]
+[ext_resource type="PackedScene" path="res://ui/components/placeholder_popup.tscn" id="6_popup"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_sex"]
+
+[node name="CharacterCreation" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Vignette" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+
+[node name="ScreenFrame" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"ScreenFrame"
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Center" type="CenterContainer" parent="SafeArea"]
+layout_mode = 2
+
+[node name="Composition" type="VBoxContainer" parent="SafeArea/Center"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="BrandLabel" type="Label" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+text = "WORLDLY LIFE"
+horizontal_alignment = 1
+
+[node name="EraLabel" type="Label" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "632 AD"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "YOUR BEGINNING"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+text = "Define the life you will begin."
+horizontal_alignment = 1
+
+[node name="DividerTop" type="Control" parent="SafeArea/Center/Composition"]
+custom_minimum_size = Vector2(360, 22)
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("3_divider")
+
+[node name="PanelSpacer" type="Control" parent="SafeArea/Center/Composition"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="InfoPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/InfoPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 24
+
+[node name="Info" type="VBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Emblem" type="Control" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("4_emblem")
+
+[node name="HeaderTextCol" type="VBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 2
+
+[node name="FactionNameLabel" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/HeaderRow/HeaderTextCol"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "RASHIDUN CALIPHATE"
+
+[node name="HomelandCaption" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/HeaderRow/HeaderTextCol"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "YOUR HOMELAND"
+
+[node name="DividerMid" type="Control" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("3_divider")
+
+[node name="FormRows" type="VBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="NameRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/NameRow"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+custom_minimum_size = Vector2(160, 0)
+text = "NAME"
+vertical_alignment = 1
+
+[node name="NameField" type="LineEdit" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/NameRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Enter Name"
+
+[node name="SexRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/SexRow"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+custom_minimum_size = Vector2(160, 0)
+text = "SEX"
+vertical_alignment = 1
+
+[node name="SexButtons" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/SexRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 10
+
+[node name="MaleButton" type="Button" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/SexRow/SexButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_sex")
+text = "♂ MALE"
+
+[node name="FemaleButton" type="Button" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/SexRow/SexButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_sex")
+text = "♀ FEMALE"
+
+[node name="AgeRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/AgeRow"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+custom_minimum_size = Vector2(160, 0)
+text = "AGE"
+vertical_alignment = 1
+
+[node name="AgeField" type="LineEdit" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/AgeRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "16"
+horizontal_alignment = 1
+max_length = 2
+
+[node name="BirthplaceRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/BirthplaceRow"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+custom_minimum_size = Vector2(160, 0)
+text = "BIRTHPLACE"
+vertical_alignment = 1
+
+[node name="BirthplaceField" type="OptionButton" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/BirthplaceRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="OriginRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/OriginRow"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+custom_minimum_size = Vector2(160, 0)
+text = "SOCIAL ORIGIN"
+vertical_alignment = 1
+
+[node name="OriginField" type="OptionButton" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/OriginRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ActionsSpacer" type="Control" parent="SafeArea/Center/Composition"]
+custom_minimum_size = Vector2(0, 22)
+layout_mode = 2
+
+[node name="Actions" type="HBoxContainer" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 18
+
+[node name="BackButton" type="Button" parent="SafeArea/Center/Composition/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BACK"
+
+[node name="BeginButton" type="Button" parent="SafeArea/Center/Composition/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+disabled = true
+text = "BEGIN LIFE"
+
+[node name="ClickSound" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("5_click")
+volume_db = -8.0
+
+[node name="PlaceholderPopup" parent="." instance=ExtResource("6_popup")]
+unique_name_in_owner = true

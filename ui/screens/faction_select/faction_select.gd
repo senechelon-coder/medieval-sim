@@ -1,6 +1,7 @@
 extends Control
 
 const ERA_SCENE := "res://ui/screens/era_select/era_select.tscn"
+const CHARACTER_CREATION_SCENE := "res://ui/screens/character_creation/character_creation.tscn"
 const RELEASE_DURATION := 0.13
 const FACTION_MUSIC := {
 	"RASHIDUN CALIPHATE": "res://audio/music/rashidun_caliphate.mp3",
@@ -24,7 +25,6 @@ const BODY_FONT_PATH := "res://ui/theme/fonts/IMFellEnglish-Regular.ttf"
 @onready var select_label: Label = %SelectLabel
 @onready var back_button: Button = %BackButton
 @onready var continue_button: Button = %ContinueButton
-@onready var popup: Control = %PlaceholderPopup
 @onready var click_sound: AudioStreamPlayer = %ClickSound
 @onready var music_player: AudioStreamPlayer = %MusicPlayer
 
@@ -110,7 +110,12 @@ func _go_back() -> void:
 
 func _continue() -> void:
 	await get_tree().create_timer(RELEASE_DURATION).timeout
-	popup.show_message("Your life will begin in the %s.\n\nThis is the end of the current New Game flow." % selected_faction)
+	var next_scene: PackedScene = load(CHARACTER_CREATION_SCENE)
+	var next: CharacterCreation = next_scene.instantiate()
+	next.selected_faction = selected_faction
+	get_tree().root.add_child(next)
+	get_tree().current_scene.queue_free()
+	get_tree().current_scene = next
 
 
 func _set_pivot(button: Button) -> void:
