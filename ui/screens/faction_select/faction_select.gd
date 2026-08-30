@@ -96,12 +96,30 @@ func _select_faction(button: Button) -> void:
 	select_label.text = "HOMELAND SELECTED  •  %s" % selected_faction
 	continue_button.disabled = false
 	for item in faction_buttons:
-		item.theme_type_variation = &"AvailableButton" if item == button else &"Button"
+		_style_faction_button(item, item == button, nation_color)
 	for label in [faction_name, description, traits]:
 		label.add_theme_color_override("font_color", nation_color)
 		label.add_theme_font_override("font", bold_body_font)
 	select_label.add_theme_color_override("font_color", nation_color)
 	_play_faction_music(selected_faction)
+
+
+func _style_faction_button(item: Button, is_selected: bool, nation_color: Color) -> void:
+	if not is_selected:
+		item.theme_type_variation = &"Button"
+		for state in [&"normal", &"hover", &"pressed", &"focus"]:
+			item.remove_theme_stylebox_override(state)
+		for color_key in [&"font_color", &"font_hover_color", &"font_pressed_color"]:
+			item.remove_theme_color_override(color_key)
+		return
+
+	item.theme_type_variation = &"AvailableButton"
+	var tinted_style: StyleBoxFlat = item.get_theme_stylebox("normal", "AvailableButton").duplicate()
+	tinted_style.border_color = nation_color
+	for state in [&"normal", &"hover", &"pressed", &"focus"]:
+		item.add_theme_stylebox_override(state, tinted_style)
+	for color_key in [&"font_color", &"font_hover_color", &"font_pressed_color"]:
+		item.add_theme_color_override(color_key, nation_color)
 
 
 func _play_faction_music(faction: String) -> void:
