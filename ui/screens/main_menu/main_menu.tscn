@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://ui/screens/main_menu/main_menu.gd" id="1_main"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
-[ext_resource type="Texture2D" path="res://art/ui/main_menu_logo_v2.png" id="3_logo"]
+[ext_resource type="Texture2D" path="res://art/ui/worldly_life_emblem_v1.png" id="3_logo"]
 [ext_resource type="Script" path="res://ui/screens/main_menu/background_motif.gd" id="4_motif"]
 [ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="5_divider"]
 [ext_resource type="PackedScene" path="res://ui/components/placeholder_popup.tscn" id="6_popup"]
@@ -93,6 +93,13 @@ size_flags_horizontal = 4
 texture = ExtResource("3_logo")
 expand_mode = 1
 stretch_mode = 5
+
+[node name="LogoTitle" type="Label" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "WORLDLY LIFE"
+horizontal_alignment = 1
 
 [node name="LogoToDividerGap" type="Control" parent="SafeArea/CompositionCenter/Composition"]
 unique_name_in_owner = true

@@ -1,7 +1,7 @@
 extends Control
 
 const MAIN_MENU_SCENE := "res://ui/screens/main_menu/main_menu.tscn"
-const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_bg.png"
+const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
 const PRESS_SCALE := Vector2(0.97, 0.97)
 const PRESS_DURATION := 0.10
 const RELEASE_DURATION := 0.13
@@ -88,10 +88,10 @@ func _apply_responsive_layout() -> void:
 	for margin_name in [&"margin_left", &"margin_top", &"margin_right", &"margin_bottom"]:
 		safe_area.add_theme_constant_override(margin_name, roundi(edge_padding))
 
-	var content_width := clampf((canvas_size.x - edge_padding * 2.0) * 0.88, 560.0, 920.0)
-	var row_height := clampf(canvas_size.y * 0.052, 76.0, 104.0)
-	var row_gap := clampf(row_height * 0.14, 10.0, 16.0)
-	var row_font_size := roundi(clampf(row_height * 0.29, 22.0, 30.0))
+	var content_width := clampf((canvas_size.x - edge_padding * 2.0) * 0.72, 520.0, 760.0)
+	var row_height := clampf(canvas_size.y * 0.046, 68.0, 88.0)
+	var row_gap := clampf(row_height * 0.14, 9.0, 13.0)
+	var row_font_size := roundi(clampf(row_height * 0.27, 19.0, 25.0))
 	composition.custom_minimum_size.x = content_width
 	era_list.custom_minimum_size.x = content_width
 	era_list.add_theme_constant_override("separation", roundi(row_gap))
@@ -100,15 +100,15 @@ func _apply_responsive_layout() -> void:
 			child.custom_minimum_size = Vector2(content_width, row_height)
 			child.add_theme_font_size_override("font_size", row_font_size)
 
-	back_button.custom_minimum_size = Vector2(content_width * 0.48, row_height)
+	back_button.custom_minimum_size = Vector2(content_width * 0.56, row_height)
 	back_button.add_theme_font_size_override("font_size", row_font_size)
-	title.add_theme_font_size_override("font_size", roundi(clampf(canvas_size.y * 0.047, 56.0, 84.0)))
-	subtitle.add_theme_font_size_override("font_size", roundi(clampf(canvas_size.y * 0.018, 24.0, 34.0)))
-	divider.custom_minimum_size = Vector2(content_width * 0.62, clampf(canvas_size.y * 0.012, 18.0, 24.0))
+	title.add_theme_font_size_override("font_size", roundi(clampf(canvas_size.y * 0.039, 48.0, 68.0)))
+	subtitle.add_theme_font_size_override("font_size", roundi(clampf(canvas_size.y * 0.014, 19.0, 27.0)))
+	divider.custom_minimum_size = Vector2(content_width * 0.54, clampf(canvas_size.y * 0.010, 16.0, 21.0))
 	title_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.008, 10.0, 16.0)
-	header_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.018, 24.0, 34.0)
-	list_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.018, 24.0, 34.0)
-	back_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.024, 32.0, 46.0)
+	header_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.014, 19.0, 27.0)
+	list_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.014, 19.0, 27.0)
+	back_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.020, 27.0, 38.0)
 	_update_button_pivot.call_deferred(era_632)
 	_update_button_pivot.call_deferred(back_button)
 

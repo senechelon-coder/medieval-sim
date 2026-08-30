@@ -13,6 +13,7 @@ const BUTTON_PRESS_TINT := Color(1.06, 1.03, 0.94, 1.0)
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
 @onready var logo_image: TextureRect = %LogoImage
+@onready var logo_title: Label = %LogoTitle
 @onready var logo_to_divider_gap: Control = %LogoToDividerGap
 @onready var divider_top: Control = %DividerTop
 @onready var divider_to_menu_gap: Control = %DividerToMenuGap
@@ -140,12 +141,13 @@ func _apply_responsive_layout() -> void:
 	_update_button_pivots.call_deferred()
 
 	var menu_height := button_height * 5.0 + button_gap * 4.0
-	var detail_height := clampf(available_height * 0.065, 60.0, 120.0)
+	var detail_height := clampf(available_height * 0.12, 110.0, 190.0)
 	var logo_height_budget := available_height * 0.84 - menu_height - detail_height
 	var logo_minimum := minf(300.0, available_height * 0.30)
-	var logo_height := clampf(logo_height_budget, logo_minimum, available_height * 0.43)
-	var logo_width := logo_height * 0.657
+	var logo_height := clampf(logo_height_budget, logo_minimum, available_height * 0.34)
+	var logo_width := logo_height
 	logo_image.custom_minimum_size = Vector2(logo_width, logo_height)
+	logo_title.add_theme_font_size_override("font_size", roundi(clampf(available_width * 0.065, 42.0, 68.0)))
 
 	var divider_width := clampf(button_width * 0.52, minf(220.0, available_width * 0.60), 440.0)
 	var divider_height := clampf(available_height * 0.012, 14.0, 26.0)

@@ -28,6 +28,7 @@ expand_mode = 1
 stretch_mode = 6
 
 [node name="Motifs" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -49,6 +50,7 @@ mouse_filter = 2
 expand_mode = 1
 
 [node name="ScreenFrame" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -88,7 +90,7 @@ text = "WORLDLY LIFE"
 horizontal_alignment = 1
 
 [node name="BrandGap" type="Control" parent="SafeArea/Center/Composition"]
-custom_minimum_size = Vector2(0, 24)
+custom_minimum_size = Vector2(0, 42)
 layout_mode = 2
 
 [node name="Title" type="Label" parent="SafeArea/Center/Composition"]
@@ -133,35 +135,10 @@ layout_mode = 2
 theme_type_variation = &"AvailableButton"
 text = "632  —  A WORLD IN TRANSITION"
 
-[node name="Era769" type="Button" parent="SafeArea/Center/Composition/EraList"]
+[node name="Era1187" type="Button" parent="SafeArea/Center/Composition/EraList"]
 layout_mode = 2
 disabled = true
-text = "769  —  THE EARLY MIDDLE AGES     LOCKED"
-
-[node name="Era867" type="Button" parent="SafeArea/Center/Composition/EraList"]
-layout_mode = 2
-disabled = true
-text = "867  —  AGE OF VIKINGS     LOCKED"
-
-[node name="Era936" type="Button" parent="SafeArea/Center/Composition/EraList"]
-layout_mode = 2
-disabled = true
-text = "936  —  THE IRON CENTURY     LOCKED"
-
-[node name="Era1066" type="Button" parent="SafeArea/Center/Composition/EraList"]
-layout_mode = 2
-disabled = true
-text = "1066  —  FATE OF KINGDOMS     LOCKED"
-
-[node name="Era1204" type="Button" parent="SafeArea/Center/Composition/EraList"]
-layout_mode = 2
-disabled = true
-text = "1204  —  SHATTERED EMPIRES     LOCKED"
-
-[node name="Era1337" type="Button" parent="SafeArea/Center/Composition/EraList"]
-layout_mode = 2
-disabled = true
-text = "1337  —  THE LATE MIDDLE AGES     LOCKED"
+text = "1187  —  AGE OF SALADIN     LOCKED"
 
 [node name="BackGap" type="Control" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
