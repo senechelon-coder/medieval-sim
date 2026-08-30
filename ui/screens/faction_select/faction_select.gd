@@ -12,7 +12,12 @@ const FACTION_MUSIC := {
 	"BYZANTINE EMPIRE": "res://audio/music/byzantine_empire.mp3",
 	"SASANIAN EMPIRE": "res://audio/music/sasanian_empire.mp3",
 }
-const DEFAULT_FACTION := "RASHIDUN CALIPHATE"
+const FACTION_COLORS := {
+	"RASHIDUN CALIPHATE": Color(0.45, 0.78, 0.48, 1.0),
+	"BYZANTINE EMPIRE": Color(0.72, 0.58, 0.88, 1.0),
+	"SASANIAN EMPIRE": Color(0.38, 0.80, 0.75, 1.0),
+}
+const BODY_FONT_PATH := "res://ui/theme/fonts/IMFellEnglish-Regular.ttf"
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
@@ -33,9 +38,14 @@ const DEFAULT_FACTION := "RASHIDUN CALIPHATE"
 var selected_faction := ""
 var faction_buttons: Array[Button]
 var tweens: Dictionary = {}
+var bold_body_font: FontVariation
 
 
 func _ready() -> void:
+	bold_body_font = FontVariation.new()
+	bold_body_font.base_font = load(BODY_FONT_PATH)
+	bold_body_font.variation_embolden = 0.6
+
 	faction_buttons = [%RashidunButton, %ByzantineButton, %SasanianButton]
 	for button in faction_buttons:
 		_wire_button(button)
@@ -46,7 +56,6 @@ func _ready() -> void:
 	continue_button.pressed.connect(_continue)
 	resized.connect(_apply_layout)
 	_apply_layout()
-	_play_faction_music(DEFAULT_FACTION)
 
 
 func _wire_button(button: Button) -> void:
@@ -79,6 +88,7 @@ func _animate(button: Button, scale_to: Vector2, tint: Color, duration: float) -
 func _select_faction(button: Button) -> void:
 	selected_faction = button.text
 	var data: Array = FACTIONS[selected_faction]
+	var nation_color: Color = FACTION_COLORS.get(selected_faction, Color(0.87, 0.83, 0.76, 1.0))
 	faction_name.text = selected_faction
 	availability.text = "[center][color=#7aad4c]●[/color]  AVAILABLE[/center]"
 	description.text = data[0]
@@ -87,6 +97,10 @@ func _select_faction(button: Button) -> void:
 	continue_button.disabled = false
 	for item in faction_buttons:
 		item.theme_type_variation = &"AvailableButton" if item == button else &"Button"
+	for label in [faction_name, description, traits]:
+		label.add_theme_color_override("font_color", nation_color)
+		label.add_theme_font_override("font", bold_body_font)
+	select_label.add_theme_color_override("font_color", nation_color)
 	_play_faction_music(selected_faction)
 
 
