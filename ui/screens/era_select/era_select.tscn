@@ -1,0 +1,154 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://ui/screens/era_select/era_select.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://ui/screens/main_menu/background_motif.gd" id="3_motif"]
+[ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="4_divider"]
+[ext_resource type="AudioStream" path="res://audio/ui/soft_ui_click.mp3" id="5_click"]
+
+[node name="EraSelect" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Motifs" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_motif")
+
+[node name="Vignette" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Center" type="CenterContainer" parent="SafeArea"]
+layout_mode = 2
+
+[node name="Composition" type="VBoxContainer" parent="SafeArea/Center"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+
+[node name="Title" type="Label" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "CHOOSE AN ERA"
+horizontal_alignment = 1
+
+[node name="TitleGap" type="Control" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Subtitle" type="Label" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Select the year in which your life begins."
+horizontal_alignment = 1
+
+[node name="HeaderGap" type="Control" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Divider" type="Control" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("4_divider")
+
+[node name="ListGap" type="Control" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="EraList" type="VBoxContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Era632" type="Button" parent="SafeArea/Center/Composition/EraList"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "632  —  A WORLD IN TRANSITION"
+
+[node name="Era769" type="Button" parent="SafeArea/Center/Composition/EraList"]
+layout_mode = 2
+disabled = true
+text = "769  —  THE EARLY MIDDLE AGES     LOCKED"
+
+[node name="Era867" type="Button" parent="SafeArea/Center/Composition/EraList"]
+layout_mode = 2
+disabled = true
+text = "867  —  AGE OF VIKINGS     LOCKED"
+
+[node name="Era936" type="Button" parent="SafeArea/Center/Composition/EraList"]
+layout_mode = 2
+disabled = true
+text = "936  —  THE IRON CENTURY     LOCKED"
+
+[node name="Era1066" type="Button" parent="SafeArea/Center/Composition/EraList"]
+layout_mode = 2
+disabled = true
+text = "1066  —  FATE OF KINGDOMS     LOCKED"
+
+[node name="Era1204" type="Button" parent="SafeArea/Center/Composition/EraList"]
+layout_mode = 2
+disabled = true
+text = "1204  —  SHATTERED EMPIRES     LOCKED"
+
+[node name="Era1337" type="Button" parent="SafeArea/Center/Composition/EraList"]
+layout_mode = 2
+disabled = true
+text = "1337  —  THE LATE MIDDLE AGES     LOCKED"
+
+[node name="BackGap" type="Control" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="BackButton" type="Button" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+text = "BACK"
+
+[node name="ClickSound" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("5_click")
+volume_db = -8.0

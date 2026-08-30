@@ -216,7 +216,7 @@ func _setup_load_game_availability() -> void:
 
 
 func _on_new_game_pressed() -> void:
-	placeholder_popup.show_message("Character creation isn't built yet.\nComing in Phase 1.")
+	get_tree().change_scene_to_file("res://ui/screens/era_select/era_select.tscn")
 
 
 func _on_load_game_pressed() -> void:
