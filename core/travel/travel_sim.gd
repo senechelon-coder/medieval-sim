@@ -25,13 +25,14 @@ static func begin_journey(destination_id: String) -> Dictionary:
 	var origin: Settlement = WorldState.settlements[WorldState.player.location_id]
 	var days := days_to(destination_id) + randi_range(-1, 1)
 	days = maxi(days, 2)
-	var danger_label := "Pirates" if WorldState.player.trade_tier == "ship" else "Bandits"
+	var danger_label := TravelEventData.danger_label_for(WorldState.player.homeland, WorldState.player.trade_tier)
+	var benign_events := TravelEventData.benign_events_for(WorldState.player.homeland)
 	var log: Array[String] = []
 	for day in range(1, days + 1):
 		if randf() < DANGER_CHANCE:
 			log.append("Day %d — %s" % [day, _resolve_danger(danger_label)])
 		else:
-			var event: Dictionary = TravelEventData.BENIGN_EVENTS[randi() % TravelEventData.BENIGN_EVENTS.size()]
+			var event: Dictionary = benign_events[randi() % benign_events.size()]
 			_apply_effects(event.get("effects", {}))
 			log.append("Day %d — %s" % [day, str(event.text)])
 	TimeManager.advance_days(days)
@@ -50,6 +51,8 @@ static func _resolve_danger(danger_label: String) -> String:
 		return "%s attack! You fight them off, but suffer wounds (-%d Health)." % [danger_label, loss]
 	else:
 		var stolen := mini(randi_range(4, 12), WorldState.player.wealth)
+		if stolen <= 0:
+			return "%s corner you, but find your purse already empty." % danger_label
 		WorldState.player.wealth -= stolen
 		return "%s rob you before fleeing (-%d Wealth)." % [danger_label, stolen]
 
