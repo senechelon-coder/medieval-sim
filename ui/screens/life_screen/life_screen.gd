@@ -44,11 +44,12 @@ var battle_beats: Array[Dictionary] = []
 @onready var birthplace_label: Label = %BirthplaceLabel
 @onready var age_value: Label = %AgeValue
 @onready var health_value: Label = %HealthValue
+@onready var health_bar: StatBar = %HealthBar
 @onready var wealth_value: Label = %WealthValue
 @onready var standing_value: Label = %StandingValue
 @onready var trait_value: Label = %TraitValue
 @onready var occupation_value: Label = %OccupationValue
-@onready var event_placeholder: Label = %EventPlaceholder
+@onready var event_placeholder: RichTextLabel = %EventPlaceholder
 @onready var chronicle_scroll: ScrollContainer = %ChronicleScroll
 @onready var advance_button: Button = %AdvanceButton
 @onready var upbringing_panel: PanelContainer = %UpbringingPanel
@@ -133,7 +134,10 @@ func _ready() -> void:
 	portrait.variant_seed = appearance_seed
 	if WorldState.player.chronicle.is_empty():
 		WorldState.player.chronicle.append("Age 1, %s\nYou begin life in %s." % [TimeManager.year_label(), birthplace])
-	event_placeholder.text = "\n\n".join(WorldState.player.chronicle)
+	var chronicle_blocks: Array[String] = []
+	for entry in WorldState.player.chronicle:
+		chronicle_blocks.append(_chronicle_bbcode(entry))
+	event_placeholder.text = "\n\n".join(chronicle_blocks)
 	advance_button.disabled = false
 	advance_button.text = "AGE UP"
 	advance_button.pressed.connect(_advance_year)
@@ -165,6 +169,7 @@ func _ready() -> void:
 	SaveManager.save_game()
 	resized.connect(_apply_layout)
 	_apply_layout()
+	_scroll_chronicle_to_bottom.call_deferred()
 
 
 func _advance_year() -> void:
@@ -246,6 +251,7 @@ func _choose_upbringing(button: Button) -> void:
 
 func _refresh_stats() -> void:
 	health_value.text = "%d%%" % health
+	health_bar.ratio = health / 100.0
 	wealth_value.text = str(wealth)
 	standing_value.text = standing
 	trait_value.text = primary_trait
@@ -386,11 +392,24 @@ func _resolve_battle_outcome() -> void:
 
 
 func _append_chronicle(entry: String) -> void:
-	event_placeholder.text += "\n\n" + entry
+	event_placeholder.text += "\n\n" + _chronicle_bbcode(entry)
 	if WorldState.has_player():
 		WorldState.player.chronicle.append(entry)
 		SaveManager.save_game()
 	_scroll_chronicle_to_bottom.call_deferred()
+
+
+func _chronicle_bbcode(entry: String) -> String:
+	var color := "ded3c2"
+	if entry.findn("battle") != -1 or entry.findn("wounded") != -1 or entry.findn("rob") != -1 or entry.findn("attack") != -1 or entry.findn("has died") != -1:
+		color = "d1524a"
+	elif entry.findn("married") != -1 or entry.findn("welcomed a child") != -1 or entry.findn("younger sibling") != -1:
+		color = "8cbf66"
+	elif entry.findn("journey to") != -1 or entry.findn("arrive in") != -1 or entry.findn("road") != -1:
+		color = "6fa8c9"
+	elif entry.findn("bought") != -1 or entry.findn("sold") != -1 or entry.findn("trade standing") != -1 or entry.findn("wage") != -1 or entry.findn("earns") != -1:
+		color = "e0c26e"
+	return "[center][color=#%s]%s[/color][/center]" % [color, entry]
 
 
 func _scroll_chronicle_to_bottom() -> void:
