@@ -142,7 +142,7 @@ theme_override_constants/separation = 14
 [node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/NameRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-custom_minimum_size = Vector2(160, 0)
+custom_minimum_size = Vector2(220, 0)
 text = "NAME"
 vertical_alignment = 1
 
@@ -159,7 +159,7 @@ theme_override_constants/separation = 14
 [node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/SexRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-custom_minimum_size = Vector2(160, 0)
+custom_minimum_size = Vector2(220, 0)
 text = "SEX"
 vertical_alignment = 1
 
@@ -174,7 +174,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 button_group = SubResource("ButtonGroup_sex")
-text = "♂ MALE"
+text = "MALE"
 
 [node name="FemaleButton" type="Button" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/SexRow/SexButtons"]
 unique_name_in_owner = true
@@ -182,7 +182,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 button_group = SubResource("ButtonGroup_sex")
-text = "♀ FEMALE"
+text = "FEMALE"
 
 [node name="AgeRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
 layout_mode = 2
@@ -191,7 +191,7 @@ theme_override_constants/separation = 14
 [node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/AgeRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-custom_minimum_size = Vector2(160, 0)
+custom_minimum_size = Vector2(220, 0)
 text = "AGE"
 vertical_alignment = 1
 
@@ -210,7 +210,7 @@ theme_override_constants/separation = 14
 [node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/BirthplaceRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-custom_minimum_size = Vector2(160, 0)
+custom_minimum_size = Vector2(220, 0)
 text = "BIRTHPLACE"
 vertical_alignment = 1
 
@@ -226,7 +226,7 @@ theme_override_constants/separation = 14
 [node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/OriginRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-custom_minimum_size = Vector2(160, 0)
+custom_minimum_size = Vector2(220, 0)
 text = "SOCIAL ORIGIN"
 vertical_alignment = 1
 
