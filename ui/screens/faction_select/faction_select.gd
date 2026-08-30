@@ -12,6 +12,7 @@ const FACTION_MUSIC := {
 	"BYZANTINE EMPIRE": "res://audio/music/byzantine_empire.mp3",
 	"SASANIAN EMPIRE": "res://audio/music/sasanian_empire.mp3",
 }
+const DEFAULT_FACTION := "RASHIDUN CALIPHATE"
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
@@ -45,6 +46,7 @@ func _ready() -> void:
 	continue_button.pressed.connect(_continue)
 	resized.connect(_apply_layout)
 	_apply_layout()
+	_play_faction_music(DEFAULT_FACTION)
 
 
 func _wire_button(button: Button) -> void:
