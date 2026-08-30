@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://ui/screens/character_creation/character_creation.gd" id="1_script"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://ui/screens/character_creation/nation_emblem.gd" id="4_emblem"]
 [ext_resource type="AudioStream" path="res://audio/ui/soft_ui_click.mp3" id="5_click"]
 [ext_resource type="PackedScene" path="res://ui/components/placeholder_popup.tscn" id="6_popup"]
+[ext_resource type="Script" path="res://ui/screens/life_screen/character_portrait.gd" id="7_portrait"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_sex"]
 
@@ -88,14 +89,14 @@ layout_mode = 2
 
 [node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/InfoPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 28
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 28
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 18
 
 [node name="Info" type="VBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 10
 
 [node name="HeaderRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
 layout_mode = 2
@@ -107,6 +108,13 @@ custom_minimum_size = Vector2(72, 72)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("4_emblem")
+
+[node name="Portrait" type="Control" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/HeaderRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(82, 96)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("7_portrait")
 
 [node name="HeaderTextCol" type="VBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/HeaderRow"]
 layout_mode = 2
@@ -125,6 +133,11 @@ layout_mode = 2
 theme_type_variation = &"VersionLabel"
 text = "YOUR HOMELAND"
 
+[node name="AppearanceButton" type="Button" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/HeaderRow/HeaderTextCol"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "NEW APPEARANCE"
+
 [node name="DividerMid" type="Control" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
 custom_minimum_size = Vector2(0, 18)
 layout_mode = 2
@@ -133,7 +146,7 @@ script = ExtResource("3_divider")
 
 [node name="FormRows" type="VBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 10
 
 [node name="NameRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
 layout_mode = 2
@@ -151,6 +164,28 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "Enter Name"
+
+[node name="GenerateNameButton" type="Button" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/NameRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "GENERATE"
+
+[node name="LineageRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/LineageRow"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+custom_minimum_size = Vector2(220, 0)
+text = "FAMILY / LINEAGE"
+vertical_alignment = 1
+
+[node name="LineageField" type="LineEdit" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/LineageRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Generated from your homeland"
 
 [node name="SexRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
 layout_mode = 2
@@ -199,9 +234,9 @@ vertical_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "16"
+text = "1"
+editable = false
 horizontal_alignment = 1
-max_length = 2
 
 [node name="BirthplaceRow" type="HBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows"]
 layout_mode = 2
@@ -227,13 +262,95 @@ theme_override_constants/separation = 14
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
 custom_minimum_size = Vector2(220, 0)
-text = "SOCIAL ORIGIN"
+text = "EARLY UPBRINGING"
 vertical_alignment = 1
 
 [node name="OriginField" type="OptionButton" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/FormRows/OriginRow"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+disabled = true
+
+[node name="BirthSummary" type="PanelContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 10
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="FullNamePreview" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "Generate a historically structured name"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Details" type="GridContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content"]
+layout_mode = 2
+columns = 2
+theme_override_constants/h_separation = 16
+theme_override_constants/v_separation = 4
+
+[node name="ParentsLabel" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "PARENTS"
+
+[node name="ParentsValue" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Generate profile"
+autowrap_mode = 2
+
+[node name="CultureLabel" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "CULTURE"
+
+[node name="CultureValue" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Generate profile"
+
+[node name="FaithLabel" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "FAITH"
+
+[node name="FaithValue" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Generate profile"
+
+[node name="SeasonLabel" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "BIRTH SEASON"
+
+[node name="SeasonValue" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Generate profile"
+
+[node name="OriginLabel" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "FAMILY ORIGIN"
+
+[node name="FamilyOriginValue" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info/BirthSummary/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Generate profile"
+autowrap_mode = 2
 
 [node name="ActionsSpacer" type="Control" parent="SafeArea/Center/Composition"]
 custom_minimum_size = Vector2(0, 22)

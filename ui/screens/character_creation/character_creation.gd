@@ -2,6 +2,7 @@ class_name CharacterCreation
 extends Control
 
 const FACTION_SELECT_SCENE := "res://ui/screens/faction_select/faction_select.tscn"
+const LIFE_SCREEN_SCENE := "res://ui/screens/life_screen/life_screen.tscn"
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
 const RELEASE_DURATION := 0.13
 
@@ -15,10 +16,24 @@ const BIRTHPLACES_BY_FACTION := {
 	"BYZANTINE EMPIRE": ["Constantinople", "Antioch", "Alexandria", "Ephesus", "Thessalonica", "Nicaea", "Caesarea", "Damascus"],
 	"SASANIAN EMPIRE": ["Ctesiphon", "Estakhr", "Rey", "Merv", "Nishapur", "Gundeshapur", "Susa", "Isfahan"],
 }
-const SOCIAL_ORIGINS := ["Peasant", "Farmer", "Artisan", "Merchant", "Soldier", "Clergy", "Noble"]
+const NAMES_BY_FACTION := {
+	"RASHIDUN CALIPHATE": {
+		"MALE": ["Zayd", "Umar", "Ali", "Uthman", "Khalid", "Amr", "Sa'd", "Talha", "Zubayr", "Bilal", "Salman", "Ammar"],
+		"FEMALE": ["Fatima", "Aisha", "Hafsa", "Zaynab", "Asma", "Safiyya", "Hind", "Khawla", "Sumayya", "Lubaynah", "Jamila", "Ruqayya"],
+	},
+	"BYZANTINE EMPIRE": {
+		"MALE": ["Herakleios", "Konstantinos", "Theodoros", "Ioannes", "Georgios", "Stephanos", "Andreas", "Petros", "Markos", "Tiberios", "Martinus", "David"],
+		"FEMALE": ["Anastasia", "Theodora", "Eudokia", "Martina", "Anna", "Maria", "Euphemia", "Helena", "Sophia", "Theodosia", "Epiphania", "Athanasia"],
+	},
+	"SASANIAN EMPIRE": {
+		"MALE": ["Khosrow", "Ardashir", "Bahram", "Yazdegerd", "Peroz", "Narseh", "Shapur", "Hormizd", "Rostam", "Farrukh", "Mihran", "Vistahm"],
+		"FEMALE": ["Denag", "Azarmidokht", "Boran", "Shirin", "Anahid", "Adur-Anahid", "Perozdukht", "Hormizddukht", "Gurdiyya", "Purandokht"],
+	},
+}
 
 var selected_faction := "RASHIDUN CALIPHATE"
 var selected_sex := ""
+var generated_profile: Dictionary = {}
 var tweens: Dictionary = {}
 
 @onready var background: TextureRect = %Background
@@ -26,13 +41,23 @@ var tweens: Dictionary = {}
 @onready var composition: VBoxContainer = %Composition
 @onready var info_panel: PanelContainer = %InfoPanel
 @onready var emblem: NationEmblem = %Emblem
+@onready var portrait: CharacterPortrait = %Portrait
 @onready var faction_name_label: Label = %FactionNameLabel
 @onready var name_field: LineEdit = %NameField
+@onready var lineage_field: LineEdit = %LineageField
+@onready var generate_name_button: Button = %GenerateNameButton
+@onready var appearance_button: Button = %AppearanceButton
 @onready var male_button: Button = %MaleButton
 @onready var female_button: Button = %FemaleButton
 @onready var age_field: LineEdit = %AgeField
 @onready var birthplace_field: OptionButton = %BirthplaceField
 @onready var origin_field: OptionButton = %OriginField
+@onready var full_name_preview: Label = %FullNamePreview
+@onready var parents_value: Label = %ParentsValue
+@onready var culture_value: Label = %CultureValue
+@onready var faith_value: Label = %FaithValue
+@onready var season_value: Label = %SeasonValue
+@onready var family_origin_value: Label = %FamilyOriginValue
 @onready var back_button: Button = %BackButton
 @onready var begin_button: Button = %BeginButton
 @onready var click_sound: AudioStreamPlayer = %ClickSound
@@ -48,18 +73,21 @@ func _ready() -> void:
 	emblem.emblem_color = nation_color
 
 	_populate_options(birthplace_field, BIRTHPLACES_BY_FACTION.get(selected_faction, []))
-	_populate_options(origin_field, SOCIAL_ORIGINS)
+	origin_field.clear()
+	origin_field.add_item("Chosen when the child turns 5")
+	origin_field.disabled = true
 
-	for button in [male_button, female_button, back_button, begin_button]:
+	for button in [male_button, female_button, generate_name_button, appearance_button, back_button, begin_button]:
 		_wire_button(button)
-	male_button.pressed.connect(func(): selected_sex = "MALE"; _update_begin_availability())
-	female_button.pressed.connect(func(): selected_sex = "FEMALE"; _update_begin_availability())
+	male_button.pressed.connect(_select_sex.bind("MALE"))
+	female_button.pressed.connect(_select_sex.bind("FEMALE"))
+	generate_name_button.pressed.connect(_generate_name)
+	appearance_button.pressed.connect(_generate_appearance)
 
-	name_field.text_changed.connect(func(_t): _update_begin_availability())
+	name_field.text_changed.connect(func(_t): _refresh_full_name(); _update_begin_availability())
+	lineage_field.text_changed.connect(func(_t): _refresh_full_name(); _update_begin_availability())
 	age_field.text_changed.connect(func(_t): _update_begin_availability())
-	age_field.focus_exited.connect(_sanitize_age)
 	birthplace_field.item_selected.connect(func(_i): _update_begin_availability())
-	origin_field.item_selected.connect(func(_i): _update_begin_availability())
 
 	back_button.pressed.connect(_go_back)
 	begin_button.pressed.connect(_begin_life)
@@ -82,9 +110,11 @@ func _apply_layout() -> void:
 		button.custom_minimum_size = Vector2(width * 0.34, clampf(canvas.y * 0.045, 68.0, 86.0))
 	for button in [male_button, female_button]:
 		button.custom_minimum_size = Vector2(0, clampf(canvas.y * 0.04, 60.0, 76.0))
-	for field in [name_field, age_field, birthplace_field, origin_field]:
+	for field in [name_field, lineage_field, age_field, birthplace_field, origin_field]:
 		field.custom_minimum_size.y = clampf(canvas.y * 0.04, 58.0, 72.0)
-	for button in [male_button, female_button, back_button, begin_button]:
+	generate_name_button.custom_minimum_size = Vector2(width * 0.24, clampf(canvas.y * 0.04, 58.0, 72.0))
+	appearance_button.custom_minimum_size = Vector2(width * 0.28, clampf(canvas.y * 0.04, 58.0, 72.0))
+	for button in [male_button, female_button, generate_name_button, appearance_button, back_button, begin_button]:
 		_set_pivot.call_deferred(button)
 
 
@@ -128,20 +158,59 @@ func _set_pivot(button: Button) -> void:
 	button.pivot_offset = button.size * 0.5
 
 
-func _sanitize_age() -> void:
-	var value := age_field.text.strip_edges()
-	if value.is_valid_int() and int(value) >= 1 and int(value) <= 99:
-		age_field.text = str(int(value))
-	else:
-		age_field.text = "16"
+func _generate_name() -> void:
+	if selected_sex == "":
+		selected_sex = "MALE" if randi() % 2 == 0 else "FEMALE"
+		male_button.button_pressed = selected_sex == "MALE"
+		female_button.button_pressed = selected_sex == "FEMALE"
+	generated_profile = CharacterNameData.generate_profile(selected_faction, selected_sex)
+	name_field.text = generated_profile.given_name
+	lineage_field.text = generated_profile.lineage
+	parents_value.text = "%s  •  %s" % [generated_profile.father, generated_profile.mother]
+	culture_value.text = generated_profile.culture
+	faith_value.text = generated_profile.faith
+	season_value.text = generated_profile.season
+	family_origin_value.text = generated_profile.family_origin
+	portrait.female = selected_sex == "FEMALE"
+	portrait.variant_seed = generated_profile.appearance_seed
+	_refresh_full_name()
+	_update_begin_availability()
+
+
+func _select_sex(sex: String) -> void:
+	selected_sex = sex
+	portrait.female = sex == "FEMALE"
+	generated_profile.clear()
+	name_field.text = ""
+	lineage_field.text = ""
+	full_name_preview.text = "Generate a historically structured name"
+	parents_value.text = "Generate profile"
+	culture_value.text = "Generate profile"
+	faith_value.text = "Generate profile"
+	season_value.text = "Generate profile"
+	family_origin_value.text = "Generate profile"
+	_update_begin_availability()
+
+
+func _generate_appearance() -> void:
+	portrait.variant_seed = randi()
+	if not generated_profile.is_empty():
+		generated_profile.appearance_seed = portrait.variant_seed
+
+
+func _refresh_full_name() -> void:
+	var given := name_field.text.strip_edges()
+	var lineage := lineage_field.text.strip_edges()
+	full_name_preview.text = (given + " " + lineage).strip_edges() if given != "" else "Generate a historically structured name"
 
 
 func _update_begin_availability() -> void:
 	var has_name := name_field.text.strip_edges() != ""
+	var has_lineage := lineage_field.text.strip_edges() != ""
 	var has_sex := selected_sex != ""
 	var has_birthplace := birthplace_field.selected > 0
-	var has_origin := origin_field.selected > 0
-	begin_button.disabled = not (has_name and has_sex and has_birthplace and has_origin)
+	var has_profile := not generated_profile.is_empty()
+	begin_button.disabled = not (has_name and has_lineage and has_sex and has_birthplace and has_profile)
 
 
 func _go_back() -> void:
@@ -151,7 +220,23 @@ func _go_back() -> void:
 
 func _begin_life() -> void:
 	await get_tree().create_timer(RELEASE_DURATION).timeout
-	popup.show_message("Character creation is wired up, but life simulation isn't built yet.\n\nThis is the end of the current New Game flow.")
+	var next_scene: PackedScene = load(LIFE_SCREEN_SCENE)
+	var next: LifeScreen = next_scene.instantiate()
+	next.character_name = full_name_preview.text
+	next.character_age = int(age_field.text)
+	next.character_sex = selected_sex
+	next.homeland = selected_faction
+	next.birthplace = birthplace_field.get_item_text(birthplace_field.selected)
+	next.social_origin = generated_profile.family_origin
+	next.father_name = generated_profile.father
+	next.mother_name = generated_profile.mother
+	next.culture = generated_profile.culture
+	next.faith = generated_profile.faith
+	next.birth_season = generated_profile.season
+	next.appearance_seed = generated_profile.appearance_seed
+	get_tree().root.add_child(next)
+	get_tree().current_scene.queue_free()
+	get_tree().current_scene = next
 
 
 func _setup_background() -> void:
