@@ -12,8 +12,8 @@ const FACTION_COLORS := {
 }
 const BIRTHPLACES_BY_FACTION := {
 	"RASHIDUN CALIPHATE": ["Medina", "Mecca", "Ta'if", "Khaybar", "Sana'a", "Najran", "Al-Yamama", "Nomadic Encampment"],
-	"BYZANTINE EMPIRE": ["Constantinople", "Antioch", "Alexandria", "Ephesus", "Thessalonica", "Nicaea"],
-	"SASANIAN EMPIRE": ["Ctesiphon", "Estakhr", "Rey", "Merv", "Nishapur", "Gundeshapur"],
+	"BYZANTINE EMPIRE": ["Constantinople", "Antioch", "Alexandria", "Ephesus", "Thessalonica", "Nicaea", "Caesarea", "Damascus"],
+	"SASANIAN EMPIRE": ["Ctesiphon", "Estakhr", "Rey", "Merv", "Nishapur", "Gundeshapur", "Susa", "Isfahan"],
 }
 const SOCIAL_ORIGINS := ["Peasant", "Farmer", "Artisan", "Merchant", "Soldier", "Clergy", "Noble"]
 

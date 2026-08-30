@@ -24,7 +24,6 @@ config/icon="res://icon_transparent.png"
 window/size/viewport_width=1080
 window/size/viewport_height=1920
 window/stretch/mode="canvas_items"
-window/stretch/aspect="keep"
 window/handheld/orientation="portrait"
 
 [rendering]

@@ -9,7 +9,6 @@ const RELEASE_DURATION := 0.13
 const PRESS_TINT := Color(1.06, 1.03, 0.94, 1.0)
 
 @onready var background: TextureRect = %Background
-@onready var vignette: TextureRect = %Vignette
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
 @onready var title: Label = %Title
@@ -29,7 +28,6 @@ var button_tweens: Dictionary = {}
 
 func _ready() -> void:
 	_setup_background()
-	_setup_vignette()
 	_setup_interactive_button(era_632)
 	_setup_interactive_button(back_button)
 	era_632.pressed.connect(_select_era_632)
@@ -136,19 +134,3 @@ func _setup_background() -> void:
 	gradient_texture.width = 512
 	gradient_texture.height = 512
 	background.texture = gradient_texture
-
-
-func _setup_vignette() -> void:
-	var gradient := Gradient.new()
-	gradient.colors = PackedColorArray([
-		Color(0.0, 0.0, 0.0, 0.0),
-		Color(0.0, 0.0, 0.0, 0.4),
-	])
-	gradient.offsets = PackedFloat32Array([0.0, 1.0])
-	var gradient_texture := GradientTexture2D.new()
-	gradient_texture.gradient = gradient
-	gradient_texture.fill_from = Vector2(0.5, 0.4)
-	gradient_texture.fill_to = Vector2(0.5, 1.0)
-	gradient_texture.width = 4
-	gradient_texture.height = 512
-	vignette.texture = gradient_texture
