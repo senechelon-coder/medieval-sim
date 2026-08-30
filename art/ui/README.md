@@ -1,4 +1,5 @@
 # UI Art
 
-- `main_menu_logo.png` — the real title-screen logo (hourglass, globe, and astrolabe ring, with the "Worldly Life" wordmark), used directly by `ui/screens/main_menu/main_menu.tscn`. Background was made transparent by flood-filling the checkerboard preview matte out of the original JPEG source (JPEG has no alpha channel).
-- The project icon (`icon.png` at the repo root) is a square crop of just the mark from the same source, sized for use as a small app/taskbar icon.
+- `main_menu_logo_v2.png` — the title-screen logo (hourglass, globe, and astrolabe ring, with the "Worldly Life" wordmark), presented on a genuine transparent background and used by `ui/screens/main_menu/main_menu.tscn`.
+- The project icon (`icon_transparent.png` at the repo root) uses the emblem without the wordmark on a genuine transparent background, enlarged for stronger readability at small app/taskbar sizes.
+- `main_menu_logo.png` and `icon.png` are the original source assets retained for reference; their checkerboard matte is baked into the pixels and they should not be used directly in the UI.

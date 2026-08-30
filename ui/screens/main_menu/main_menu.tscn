@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://ui/screens/main_menu/main_menu.gd" id="1_main"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
-[ext_resource type="Texture2D" path="res://art/ui/main_menu_logo.png" id="3_logo"]
+[ext_resource type="Texture2D" path="res://art/ui/main_menu_logo_v2.png" id="3_logo"]
 [ext_resource type="Script" path="res://ui/screens/main_menu/background_motif.gd" id="4_motif"]
 [ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="5_divider"]
 [ext_resource type="PackedScene" path="res://ui/components/placeholder_popup.tscn" id="6_popup"]
@@ -50,7 +50,8 @@ mouse_filter = 2
 expand_mode = 1
 stretch_mode = 0
 
-[node name="Layout" type="VBoxContainer" parent="."]
+[node name="SafeArea" type="MarginContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -58,96 +59,90 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TopSpacer" type="Control" parent="Layout"]
-custom_minimum_size = Vector2(0, 40)
+[node name="CompositionCenter" type="CenterContainer" parent="SafeArea"]
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="LogoImage" type="TextureRect" parent="Layout"]
-custom_minimum_size = Vector2(620, 608)
+[node name="Composition" type="VBoxContainer" parent="SafeArea/CompositionCenter"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 0
+
+[node name="LogoImage" type="TextureRect" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("3_logo")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Spacer1" type="Control" parent="Layout"]
-custom_minimum_size = Vector2(0, 18)
+[node name="LogoToDividerGap" type="Control" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="DividerTop" type="Control" parent="Layout"]
-custom_minimum_size = Vector2(360, 22)
+[node name="DividerTop" type="Control" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("5_divider")
 
-[node name="MidSpacer" type="Control" parent="Layout"]
-custom_minimum_size = Vector2(0, 30)
+[node name="DividerToMenuGap" type="Control" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="ButtonColumn" type="VBoxContainer" parent="Layout"]
-custom_minimum_size = Vector2(760, 0)
+[node name="ButtonColumn" type="VBoxContainer" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 theme_override_constants/separation = 16
 
-[node name="NewGameButton" type="Button" parent="Layout/ButtonColumn"]
+[node name="NewGameButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 text = "NEW GAME"
 
-[node name="LoadGameButton" type="Button" parent="Layout/ButtonColumn"]
+[node name="LoadGameButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 disabled = true
 text = "LOAD GAME"
 
-[node name="OptionsButton" type="Button" parent="Layout/ButtonColumn"]
+[node name="OptionsButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 text = "OPTIONS"
 
-[node name="CreditsButton" type="Button" parent="Layout/ButtonColumn"]
+[node name="CreditsButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 text = "CREDITS"
 
-[node name="StoreButton" type="Button" parent="Layout/ButtonColumn"]
+[node name="StoreButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 84)
 layout_mode = 2
 text = "STORE"
 
-[node name="BottomSpacer" type="Control" parent="Layout"]
-custom_minimum_size = Vector2(0, 30)
+[node name="MenuToFooterGap" type="Control" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
 
-[node name="DividerBottom" type="Control" parent="Layout"]
-custom_minimum_size = Vector2(360, 22)
+[node name="DividerBottom" type="Control" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("5_divider")
 
-[node name="Spacer3" type="Control" parent="Layout"]
-custom_minimum_size = Vector2(0, 14)
+[node name="VersionGap" type="Control" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
 
-[node name="VersionLabel" type="Label" parent="Layout"]
+[node name="VersionLabel" type="Label" parent="SafeArea/CompositionCenter/Composition"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"VersionLabel"
 horizontal_alignment = 1
 text = "v 0.1.0"
-
-[node name="BottomPad" type="Control" parent="Layout"]
-custom_minimum_size = Vector2(0, 40)
-layout_mode = 2
 
 [node name="PlaceholderPopup" parent="." instance=ExtResource("6_popup")]
 unique_name_in_owner = true

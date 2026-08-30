@@ -2,7 +2,7 @@
 
 ## Context
 
-This is a greenfield Godot 4 project. The vision is a portrait-mobile, primarily text/UI-driven medieval life simulator combining BitLife-style personal life sim, CK-style dynasties/world sim, AoH-style changing political map, and text-adventure-style travel/battle. The world simulates independently of the player; the player is one participant in it.
+This is a greenfield Godot 4 project. The vision is a portrait-mobile, primarily text/UI-driven medieval life simulator combining BitLife-style personal life sim, CK-style dynasties/world sim, AoH-style changing political map, and text-adventure-style travel/battle. Trade and piracy are active parts of the world: merchants move goods between settlements, while pirates raid routes, disrupt prices, and create opportunities or danger for the player. The world simulates independently of the player; the player is one participant in it.
 
 This document is the foundational architecture — project structure, data models, simulation loop, save format, and phased build order — so that later systems (kingdoms, wars, economy, careers, inheritance) can be added without rewrites.
 
@@ -31,7 +31,8 @@ medieval-sim/
       kingdom.gd
       dynasty.gd
       army.gd
-      caravan.gd (later)
+      caravan.gd (Phase 4)
+      pirate_crew.gd (Phase 4)
     simulation/
       time_system.gd
       character_lifecycle.gd    # aging, births, deaths, marriage rolls
@@ -49,6 +50,8 @@ medieval-sim/
       battle_sim.gd              # (Phase 5) text battle resolution
     travel/
       travel_sim.gd              # (Phase 4) travel event sequencing
+      trade_route_sim.gd         # merchant movement, supply, demand, and route risk
+      piracy_sim.gd              # pirate activity, raids, patrols, and loot
   data/                        # Authored .tres resources (content, not code)
     occupations/
     goods/
@@ -123,6 +126,8 @@ func to_dict() -> Dictionary: ...
 static func from_dict(d: Dictionary) -> Character: ...
 ```
 
+Trader and pirate are supported life paths rather than special player-only modes. A trader's occupation, inventory, caravan or ship association, route knowledge, and reputation use the same character model as other careers. Pirates use occupations and traits alongside membership in a `PirateCrew`; named captains and player-relevant crew are Tier 0/1 characters, while ordinary crew can remain abstracted.
+
 ### Settlement
 ```
 class_name Settlement extends RefCounted
@@ -183,6 +188,37 @@ var war_score: float
 var start_date: SimDate
 ```
 
+### Trade routes / Caravans / Pirate crews (introduced Phase 4)
+```
+class_name TradeRoute extends RefCounted
+var id: String
+var settlement_ids: Array[String]
+var transport_type: String          # road, river, coastal
+var risk: float                     # bandit/pirate danger
+var traffic: float
+
+class_name Caravan extends RefCounted
+var id: String
+var owner_character_id: String
+var member_ids: Array[String]
+var inventory: Dictionary           # good_id -> quantity
+var current_route_id: String
+var destination_id: String
+var wealth: int
+
+class_name PirateCrew extends RefCounted
+var id: String
+var captain_character_id: String
+var member_ids: Array[String]       # only named/relevant members
+var strength: int                   # abstract ordinary crew
+var morale: float
+var wealth: int
+var current_route_id: String
+var notoriety: float
+```
+
+Trade routes connect settlements and drive the movement of goods. Traders react to price differences, risk, travel time, and available cargo capacity. Successful deliveries increase local supply and can reduce prices; raids or disrupted routes reduce supply and can raise prices. Pirate crews choose vulnerable coastal or river routes, raid traffic, sell loot, gain notoriety, and may be hunted by rulers or patrols. Both systems continue operating when the player follows another career.
+
 ### Static definitions (authored as .tres, loaded once at startup into `GameData` autoload)
 `OccupationDef`, `GoodDef`, `EventDef`, `KingdomDef` (starting-world seed data), `SettlementDef` — these are read-only templates; runtime entities reference them by id, they are never mutated or saved (save files only store the runtime `Character`/`Settlement`/etc. instances above).
 
@@ -199,7 +235,7 @@ This tiering is enforced by `WorldState` (Section 3): it holds all Tier-0/1 char
 
 - **`TimeManager`** — owns the current `SimDate` (day/month/year), the pause state, and simulation speed multiplier. Advances time on a real-time timer (scaled by speed) or is driven by "advance until next decision" logic during travel/battle. Emits `day_passed`, `month_passed`, `year_passed` signals. Nothing else owns time.
 - **`EventBus`** — global signal hub. Systems publish (`EventBus.emit_signal("war_declared", war)`) and other systems subscribe, rather than calling each other directly. This is what implements the "King declares war → lord obligation → recruiting → player called → ..." chain from the vision doc without hard-coupling those systems.
-- **`WorldState`** — the live-world registry: dictionaries of all Tier-0/1 `Character`, `Settlement`, `Province`, `Kingdom`, `Dynasty`, `Army`, `War` objects by id, plus the player's character id. This is *the* source of truth; UI and systems query it, never hold their own copies.
+- **`WorldState`** — the live-world registry: dictionaries of all Tier-0/1 `Character`, `Settlement`, `Province`, `Kingdom`, `Dynasty`, `Army`, `War`, `TradeRoute`, `Caravan`, and `PirateCrew` objects by id, plus the player's character id. This is *the* source of truth; UI and systems query it, never hold their own copies.
 - **`GameData`** — loads all authored `.tres` definitions at boot into typed lookup dictionaries (`GameData.occupations[id]`, `GameData.goods[id]`, ...). Read-only after load.
 - **`SaveManager`** — serializes `WorldState` + `TimeManager` state to/from disk (Section 5).
 
@@ -238,7 +274,10 @@ Pause simply stops `TimeManager` from advancing; speed changes how much simulate
     "kingdoms": { id: {...}, ... },
     "dynasties": { id: {...}, ... },
     "armies": { id: {...}, ... },
-    "wars": { id: {...}, ... }
+    "wars": { id: {...}, ... },
+    "trade_routes": { id: {...}, ... },
+    "caravans": { id: {...}, ... },
+    "pirate_crews": { id: {...}, ... }
   }
   ```
 - Serialized with `JSON.stringify` to a file under `user://saves/<slot>.json` (human-readable, easy to debug/inspect during development; can move to a compressed/binary format later without changing the model layer since it's all just dict-in/dict-out).
@@ -260,15 +299,15 @@ Godot 4 project set up for mobile/portrait export, folder structure above, empty
 Add `Province`/`Kingdom`/`Dynasty` skeletons (one seed kingdom, a few provinces/settlements). `EventDef` table + `event_resolver.gd` producing simple narrative life events (illness, chance encounter, etc.) as decision cards. Tier-1 NPCs populate the player's settlement (family, a few named locals) with basic lifecycle (aging, death, simple marriage). **Exit criterion:** living in a settlement produces periodic events with real choices that affect stats/wealth; NPCs around the player age and occasionally die independent of player action.
 
 **Phase 3 — Occupation & economy seed**
-`OccupationDef`/`GoodDef` tables, basic job assignment (peasant/farmer/soldier/merchant start), wage/income tick, simple regional `goods_prices` per settlement. **Exit criterion:** player can work an occupation, earn/spend wealth, and see prices differ between at least two settlements.
+`OccupationDef`/`GoodDef` tables, basic job assignment (peasant/farmer/soldier/trader start), wage/income tick, simple regional `goods_prices` per settlement. Traders can buy and sell goods, build trade reputation, and progress from travelling peddler toward caravan or ship ownership. **Exit criterion:** player can work an occupation, earn/spend wealth, and see prices differ between at least two settlements.
 
-**Phase 4 — Travel**
-`travel_sim.gd`: multi-day travel between settlements as a day-by-day event sequence (bandits/inn/weather/merchant/etc. drawn from `EventDef` travel-tagged pool), arriving updates `location_id`. **Exit criterion:** travel from settlement A to B takes multiple simulated days, produces at least 2-3 event types, and merchant profit (buy low, travel, sell high) is possible.
+**Phase 4 — Travel, trade & piracy**
+`travel_sim.gd`: multi-day travel between settlements as a day-by-day event sequence (bandits/inn/weather/trader/pirate/etc. drawn from `EventDef` travel-tagged pools), arriving updates `location_id`. `trade_route_sim.gd` moves background merchants and goods between connected settlements. `piracy_sim.gd` creates route danger, raids, loot flows, patrol responses, and pirate-hunting opportunities. The player may trade independently, join or lead a caravan, work aboard a merchant vessel, join a pirate crew, become a captain, raid traffic, or hunt pirates. **Exit criterion:** travel from settlement A to B takes multiple simulated days, trade can produce a buy-low/sell-high profit, at least one background trader changes local supply, and pirate activity can disrupt a route or trigger an encounter without player involvement.
 
 **Phase 5 — Minimal battle & wider-world independence**
 `Army`/`War` skeleton, one scripted small battle reachable via a recruitment event chain (`King declares war → obligation → recruit → player joins → battle`), `battle_sim.gd` producing the timestamped narrated-event + choice format from the vision doc, outcome affecting war score and player survival/injury. In parallel, confirm at least one *player-independent* world event can occur (e.g. an NPC king dies and succession resolves, or a second kingdom's war progresses) purely from the Tier-1/Tier-2 simulation ticking in the background. **Exit criterion (full vertical slice):** create character → time advances → ages → lives in settlement → receives events → works occupation → travels → world events happen independent of the player → gets called to a small battle → participates via text choices → outcome recorded.
 
-**Deferred beyond the prototype** (explicitly not in scope now): full political map rendering/border changes, criminal/mercenary/clergy branching career trees, inheritance-on-death/continue-as-heir, full diplomacy, disease/famine systems, Chronicle history log UI, army composition detail beyond abstracted "strength".
+**Deferred beyond the prototype** (explicitly not in scope now): full political map rendering/border changes, deep criminal/mercenary/clergy branching career trees, detailed naval combat and ship customization, inheritance-on-death/continue-as-heir, full diplomacy, disease/famine systems, Chronicle history log UI, army composition detail beyond abstracted "strength".
 
 ---
 
