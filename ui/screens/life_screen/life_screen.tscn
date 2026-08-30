@@ -362,16 +362,16 @@ theme_type_variation = &"AvailableButton"
 disabled = true
 text = "LIFE"
 [node name="World" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
+unique_name_in_owner = true
 layout_mode = 2
-disabled = true
 text = "WORLD"
 [node name="Activities" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
 layout_mode = 2
 disabled = true
 text = "ACTIVITIES"
 [node name="Character" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
+unique_name_in_owner = true
 layout_mode = 2
-disabled = true
 text = "CHARACTER"
 [node name="More" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
 unique_name_in_owner = true
@@ -444,3 +444,243 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 76)
 layout_mode = 2
 text = "SAVE & MAIN MENU"
+
+[node name="WorldOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shade" type="ColorRect" parent="WorldOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.01, 0.008, 0.012, 0.94)
+
+[node name="Center" type="CenterContainer" parent="WorldOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="WorldOverlay/Center"]
+custom_minimum_size = Vector2(720, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="WorldOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 34
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 34
+theme_override_constants/margin_bottom = 30
+
+[node name="Content" type="VBoxContainer" parent="WorldOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Brand" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+text = "WORLDLY LIFE"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "YOUR LOCAL WORLD"
+horizontal_alignment = 1
+
+[node name="Details" type="GridContainer" parent="WorldOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+columns = 2
+theme_override_constants/h_separation = 24
+theme_override_constants/v_separation = 12
+
+[node name="RealmLabel" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+layout_mode = 2
+text = "REALM"
+[node name="WorldRealmValue" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Unknown"
+[node name="ProvinceLabel" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+layout_mode = 2
+text = "PROVINCE"
+[node name="WorldProvinceValue" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Unknown"
+[node name="SettlementLabel" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+layout_mode = 2
+text = "SETTLEMENT"
+[node name="WorldSettlementValue" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Unknown"
+[node name="PopulationLabel" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+layout_mode = 2
+text = "POPULATION"
+[node name="WorldPopulationValue" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0"
+[node name="ProsperityLabel" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+layout_mode = 2
+text = "PROSPERITY"
+[node name="WorldProsperityValue" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/Details"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "0 / 100"
+
+[node name="ResidentsTitle" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "PEOPLE NEAR YOU"
+horizontal_alignment = 1
+
+[node name="ResidentsScroll" type="ScrollContainer" parent="WorldOverlay/Center/Panel/Margin/Content"]
+custom_minimum_size = Vector2(0, 170)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="WorldResidentsValue" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content/ResidentsScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "No known residents"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ReportsTitle" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "RECENT LOCAL REPORTS"
+horizontal_alignment = 1
+
+[node name="WorldReportsValue" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "No major developments yet."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="NearbyTitle" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "NEARBY PLACES"
+horizontal_alignment = 1
+
+[node name="WorldNearbyValue" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "No known routes"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ActionsTitle" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "LOCAL ACTIVITIES"
+horizontal_alignment = 1
+
+[node name="VisitFamilyButton" type="Button" parent="WorldOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 68)
+layout_mode = 2
+text = "SPEND TIME WITH FAMILY"
+
+[node name="HelpTraderButton" type="Button" parent="WorldOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 68)
+layout_mode = 2
+text = "HELP THE LOCAL TRADER"
+
+[node name="WorldActionMessage" type="Label" parent="WorldOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "Each activity is available once per year."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseWorldButton" type="Button" parent="WorldOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+text = "BACK TO LIFE"
+
+[node name="CharacterOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shade" type="ColorRect" parent="CharacterOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.01, 0.008, 0.012, 0.94)
+
+[node name="Center" type="CenterContainer" parent="CharacterOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="CharacterOverlay/Center"]
+custom_minimum_size = Vector2(700, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="CharacterOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 38
+theme_override_constants/margin_top = 34
+theme_override_constants/margin_right = 38
+theme_override_constants/margin_bottom = 34
+
+[node name="Content" type="VBoxContainer" parent="CharacterOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Brand" type="Label" parent="CharacterOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+text = "WORLDLY LIFE"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="CharacterOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "CHARACTER"
+horizontal_alignment = 1
+
+[node name="CharacterDetailsValue" type="Label" parent="CharacterOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Character details"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CloseCharacterButton" type="Button" parent="CharacterOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+text = "BACK TO LIFE"

@@ -217,6 +217,7 @@ func _begin_life() -> void:
 	TimeManager.start_new_game(632)
 	WorldState.create_player({
 		"full_name": full_name_preview.text,
+		"lineage": lineage_field.text.strip_edges(),
 		"age": int(age_field.text),
 		"sex": selected_sex,
 		"homeland": selected_faction,

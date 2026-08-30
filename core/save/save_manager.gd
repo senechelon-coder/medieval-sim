@@ -2,7 +2,7 @@ extends Node
 
 const SAVE_DIRECTORY := "user://saves"
 const SAVE_PATH := "user://saves/slot_1.json"
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 
 
 func has_save() -> bool:
@@ -38,6 +38,7 @@ func save_game() -> bool:
 			"year": TimeManager.current_date.year,
 		},
 		"player": WorldState.player.to_dict(),
+		"world": WorldState.world_to_dict(),
 	}
 	file.store_string(JSON.stringify(payload))
 	return true
@@ -48,6 +49,7 @@ func load_game() -> bool:
 	if parsed.is_empty():
 		return false
 	WorldState.load_player(parsed.player)
+	WorldState.load_world(parsed.get("world", {}))
 	TimeManager.load_date(parsed.date)
 	MusicManager.play_faction_music(WorldState.player.homeland)
 	return true

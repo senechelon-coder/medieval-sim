@@ -60,6 +60,24 @@ var pending_event := ""
 	%MartialApprenticeshipButton,
 ]
 @onready var more_button: Button = %More
+@onready var character_button: Button = %Character
+@onready var character_overlay: Control = %CharacterOverlay
+@onready var character_details_value: Label = %CharacterDetailsValue
+@onready var close_character_button: Button = %CloseCharacterButton
+@onready var world_button: Button = %World
+@onready var world_overlay: Control = %WorldOverlay
+@onready var world_realm_value: Label = %WorldRealmValue
+@onready var world_province_value: Label = %WorldProvinceValue
+@onready var world_settlement_value: Label = %WorldSettlementValue
+@onready var world_population_value: Label = %WorldPopulationValue
+@onready var world_prosperity_value: Label = %WorldProsperityValue
+@onready var world_residents_value: Label = %WorldResidentsValue
+@onready var world_reports_value: Label = %WorldReportsValue
+@onready var world_nearby_value: Label = %WorldNearbyValue
+@onready var world_action_message: Label = %WorldActionMessage
+@onready var visit_family_button: Button = %VisitFamilyButton
+@onready var help_trader_button: Button = %HelpTraderButton
+@onready var close_world_button: Button = %CloseWorldButton
 @onready var pause_overlay: Control = %PauseOverlay
 @onready var resume_button: Button = %ResumeButton
 @onready var main_menu_button: Button = %MainMenuButton
@@ -87,6 +105,12 @@ func _ready() -> void:
 	for button in apprenticeship_buttons:
 		button.pressed.connect(_choose_apprenticeship.bind(button))
 	more_button.pressed.connect(_open_pause_menu)
+	character_button.pressed.connect(_open_character)
+	close_character_button.pressed.connect(func(): character_overlay.hide())
+	world_button.pressed.connect(_open_world)
+	visit_family_button.pressed.connect(_perform_local_action.bind("family"))
+	help_trader_button.pressed.connect(_perform_local_action.bind("trader"))
+	close_world_button.pressed.connect(func(): world_overlay.hide())
 	resume_button.pressed.connect(_resume_game)
 	main_menu_button.pressed.connect(_save_and_return_to_menu)
 	_restore_pending_milestone()
@@ -98,28 +122,27 @@ func _ready() -> void:
 func _advance_year() -> void:
 	TimeManager.advance_year()
 	character_age += 1
+	var local_news := WorldState.advance_local_year(TimeManager.current_date.year)
 	_sync_character_state()
 	_refresh_character_display()
 	occupation_value.text = _starting_occupation()
+	for news in local_news:
+		_append_chronicle("Local news, %s\n%s" % [TimeManager.year_label(), news])
 	if character_age == 5:
 		_append_chronicle("Age 5, %s\nYour early upbringing can now be chosen." % TimeManager.year_label())
 		upbringing_panel.show()
 		advance_button.disabled = true
-	elif character_age == 6:
-		_append_chronicle("Age 6, %s\nYou discover a merchant's lost purse near the market road." % TimeManager.year_label())
-		_show_decision("lost_purse", "A LOST PURSE", "A merchant's purse lies unattended beside the market road. What will you do?", "RETURN IT TO THE MERCHANT", "BRING IT HOME")
-	elif character_age == 8:
-		_append_chronicle("Age 8, %s\nA sudden fever leaves you weak for several days." % TimeManager.year_label())
-		_show_decision("childhood_fever", "A SUDDEN FEVER", "Your family urges you to rest, but household work remains unfinished.", "REST AND RECOVER", "KEEP HELPING")
-	elif character_age == 10:
-		_append_chronicle("Age 10, %s\nA respected elder notices your potential and offers personal guidance." % TimeManager.year_label())
-		_show_decision("mentors_offer", "A MENTOR'S OFFER", "Learning from the elder will cost the household your daily help. What matters most?", "ACCEPT THE GUIDANCE", "REMAIN WITH YOUR FAMILY")
 	elif character_age == 12:
 		_append_chronicle("Age 12, %s\nChildhood gives way to responsibility. Your household must decide how you will be trained." % TimeManager.year_label())
 		apprenticeship_panel.show()
 		advance_button.disabled = true
 	else:
-		_append_chronicle("Age %d, %s\nAnother year of childhood passes." % [character_age, TimeManager.year_label()])
+		var event := EventResolver.event_for_age(character_age, WorldState.player.completed_events)
+		if event.is_empty():
+			_append_chronicle("Age %d, %s\nAnother year of childhood passes." % [character_age, TimeManager.year_label()])
+		else:
+			_append_chronicle("Age %d, %s\n%s" % [character_age, TimeManager.year_label(), event.intro])
+			_show_decision(event)
 
 
 func _refresh_character_display() -> void:
@@ -164,12 +187,12 @@ func _refresh_stats() -> void:
 	trait_value.text = primary_trait
 
 
-func _show_decision(event_id: String, title: String, description: String, first_choice: String, second_choice: String) -> void:
-	pending_event = event_id
-	%DecisionTitle.text = title
-	%DecisionDescription.text = description
-	return_purse_button.text = first_choice
-	keep_purse_button.text = second_choice
+func _show_decision(event: Dictionary) -> void:
+	pending_event = str(event.id)
+	%DecisionTitle.text = str(event.title)
+	%DecisionDescription.text = str(event.description)
+	return_purse_button.text = str(event.choices[0].text)
+	keep_purse_button.text = str(event.choices[1].text)
 	decision_panel.show()
 	advance_button.disabled = true
 
@@ -177,35 +200,19 @@ func _show_decision(event_id: String, title: String, description: String, first_
 func _resolve_decision(choice: int) -> void:
 	decision_panel.hide()
 	advance_button.disabled = false
-	match pending_event:
-		"lost_purse":
-			if choice == 0:
-				standing = "Honorable"
-				_append_chronicle("You return it to its owner. Your honesty becomes known.\nHonorable standing")
-			else:
-				wealth += 8
-				standing = "Questioned"
-				_append_chronicle("You quietly bring it home. The money helps, but whispers follow.\n+8 Wealth • Questioned standing")
-		"childhood_fever":
-			if choice == 0:
-				health = mini(health + 5, 100)
-				wealth = maxi(wealth - 2, 0)
-				_append_chronicle("You are allowed to recover beside the hearth.\n+5 Health • -2 Wealth")
-			else:
-				health = maxi(health - 8, 0)
-				wealth += 3
-				_append_chronicle("You work through the fever and worsen before recovering.\n-8 Health • +3 Wealth")
-		"mentors_offer":
-			if choice == 0:
-				wealth = maxi(wealth - 3, 0)
-				standing = "Promising"
-				primary_trait = "Curious"
-				_append_chronicle("You accept the elder's guidance and discover a hunger for knowledge.\n-3 Wealth • Curious trait • Promising standing")
-			else:
-				wealth += 4
-				standing = "Dependable"
-				primary_trait = "Loyal"
-				_append_chronicle("You remain beside your family and become someone they can rely upon.\n+4 Wealth • Loyal trait • Dependable standing")
+	var event := EventResolver.event_by_id(pending_event)
+	if event.is_empty():
+		pending_event = ""
+		return
+	var selected_choice: Dictionary = event.choices[choice]
+	var effects: Dictionary = selected_choice.get("effects", {})
+	health = clampi(health + int(effects.get("health", 0)), 0, 100)
+	wealth = maxi(wealth + int(effects.get("wealth", 0)), 0)
+	if effects.has("standing"):
+		standing = str(effects.standing)
+	if effects.has("trait"):
+		primary_trait = str(effects.trait)
+	_append_chronicle("%s\n%s" % [selected_choice.result, selected_choice.summary])
 	if WorldState.has_player() and pending_event not in WorldState.player.completed_events:
 		WorldState.player.completed_events.append(pending_event)
 	pending_event = ""
@@ -309,15 +316,13 @@ func _restore_pending_milestone() -> void:
 	if character_age == 5 and upbringing == "Undetermined":
 		upbringing_panel.show()
 		advance_button.disabled = true
-	elif character_age == 6 and "lost_purse" not in WorldState.player.completed_events:
-		_show_decision("lost_purse", "A LOST PURSE", "A merchant's purse lies unattended beside the market road. What will you do?", "RETURN IT TO THE MERCHANT", "BRING IT HOME")
-	elif character_age == 8 and "childhood_fever" not in WorldState.player.completed_events:
-		_show_decision("childhood_fever", "A SUDDEN FEVER", "Your family urges you to rest, but household work remains unfinished.", "REST AND RECOVER", "KEEP HELPING")
-	elif character_age == 10 and "mentors_offer" not in WorldState.player.completed_events:
-		_show_decision("mentors_offer", "A MENTOR'S OFFER", "Learning from the elder will cost the household your daily help. What matters most?", "ACCEPT THE GUIDANCE", "REMAIN WITH YOUR FAMILY")
 	elif character_age == 12 and apprenticeship == "None":
 		apprenticeship_panel.show()
 		advance_button.disabled = true
+	else:
+		var event := EventResolver.event_for_age(character_age, WorldState.player.completed_events)
+		if not event.is_empty():
+			_show_decision(event)
 
 
 func _open_pause_menu() -> void:
@@ -336,6 +341,47 @@ func _save_and_return_to_menu() -> void:
 	get_tree().paused = false
 	MusicManager.stop_music()
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
+
+
+func _open_world() -> void:
+	var context := WorldState.get_home_context()
+	if context.is_empty():
+		return
+	world_realm_value.text = context.kingdom
+	world_province_value.text = context.province
+	world_settlement_value.text = "%s  •  %s" % [context.settlement, context.type]
+	world_population_value.text = str(context.population)
+	world_prosperity_value.text = "%d / 100" % context.prosperity
+	world_residents_value.text = "\n".join(context.residents)
+	world_reports_value.text = "No major developments yet." if context.reports.is_empty() else "\n".join(context.reports)
+	world_nearby_value.text = "\n".join(context.nearby_places)
+	world_action_message.text = "You may spend time on each local activity once per year."
+	visit_family_button.disabled = int(WorldState.player.local_action_years.get("family", 0)) == TimeManager.current_date.year
+	help_trader_button.disabled = int(WorldState.player.local_action_years.get("trader", 0)) == TimeManager.current_date.year
+	world_overlay.show()
+
+
+func _open_character() -> void:
+	var context := WorldState.get_character_context()
+	character_details_value.text = "LINEAGE\n%s\n\nDYNASTY\n%s  •  PRESTIGE %d\n\nPARENTS\n%s\n%s\n\nCULTURE\n%s\n\nFAITH\n%s\n\nBORN\n%s  •  %s" % [context.lineage, context.dynasty, context.prestige, context.father, context.mother, context.culture, context.faith, context.birth_season, context.family_origin]
+	character_overlay.show()
+
+
+func _perform_local_action(action_id: String) -> void:
+	var result := WorldState.perform_local_action(action_id, TimeManager.current_date.year)
+	if result.has("unavailable"):
+		world_action_message.text = result.unavailable
+		return
+	if result.is_empty():
+		world_action_message.text = "You have already done this activity this year."
+		return
+	health = clampi(health + int(result.get("health", 0)), 0, 100)
+	wealth = maxi(wealth + int(result.get("wealth", 0)), 0)
+	_append_chronicle("Age %d, %s\n%s" % [character_age, TimeManager.year_label(), result.chronicle])
+	_refresh_stats()
+	_sync_character_state()
+	_open_world()
+	world_action_message.text = "Activity completed and recorded in your chronicle."
 
 
 func _apply_layout() -> void:
