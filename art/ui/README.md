@@ -1,7 +1,4 @@
 # UI Art
 
-Drop an emblem image here named `emblem.png` and the main menu will use it
-automatically instead of its procedural vector hourglass-and-globe fallback
-(see `ui/screens/main_menu/emblem_icon.gd`). No code changes needed.
-
-Recommended: square, transparent background, at least 512x512.
+- `main_menu_logo.png` — the real title-screen logo (hourglass, globe, and astrolabe ring, with the "Worldly Life" wordmark), used directly by `ui/screens/main_menu/main_menu.tscn`. Background was made transparent by flood-filling the checkerboard preview matte out of the original JPEG source (JPEG has no alpha channel).
+- The project icon (`icon.png` at the repo root) is a square crop of just the mark from the same source, sized for use as a small app/taskbar icon.
