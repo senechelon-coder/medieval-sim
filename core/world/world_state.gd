@@ -230,16 +230,11 @@ func get_home_context() -> Dictionary:
 				var spouse: LocalCharacter = local_characters[character.spouse_id]
 				spouse_text = " • Spouse: %s" % spouse.full_name
 			residents.append("%s — %s, age %d • Bond %d%s" % [character.full_name, character.role, character.age, character.relationship_to_player, spouse_text])
-	var nearby_places: Array[String] = []
-	for other: Settlement in settlements.values():
-		if other.id != settlement.id:
-			var other_province: Province = provinces.get(other.province_id)
-			nearby_places.append("%s — %s" % [other.name, other_province.name])
 	var market: Array[String] = []
 	for good_id in settlement.goods_prices:
 		var stock := int(settlement.goods_stock.get(good_id, 0))
 		market.append("%s — %d Wealth • %s" % [GoodData.get_good(good_id).name, settlement.goods_prices[good_id], MarketService.stock_condition(stock)])
-	return {"kingdom": kingdom.name, "province": province.name, "settlement": settlement.name, "type": settlement.type.capitalize(), "population": settlement.population, "prosperity": roundi(settlement.prosperity), "residents": residents, "reports": settlement.recent_reports.duplicate(), "nearby_places": nearby_places, "market": market}
+	return {"kingdom": kingdom.name, "province": province.name, "settlement": settlement.name, "type": settlement.type.capitalize(), "population": settlement.population, "prosperity": roundi(settlement.prosperity), "residents": residents, "reports": settlement.recent_reports.duplicate(), "market": market}
 
 
 func get_character_context() -> Dictionary:

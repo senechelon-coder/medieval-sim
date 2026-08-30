@@ -93,7 +93,8 @@ var pending_event := ""
 @onready var world_prosperity_value: Label = %WorldProsperityValue
 @onready var world_residents_value: Label = %WorldResidentsValue
 @onready var world_reports_value: Label = %WorldReportsValue
-@onready var world_nearby_value: Label = %WorldNearbyValue
+@onready var travel_rows: VBoxContainer = %TravelRows
+@onready var travel_message: Label = %TravelMessage
 @onready var world_market_value: Label = %WorldMarketValue
 @onready var world_action_message: Label = %WorldActionMessage
 @onready var visit_family_button: Button = %VisitFamilyButton
@@ -428,12 +429,54 @@ func _open_world() -> void:
 	world_prosperity_value.text = "%d / 100" % context.prosperity
 	world_residents_value.text = "\n".join(context.residents)
 	world_reports_value.text = "No major developments yet." if context.reports.is_empty() else "\n".join(context.reports)
-	world_nearby_value.text = "\n".join(context.nearby_places)
 	world_market_value.text = "\n".join(context.market)
 	world_action_message.text = "You may spend time on each local activity once per year."
 	visit_family_button.disabled = int(WorldState.player.local_action_years.get("family", 0)) == TimeManager.current_date.year
 	help_trader_button.disabled = int(WorldState.player.local_action_years.get("trader", 0)) == TimeManager.current_date.year
+	travel_message.text = ""
+	_rebuild_travel_rows()
 	world_overlay.show()
+
+
+func _rebuild_travel_rows() -> void:
+	for child in travel_rows.get_children():
+		travel_rows.remove_child(child)
+		child.queue_free()
+	for settlement: Settlement in WorldState.settlements.values():
+		if settlement.id == WorldState.player.location_id:
+			continue
+		var province: Province = WorldState.provinces.get(settlement.province_id)
+		var days := TravelSim.days_to(settlement.id)
+		var row := HBoxContainer.new()
+		row.add_theme_constant_override("separation", 8)
+		var details := Label.new()
+		details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		details.autowrap_mode = TextServer.AUTOWRAP_WORD
+		details.text = "%s  •  %s\n~%d days" % [settlement.name, province.name if province else "Unknown", days]
+		var travel_button := Button.new()
+		travel_button.text = "TRAVEL"
+		travel_button.custom_minimum_size = Vector2(140, 68)
+		travel_button.pressed.connect(_begin_travel.bind(settlement.id))
+		row.add_child(details)
+		row.add_child(travel_button)
+		travel_rows.add_child(row)
+
+
+func _begin_travel(destination_id: String) -> void:
+	var result := TravelSim.begin_journey(destination_id)
+	if not bool(result.get("ok", false)):
+		travel_message.text = str(result.get("message", "You cannot travel there."))
+		return
+	var days := int(result.days)
+	var journey_text := "\n".join(result.log as Array)
+	_append_chronicle("Journey to %s, %s\n%d days on the road from %s.\n%s" % [result.destination, TimeManager.year_label(), days, result.origin, journey_text])
+	health = WorldState.player.health
+	wealth = WorldState.player.wealth
+	_refresh_stats()
+	_refresh_character_display()
+	SaveManager.save_game()
+	_open_world()
+	travel_message.text = "You have arrived in %s." % result.destination
 
 
 func _open_character() -> void:

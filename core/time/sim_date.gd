@@ -16,5 +16,15 @@ func advance_year() -> void:
 	year += 1
 
 
+func advance_days(amount: int) -> void:
+	day += amount
+	while day > 30:
+		day -= 30
+		month += 1
+		while month > 12:
+			month -= 12
+			year += 1
+
+
 func display_year() -> String:
 	return "%d AD" % year

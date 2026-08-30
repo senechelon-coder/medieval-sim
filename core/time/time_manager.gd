@@ -14,6 +14,10 @@ func advance_year() -> void:
 	year_passed.emit(current_date.year)
 
 
+func advance_days(amount: int) -> void:
+	current_date.advance_days(amount)
+
+
 func year_label() -> String:
 	return current_date.display_year()
 
