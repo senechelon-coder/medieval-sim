@@ -16,3 +16,7 @@ func advance_year() -> void:
 
 func year_label() -> String:
 	return current_date.display_year()
+
+
+func load_date(data: Dictionary) -> void:
+	current_date = SimDate.new(data.get("day", 1), data.get("month", 1), data.get("year", 632))

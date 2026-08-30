@@ -374,6 +374,73 @@ layout_mode = 2
 disabled = true
 text = "CHARACTER"
 [node name="More" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
+unique_name_in_owner = true
 layout_mode = 2
-disabled = true
 text = "MORE"
+
+[node name="PauseOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+process_mode = 3
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Shade" type="ColorRect" parent="PauseOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.01, 0.008, 0.012, 0.88)
+
+[node name="Center" type="CenterContainer" parent="PauseOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Panel" type="PanelContainer" parent="PauseOverlay/Center"]
+custom_minimum_size = Vector2(620, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="PauseOverlay/Center/Panel"]
+layout_mode = 2
+theme_override_constants/margin_left = 36
+theme_override_constants/margin_top = 34
+theme_override_constants/margin_right = 36
+theme_override_constants/margin_bottom = 34
+
+[node name="Content" type="VBoxContainer" parent="PauseOverlay/Center/Panel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 18
+
+[node name="Title" type="Label" parent="PauseOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "GAME PAUSED"
+horizontal_alignment = 1
+
+[node name="Message" type="Label" parent="PauseOverlay/Center/Panel/Margin/Content"]
+layout_mode = 2
+text = "Your current life has been saved."
+horizontal_alignment = 1
+
+[node name="ResumeButton" type="Button" parent="PauseOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+theme_type_variation = &"PrimaryButton"
+text = "RESUME"
+
+[node name="MainMenuButton" type="Button" parent="PauseOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 76)
+layout_mode = 2
+text = "SAVE & MAIN MENU"

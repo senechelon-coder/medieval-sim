@@ -20,6 +20,7 @@ var upbringing := "Undetermined"
 var primary_trait := "Undeveloped"
 var apprenticeship := "None"
 var chronicle: Array[String] = []
+var completed_events: Array[String] = []
 
 
 func to_dict() -> Dictionary:
@@ -32,4 +33,17 @@ func to_dict() -> Dictionary:
 		"health": health, "wealth": wealth, "standing": standing,
 		"upbringing": upbringing, "primary_trait": primary_trait,
 		"apprenticeship": apprenticeship, "chronicle": chronicle.duplicate(),
+		"completed_events": completed_events.duplicate(),
 	}
+
+
+func apply_dict(data: Dictionary) -> void:
+	for property in ["full_name", "age", "sex", "homeland", "birthplace", "family_origin", "father_name", "mother_name", "culture", "faith", "birth_season", "appearance_seed", "health", "wealth", "standing", "upbringing", "primary_trait", "apprenticeship"]:
+		if data.has(property):
+			set(property, data[property])
+	chronicle.clear()
+	for entry in data.get("chronicle", []):
+		chronicle.append(str(entry))
+	completed_events.clear()
+	for event_id in data.get("completed_events", []):
+		completed_events.append(str(event_id))

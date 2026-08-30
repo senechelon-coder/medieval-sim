@@ -24,5 +24,11 @@ func has_player() -> bool:
 	return player != null
 
 
+func load_player(data: Dictionary) -> PlayerCharacter:
+	player = PlayerCharacter.new()
+	player.apply_dict(data)
+	return player
+
+
 func clear() -> void:
 	player = null

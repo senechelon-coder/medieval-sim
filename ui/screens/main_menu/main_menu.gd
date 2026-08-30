@@ -1,7 +1,8 @@
 extends Control
 
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
-const SAVE_DIR := "user://saves/"
+const LIFE_SCREEN_SCENE := "res://ui/screens/life_screen/life_screen.tscn"
+const LOAD_GAME_SCENE := "res://ui/screens/load_game/load_game.tscn"
 const GAME_VERSION := "v 0.1.0"
 const BUTTON_PRESS_SCALE := Vector2(0.97, 0.97)
 const BUTTON_PRESS_DURATION := 0.10
@@ -206,18 +207,7 @@ func _setup_vignette() -> void:
 
 
 func _setup_load_game_availability() -> void:
-	var dir := DirAccess.open(SAVE_DIR)
-	var has_saves := false
-	if dir:
-		dir.list_dir_begin()
-		var file_name := dir.get_next()
-		while file_name != "":
-			if not dir.current_is_dir():
-				has_saves = true
-				break
-			file_name = dir.get_next()
-		dir.list_dir_end()
-	load_game_button.disabled = not has_saves
+	load_game_button.disabled = not SaveManager.has_save()
 
 
 func _on_new_game_pressed() -> void:
@@ -225,7 +215,7 @@ func _on_new_game_pressed() -> void:
 
 
 func _on_load_game_pressed() -> void:
-	placeholder_popup.show_message("Save/Load isn't built yet.")
+	get_tree().change_scene_to_file(LOAD_GAME_SCENE)
 
 
 func _on_options_pressed() -> void:

@@ -245,6 +245,7 @@ func _begin_life() -> void:
 		"birth_season": generated_profile.season,
 		"appearance_seed": generated_profile.appearance_seed,
 	})
+	SaveManager.save_game()
 	get_tree().change_scene_to_file(LIFE_SCREEN_SCENE)
 
 

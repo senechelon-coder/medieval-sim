@@ -2,6 +2,7 @@ class_name LifeScreen
 extends Control
 
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
+const MAIN_MENU_SCENE := "res://ui/screens/main_menu/main_menu.tscn"
 
 var character_name := "Unnamed"
 var character_age := 1
@@ -58,6 +59,10 @@ var pending_event := ""
 	%TradeApprenticeshipButton,
 	%MartialApprenticeshipButton,
 ]
+@onready var more_button: Button = %More
+@onready var pause_overlay: Control = %PauseOverlay
+@onready var resume_button: Button = %ResumeButton
+@onready var main_menu_button: Button = %MainMenuButton
 
 
 func _ready() -> void:
@@ -81,6 +86,11 @@ func _ready() -> void:
 	keep_purse_button.pressed.connect(_resolve_decision.bind(1))
 	for button in apprenticeship_buttons:
 		button.pressed.connect(_choose_apprenticeship.bind(button))
+	more_button.pressed.connect(_open_pause_menu)
+	resume_button.pressed.connect(_resume_game)
+	main_menu_button.pressed.connect(_save_and_return_to_menu)
+	_restore_pending_milestone()
+	SaveManager.save_game()
 	resized.connect(_apply_layout)
 	_apply_layout()
 
@@ -196,6 +206,8 @@ func _resolve_decision(choice: int) -> void:
 				standing = "Dependable"
 				primary_trait = "Loyal"
 				_append_chronicle("You remain beside your family and become someone they can rely upon.\n+4 Wealth • Loyal trait • Dependable standing")
+	if WorldState.has_player() and pending_event not in WorldState.player.completed_events:
+		WorldState.player.completed_events.append(pending_event)
 	pending_event = ""
 	_refresh_stats()
 	_sync_character_state()
@@ -205,6 +217,7 @@ func _append_chronicle(entry: String) -> void:
 	event_placeholder.text += "\n\n" + entry
 	if WorldState.has_player():
 		WorldState.player.chronicle.append(entry)
+		SaveManager.save_game()
 	_scroll_chronicle_to_bottom.call_deferred()
 
 
@@ -289,6 +302,40 @@ func _sync_character_state() -> void:
 	state.upbringing = upbringing
 	state.primary_trait = primary_trait
 	state.apprenticeship = apprenticeship
+	SaveManager.save_game()
+
+
+func _restore_pending_milestone() -> void:
+	if character_age == 5 and upbringing == "Undetermined":
+		upbringing_panel.show()
+		advance_button.disabled = true
+	elif character_age == 6 and "lost_purse" not in WorldState.player.completed_events:
+		_show_decision("lost_purse", "A LOST PURSE", "A merchant's purse lies unattended beside the market road. What will you do?", "RETURN IT TO THE MERCHANT", "BRING IT HOME")
+	elif character_age == 8 and "childhood_fever" not in WorldState.player.completed_events:
+		_show_decision("childhood_fever", "A SUDDEN FEVER", "Your family urges you to rest, but household work remains unfinished.", "REST AND RECOVER", "KEEP HELPING")
+	elif character_age == 10 and "mentors_offer" not in WorldState.player.completed_events:
+		_show_decision("mentors_offer", "A MENTOR'S OFFER", "Learning from the elder will cost the household your daily help. What matters most?", "ACCEPT THE GUIDANCE", "REMAIN WITH YOUR FAMILY")
+	elif character_age == 12 and apprenticeship == "None":
+		apprenticeship_panel.show()
+		advance_button.disabled = true
+
+
+func _open_pause_menu() -> void:
+	SaveManager.save_game()
+	pause_overlay.show()
+	get_tree().paused = true
+
+
+func _resume_game() -> void:
+	get_tree().paused = false
+	pause_overlay.hide()
+
+
+func _save_and_return_to_menu() -> void:
+	SaveManager.save_game()
+	get_tree().paused = false
+	MusicManager.stop_music()
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 
 func _apply_layout() -> void:
