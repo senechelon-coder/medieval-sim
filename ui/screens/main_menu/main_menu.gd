@@ -3,6 +3,10 @@ extends Control
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_bg.png"
 const SAVE_DIR := "user://saves/"
 const GAME_VERSION := "v 0.1.0"
+const BUTTON_PRESS_SCALE := Vector2(0.97, 0.97)
+const BUTTON_PRESS_DURATION := 0.10
+const BUTTON_RELEASE_DURATION := 0.13
+const BUTTON_PRESS_TINT := Color(1.06, 1.03, 0.94, 1.0)
 
 @onready var background: TextureRect = %Background
 @onready var vignette: TextureRect = %Vignette
@@ -22,7 +26,10 @@ const GAME_VERSION := "v 0.1.0"
 @onready var divider_bottom: Control = %DividerBottom
 @onready var version_gap: Control = %VersionGap
 @onready var version_label: Label = %VersionLabel
-@onready var placeholder_popup: PopupPanel = %PlaceholderPopup
+@onready var placeholder_popup: Control = %PlaceholderPopup
+@onready var click_sound: AudioStreamPlayer = %ClickSound
+
+var button_tweens: Dictionary = {}
 
 
 func _ready() -> void:
@@ -33,17 +40,83 @@ func _ready() -> void:
 	resized.connect(_apply_responsive_layout)
 	_apply_responsive_layout()
 
-	new_game_button.pressed.connect(_on_new_game_pressed)
-	load_game_button.pressed.connect(_on_load_game_pressed)
-	options_button.pressed.connect(_on_options_pressed)
-	credits_button.pressed.connect(_on_credits_pressed)
-	store_button.pressed.connect(_on_store_pressed)
+	_setup_menu_button(new_game_button, _on_new_game_pressed)
+	_setup_menu_button(load_game_button, _on_load_game_pressed)
+	_setup_menu_button(options_button, _on_options_pressed)
+	_setup_menu_button(credits_button, _on_credits_pressed)
+	_setup_menu_button(store_button, _on_store_pressed)
+	_update_button_pivots.call_deferred()
+
+
+func _setup_menu_button(button: Button, action: Callable) -> void:
+	button.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+	button.gui_input.connect(_on_menu_button_gui_input.bind(button))
+	button.button_down.connect(_on_menu_button_down.bind(button))
+	button.button_up.connect(_on_menu_button_up.bind(button))
+	button.pressed.connect(_on_menu_button_pressed.bind(action))
+	button.resized.connect(_update_button_pivot.bind(button))
+
+
+func _on_menu_button_gui_input(event: InputEvent, button: Button) -> void:
+	if event is InputEventMouseButton:
+		var mouse_event := event as InputEventMouseButton
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT and not mouse_event.pressed:
+			button.release_focus.call_deferred()
+	elif event is InputEventScreenTouch:
+		var touch_event := event as InputEventScreenTouch
+		if not touch_event.pressed:
+			button.release_focus.call_deferred()
+
+
+func _on_menu_button_down(button: Button) -> void:
+	if button.disabled:
+		return
+	_update_button_pivot(button)
+	click_sound.stop()
+	click_sound.play()
+	_tween_button(button, BUTTON_PRESS_SCALE, BUTTON_PRESS_TINT, BUTTON_PRESS_DURATION)
+
+
+func _on_menu_button_up(button: Button) -> void:
+	_tween_button(button, Vector2.ONE, Color.WHITE, BUTTON_RELEASE_DURATION)
+
+
+func _on_menu_button_pressed(action: Callable) -> void:
+	await get_tree().create_timer(BUTTON_RELEASE_DURATION).timeout
+	if is_instance_valid(self):
+		action.call()
+
+
+func _tween_button(button: Button, target_scale: Vector2, target_tint: Color, duration: float) -> void:
+	var existing_tween: Tween = button_tweens.get(button)
+	if existing_tween and existing_tween.is_valid():
+		existing_tween.kill()
+
+	var tween := create_tween().set_parallel(true)
+	tween.set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(button, "scale", target_scale, duration)
+	tween.tween_property(button, "self_modulate", target_tint, duration)
+	button_tweens[button] = tween
+
+
+func _update_button_pivots() -> void:
+	for button in [new_game_button, load_game_button, options_button, credits_button, store_button]:
+		_update_button_pivot(button)
+
+
+func _update_button_pivot(button: Button) -> void:
+	button.pivot_offset = button.size * 0.5
 
 
 func _apply_responsive_layout() -> void:
-	var viewport_size := size
+	# Size against Godot's logical portrait canvas, not the editor's embedded
+	# preview panel. The engine scales this canvas to the physical device.
+	var viewport_size := Vector2(get_window().content_scale_size)
 	if viewport_size.x <= 0.0 or viewport_size.y <= 0.0:
-		viewport_size = get_viewport_rect().size
+		viewport_size = Vector2(
+			float(ProjectSettings.get_setting("display/window/size/viewport_width", 1080)),
+			float(ProjectSettings.get_setting("display/window/size/viewport_height", 1920))
+		)
 
 	var short_edge := minf(viewport_size.x, viewport_size.y)
 	var edge_padding := clampf(short_edge * 0.045, 24.0, 72.0)
@@ -62,6 +135,7 @@ func _apply_responsive_layout() -> void:
 	for button in [new_game_button, load_game_button, options_button, credits_button, store_button]:
 		button.custom_minimum_size = Vector2(button_width, button_height)
 		button.add_theme_font_size_override("font_size", button_font_size)
+	_update_button_pivots.call_deferred()
 
 	var menu_height := button_height * 5.0 + button_gap * 4.0
 	var detail_height := clampf(available_height * 0.07, 64.0, 138.0)

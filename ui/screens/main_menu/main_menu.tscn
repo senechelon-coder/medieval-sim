@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://dqx8m2h5n1kfr"]
+[gd_scene load_steps=8 format=3 uid="uid://dqx8m2h5n1kfr"]
 
 [ext_resource type="Script" path="res://ui/screens/main_menu/main_menu.gd" id="1_main"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://ui/screens/main_menu/background_motif.gd" id="4_motif"]
 [ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="5_divider"]
 [ext_resource type="PackedScene" path="res://ui/components/placeholder_popup.tscn" id="6_popup"]
+[ext_resource type="AudioStream" path="res://audio/ui/soft_ui_click.mp3" id="7_click"]
 
 [node name="MainMenu" type="Control"]
 anchors_preset = 15
@@ -146,3 +147,8 @@ text = "v 0.1.0"
 
 [node name="PlaceholderPopup" parent="." instance=ExtResource("6_popup")]
 unique_name_in_owner = true
+
+[node name="ClickSound" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("7_click")
+volume_db = -8.0
