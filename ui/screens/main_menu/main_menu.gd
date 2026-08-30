@@ -167,11 +167,12 @@ func _setup_background() -> void:
 	# Warm gold glow fading to near-black, radiating from the top.
 	var gradient := Gradient.new()
 	gradient.colors = PackedColorArray([
-		Color(0.48, 0.36, 0.18, 1.0),
-		Color(0.1, 0.08, 0.11, 1.0),
-		Color(0.043, 0.035, 0.055, 1.0),
+		Color(0.34, 0.23, 0.09, 1.0),
+		Color(0.075, 0.052, 0.058, 1.0),
+		Color(0.025, 0.019, 0.029, 1.0),
+		Color(0.009, 0.008, 0.013, 1.0),
 	])
-	gradient.offsets = PackedFloat32Array([0.0, 0.35, 1.0])
+	gradient.offsets = PackedFloat32Array([0.0, 0.28, 0.64, 1.0])
 
 	var gradient_texture := GradientTexture2D.new()
 	gradient_texture.gradient = gradient

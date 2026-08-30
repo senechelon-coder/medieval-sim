@@ -1,7 +1,6 @@
 extends Control
 
-const MAIN_MENU_SCENE := "res://ui/screens/main_menu/main_menu.tscn"
-const HOMELAND_SELECT_SCENE := "res://ui/screens/homeland_select/homeland_select.tscn"
+const ERA_SELECT_SCENE := "res://ui/screens/era_select/era_select.tscn"
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_bg.png"
 const PRESS_SCALE := Vector2(0.97, 0.97)
 const PRESS_DURATION := 0.10
@@ -12,14 +11,16 @@ const PRESS_TINT := Color(1.06, 1.03, 0.94, 1.0)
 @onready var vignette: TextureRect = %Vignette
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
+@onready var era_label: Label = %EraLabel
+@onready var era_gap: Control = %EraGap
 @onready var title: Label = %Title
 @onready var title_gap: Control = %TitleGap
 @onready var subtitle: Label = %Subtitle
 @onready var header_gap: Control = %HeaderGap
 @onready var divider: Control = %Divider
 @onready var list_gap: Control = %ListGap
-@onready var era_list: VBoxContainer = %EraList
-@onready var era_632: Button = %Era632
+@onready var homeland_list: VBoxContainer = %HomelandList
+@onready var arabia_button: Button = %ArabiaButton
 @onready var back_gap: Control = %BackGap
 @onready var back_button: Button = %BackButton
 @onready var click_sound: AudioStreamPlayer = %ClickSound
@@ -30,10 +31,9 @@ var button_tweens: Dictionary = {}
 func _ready() -> void:
 	_setup_background()
 	_setup_vignette()
-	_setup_interactive_button(era_632)
+	_setup_interactive_button(arabia_button)
 	_setup_interactive_button(back_button)
-	era_632.pressed.connect(_open_homeland_select)
-	back_button.pressed.connect(_return_to_main_menu)
+	back_button.pressed.connect(_return_to_era_select)
 	resized.connect(_apply_responsive_layout)
 	_apply_responsive_layout()
 
@@ -67,14 +67,9 @@ func _tween_button(button: Button, target_scale: Vector2, target_tint: Color, du
 	button_tweens[button] = tween
 
 
-func _return_to_main_menu() -> void:
+func _return_to_era_select() -> void:
 	await get_tree().create_timer(RELEASE_DURATION).timeout
-	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
-
-
-func _open_homeland_select() -> void:
-	await get_tree().create_timer(RELEASE_DURATION).timeout
-	get_tree().change_scene_to_file(HOMELAND_SELECT_SCENE)
+	get_tree().change_scene_to_file(ERA_SELECT_SCENE)
 
 
 func _update_button_pivot(button: Button) -> void:
@@ -90,27 +85,33 @@ func _apply_responsive_layout() -> void:
 		safe_area.add_theme_constant_override(margin_name, roundi(edge_padding))
 
 	var content_width := clampf((canvas_size.x - edge_padding * 2.0) * 0.88, 560.0, 920.0)
-	var row_height := clampf(canvas_size.y * 0.052, 76.0, 104.0)
-	var row_gap := clampf(row_height * 0.14, 10.0, 16.0)
-	var row_font_size := roundi(clampf(row_height * 0.29, 22.0, 30.0))
+	var row_height := clampf(canvas_size.y * 0.047, 72.0, 94.0)
+	var feature_height := clampf(row_height * 1.48, 112.0, 140.0)
+	var row_gap := clampf(row_height * 0.14, 10.0, 15.0)
+	var row_font_size := roundi(clampf(row_height * 0.29, 21.0, 28.0))
 	composition.custom_minimum_size.x = content_width
-	era_list.custom_minimum_size.x = content_width
-	era_list.add_theme_constant_override("separation", roundi(row_gap))
-	for child in era_list.get_children():
+	homeland_list.custom_minimum_size.x = content_width
+	homeland_list.add_theme_constant_override("separation", roundi(row_gap))
+	for child in homeland_list.get_children():
 		if child is Button:
 			child.custom_minimum_size = Vector2(content_width, row_height)
 			child.add_theme_font_size_override("font_size", row_font_size)
+	arabia_button.custom_minimum_size.y = feature_height
 
 	back_button.custom_minimum_size = Vector2(content_width * 0.48, row_height)
 	back_button.add_theme_font_size_override("font_size", row_font_size)
-	title.add_theme_font_size_override("font_size", roundi(clampf(canvas_size.y * 0.047, 56.0, 84.0)))
+	era_label.add_theme_font_size_override("font_size", roundi(clampf(canvas_size.y * 0.014, 18.0, 26.0)))
+	# This heading is much longer than the era-screen title. Scale it from the
+	# usable width so its Cinzel letter spacing never clips on portrait screens.
+	title.add_theme_font_size_override("font_size", roundi(clampf(content_width * 0.053, 42.0, 52.0)))
 	subtitle.add_theme_font_size_override("font_size", roundi(clampf(canvas_size.y * 0.018, 24.0, 34.0)))
 	divider.custom_minimum_size = Vector2(content_width * 0.62, clampf(canvas_size.y * 0.012, 18.0, 24.0))
+	era_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.007, 8.0, 14.0)
 	title_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.008, 10.0, 16.0)
-	header_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.018, 24.0, 34.0)
-	list_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.018, 24.0, 34.0)
-	back_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.024, 32.0, 46.0)
-	_update_button_pivot.call_deferred(era_632)
+	header_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.016, 22.0, 32.0)
+	list_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.016, 22.0, 32.0)
+	back_gap.custom_minimum_size.y = clampf(canvas_size.y * 0.022, 28.0, 42.0)
+	_update_button_pivot.call_deferred(arabia_button)
 	_update_button_pivot.call_deferred(back_button)
 
 

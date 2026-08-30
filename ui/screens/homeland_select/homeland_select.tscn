@@ -1,12 +1,12 @@
 [gd_scene load_steps=6 format=3]
 
-[ext_resource type="Script" path="res://ui/screens/era_select/era_select.gd" id="1_script"]
+[ext_resource type="Script" path="res://ui/screens/homeland_select/homeland_select.gd" id="1_script"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
 [ext_resource type="Script" path="res://ui/screens/main_menu/background_motif.gd" id="3_motif"]
 [ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="4_divider"]
 [ext_resource type="AudioStream" path="res://audio/ui/soft_ui_click.mp3" id="5_click"]
 
-[node name="EraSelect" type="Control"]
+[node name="HomelandSelect" type="Control"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -88,14 +88,25 @@ text = "WORLDLY LIFE"
 horizontal_alignment = 1
 
 [node name="BrandGap" type="Control" parent="SafeArea/Center/Composition"]
-custom_minimum_size = Vector2(0, 24)
+custom_minimum_size = Vector2(0, 18)
+layout_mode = 2
+
+[node name="EraLabel" type="Label" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "ERA 632"
+horizontal_alignment = 1
+
+[node name="EraGap" type="Control" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Title" type="Label" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TitleLabel"
-text = "CHOOSE AN ERA"
+text = "CHOOSE YOUR HOMELAND"
 horizontal_alignment = 1
 
 [node name="TitleGap" type="Control" parent="SafeArea/Center/Composition"]
@@ -105,7 +116,7 @@ layout_mode = 2
 [node name="Subtitle" type="Label" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Select the year in which your life begins."
+text = "Where will your life begin?"
 horizontal_alignment = 1
 
 [node name="HeaderGap" type="Control" parent="SafeArea/Center/Composition"]
@@ -122,46 +133,46 @@ script = ExtResource("4_divider")
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="EraList" type="VBoxContainer" parent="SafeArea/Center/Composition"]
+[node name="HomelandList" type="VBoxContainer" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 
-[node name="Era632" type="Button" parent="SafeArea/Center/Composition/EraList"]
+[node name="ArabiaButton" type="Button" parent="SafeArea/Center/Composition/HomelandList"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"AvailableButton"
-text = "632  —  A WORLD IN TRANSITION"
+text = "ARABIAN PENINSULA\nFAITH  •  TRIBAL POLITICS  •  TRADE  •  WARFARE"
 
-[node name="Era769" type="Button" parent="SafeArea/Center/Composition/EraList"]
+[node name="EasternRomanButton" type="Button" parent="SafeArea/Center/Composition/HomelandList"]
 layout_mode = 2
 disabled = true
-text = "769  —  THE EARLY MIDDLE AGES     LOCKED"
+text = "EASTERN ROMAN EMPIRE     LOCKED"
 
-[node name="Era867" type="Button" parent="SafeArea/Center/Composition/EraList"]
+[node name="SasanianButton" type="Button" parent="SafeArea/Center/Composition/HomelandList"]
 layout_mode = 2
 disabled = true
-text = "867  —  AGE OF VIKINGS     LOCKED"
+text = "SASANIAN PERSIA     LOCKED"
 
-[node name="Era936" type="Button" parent="SafeArea/Center/Composition/EraList"]
+[node name="WesternEuropeButton" type="Button" parent="SafeArea/Center/Composition/HomelandList"]
 layout_mode = 2
 disabled = true
-text = "936  —  THE IRON CENTURY     LOCKED"
+text = "WESTERN EUROPE     LOCKED"
 
-[node name="Era1066" type="Button" parent="SafeArea/Center/Composition/EraList"]
+[node name="EastAfricaButton" type="Button" parent="SafeArea/Center/Composition/HomelandList"]
 layout_mode = 2
 disabled = true
-text = "1066  —  FATE OF KINGDOMS     LOCKED"
+text = "EAST AFRICA     LOCKED"
 
-[node name="Era1204" type="Button" parent="SafeArea/Center/Composition/EraList"]
+[node name="SouthAsiaButton" type="Button" parent="SafeArea/Center/Composition/HomelandList"]
 layout_mode = 2
 disabled = true
-text = "1204  —  SHATTERED EMPIRES     LOCKED"
+text = "SOUTH ASIA     LOCKED"
 
-[node name="Era1337" type="Button" parent="SafeArea/Center/Composition/EraList"]
+[node name="TangChinaButton" type="Button" parent="SafeArea/Center/Composition/HomelandList"]
 layout_mode = 2
 disabled = true
-text = "1337  —  THE LATE MIDDLE AGES     LOCKED"
+text = "TANG CHINA     LOCKED"
 
 [node name="BackGap" type="Control" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
