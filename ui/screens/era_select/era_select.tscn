@@ -138,7 +138,7 @@ text = "632  —  A WORLD IN TRANSITION"
 [node name="Era1187" type="Button" parent="SafeArea/Center/Composition/EraList"]
 layout_mode = 2
 disabled = true
-text = "1187  —  AGE OF SALADIN     LOCKED"
+text = "1187  —  AGE OF SALADIN  •  LOCKED"
 
 [node name="BackGap" type="Control" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true

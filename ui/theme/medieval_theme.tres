@@ -189,6 +189,12 @@ ScreenFrame/styles/panel = SubResource("StyleBoxFlat_screen_frame")
 Label/fonts/font = ExtResource("2_imfell")
 Label/colors/font_color = Color(0.87, 0.83, 0.76, 1)
 
+RichTextLabel/fonts/normal_font = ExtResource("2_imfell")
+RichTextLabel/fonts/bold_font = ExtResource("2_imfell")
+RichTextLabel/font_sizes/normal_font_size = 32
+RichTextLabel/font_sizes/bold_font_size = 32
+RichTextLabel/colors/default_color = Color(0.87, 0.83, 0.76, 1)
+
 Panel/styles/panel = SubResource("StyleBoxFlat_panel")
 
 PopupPanel/styles/panel = SubResource("StyleBoxFlat_panel")

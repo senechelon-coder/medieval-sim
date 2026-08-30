@@ -168,7 +168,8 @@ vertical_alignment = 1
 [node name="SelectLabel" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "SELECT HOMELAND"
+theme_type_variation = &"VersionLabel"
+text = "TAP A REALM ABOVE TO BEGIN"
 horizontal_alignment = 1
 
 [node name="Actions" type="HBoxContainer" parent="SafeArea/Center/Composition"]
