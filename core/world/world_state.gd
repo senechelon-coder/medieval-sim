@@ -475,6 +475,8 @@ func get_active_war() -> War:
 
 
 func get_player_army() -> Army:
+	if not has_player():
+		return null
 	var realm_id := player.homeland.to_lower().replace(" ", "_")
 	for army: Army in armies.values():
 		if army.kingdom_id == realm_id:
