@@ -16,21 +16,6 @@ const BIRTHPLACES_BY_FACTION := {
 	"BYZANTINE EMPIRE": ["Constantinople", "Antioch", "Alexandria", "Ephesus", "Thessalonica", "Nicaea", "Caesarea", "Damascus"],
 	"SASANIAN EMPIRE": ["Ctesiphon", "Estakhr", "Rey", "Merv", "Nishapur", "Gundeshapur", "Susa", "Isfahan"],
 }
-const NAMES_BY_FACTION := {
-	"RASHIDUN CALIPHATE": {
-		"MALE": ["Zayd", "Umar", "Ali", "Uthman", "Khalid", "Amr", "Sa'd", "Talha", "Zubayr", "Bilal", "Salman", "Ammar"],
-		"FEMALE": ["Fatima", "Aisha", "Hafsa", "Zaynab", "Asma", "Safiyya", "Hind", "Khawla", "Sumayya", "Lubaynah", "Jamila", "Ruqayya"],
-	},
-	"BYZANTINE EMPIRE": {
-		"MALE": ["Herakleios", "Konstantinos", "Theodoros", "Ioannes", "Georgios", "Stephanos", "Andreas", "Petros", "Markos", "Tiberios", "Martinus", "David"],
-		"FEMALE": ["Anastasia", "Theodora", "Eudokia", "Martina", "Anna", "Maria", "Euphemia", "Helena", "Sophia", "Theodosia", "Epiphania", "Athanasia"],
-	},
-	"SASANIAN EMPIRE": {
-		"MALE": ["Khosrow", "Ardashir", "Bahram", "Yazdegerd", "Peroz", "Narseh", "Shapur", "Hormizd", "Rostam", "Farrukh", "Mihran", "Vistahm"],
-		"FEMALE": ["Denag", "Azarmidokht", "Boran", "Shirin", "Anahid", "Adur-Anahid", "Perozdukht", "Hormizddukht", "Gurdiyya", "Purandokht"],
-	},
-}
-
 var selected_faction := "RASHIDUN CALIPHATE"
 var selected_sex := ""
 var generated_profile: Dictionary = {}
@@ -61,7 +46,6 @@ var tweens: Dictionary = {}
 @onready var back_button: Button = %BackButton
 @onready var begin_button: Button = %BeginButton
 @onready var click_sound: AudioStreamPlayer = %ClickSound
-@onready var popup: Control = %PlaceholderPopup
 
 
 func _ready() -> void:

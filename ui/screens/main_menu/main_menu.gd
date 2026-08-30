@@ -1,7 +1,6 @@
 extends Control
 
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
-const LIFE_SCREEN_SCENE := "res://ui/screens/life_screen/life_screen.tscn"
 const LOAD_GAME_SCENE := "res://ui/screens/load_game/load_game.tscn"
 const GAME_VERSION := "v 0.1.0"
 const BUTTON_PRESS_SCALE := Vector2(0.97, 0.97)

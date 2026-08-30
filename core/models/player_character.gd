@@ -38,9 +38,24 @@ func to_dict() -> Dictionary:
 
 
 func apply_dict(data: Dictionary) -> void:
-	for property in ["full_name", "age", "sex", "homeland", "birthplace", "family_origin", "father_name", "mother_name", "culture", "faith", "birth_season", "appearance_seed", "health", "wealth", "standing", "upbringing", "primary_trait", "apprenticeship"]:
-		if data.has(property):
-			set(property, data[property])
+	full_name = str(data.get("full_name", full_name))
+	age = int(data.get("age", age))
+	sex = str(data.get("sex", sex))
+	homeland = str(data.get("homeland", homeland))
+	birthplace = str(data.get("birthplace", birthplace))
+	family_origin = str(data.get("family_origin", family_origin))
+	father_name = str(data.get("father_name", father_name))
+	mother_name = str(data.get("mother_name", mother_name))
+	culture = str(data.get("culture", culture))
+	faith = str(data.get("faith", faith))
+	birth_season = str(data.get("birth_season", birth_season))
+	appearance_seed = int(data.get("appearance_seed", appearance_seed))
+	health = int(data.get("health", health))
+	wealth = int(data.get("wealth", wealth))
+	standing = str(data.get("standing", standing))
+	upbringing = str(data.get("upbringing", upbringing))
+	primary_trait = str(data.get("primary_trait", primary_trait))
+	apprenticeship = str(data.get("apprenticeship", apprenticeship))
 	chronicle.clear()
 	for entry in data.get("chronicle", []):
 		chronicle.append(str(entry))

@@ -1,11 +1,10 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="Script" path="res://ui/screens/character_creation/character_creation.gd" id="1_script"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
 [ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="3_divider"]
 [ext_resource type="Script" path="res://ui/screens/character_creation/nation_emblem.gd" id="4_emblem"]
 [ext_resource type="AudioStream" path="res://audio/ui/soft_ui_click.mp3" id="5_click"]
-[ext_resource type="PackedScene" path="res://ui/components/placeholder_popup.tscn" id="6_popup"]
 [ext_resource type="Script" path="res://ui/screens/life_screen/character_portrait.gd" id="7_portrait"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_sex"]
@@ -377,6 +376,3 @@ text = "BEGIN LIFE"
 unique_name_in_owner = true
 stream = ExtResource("5_click")
 volume_db = -8.0
-
-[node name="PlaceholderPopup" parent="." instance=ExtResource("6_popup")]
-unique_name_in_owner = true
