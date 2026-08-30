@@ -31,6 +31,7 @@ var battle_beat_index := 0
 var battle_morale := 0.0
 var battle_rival_name := ""
 var battle_log: Array[String] = []
+var battle_beats: Array[Dictionary] = []
 
 @onready var background: TextureRect = %Background
 @onready var era_label: Label = %Era
@@ -325,14 +326,26 @@ func _begin_battle(rival_name: String) -> void:
 	battle_morale = 0.0
 	battle_rival_name = rival_name
 	battle_log.clear()
+	battle_beats = BattleEventData.generate_battle(rival_name)
+	var army := WorldState.get_player_army()
+	if army != null:
+		battle_log.append(_army_flavor_text(army))
 	battle_title_value.text = "BATTLE AGAINST THE %s" % rival_name.to_upper()
 	battle_overlay.show()
 	advance_button.disabled = true
 	_show_battle_beat()
 
 
+func _army_flavor_text(army: Army) -> String:
+	if army.strength >= 115 and army.morale >= 70.0:
+		return "Your army musters strong and confident before the battle."
+	if army.strength <= 90 or army.morale <= 60.0:
+		return "Your army is thin and spirits are low as the battle begins."
+	return "Your army takes its position, neither confident nor afraid."
+
+
 func _show_battle_beat() -> void:
-	var beat: Dictionary = BattleEventData.BEATS[battle_beat_index]
+	var beat: Dictionary = battle_beats[battle_beat_index]
 	battle_time_value.text = str(beat.time)
 	battle_narration_value.text = str(beat.narration)
 	battle_choice_a_button.text = str(beat.choices[0].text)
@@ -340,7 +353,7 @@ func _show_battle_beat() -> void:
 
 
 func _resolve_battle_choice(choice_index: int) -> void:
-	var beat: Dictionary = BattleEventData.BEATS[battle_beat_index]
+	var beat: Dictionary = battle_beats[battle_beat_index]
 	var choice: Dictionary = beat.choices[choice_index]
 	var effects: Dictionary = choice.get("effects", {})
 	health = clampi(health + int(effects.get("health", 0)), 0, 100)
@@ -348,7 +361,7 @@ func _resolve_battle_choice(choice_index: int) -> void:
 	battle_log.append("%s — %s" % [str(beat.time), str(choice.result)])
 	_refresh_stats()
 	battle_beat_index += 1
-	if battle_beat_index < BattleEventData.BEATS.size():
+	if battle_beat_index < battle_beats.size():
 		_show_battle_beat()
 	else:
 		_resolve_battle_outcome()
