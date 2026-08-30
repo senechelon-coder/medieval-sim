@@ -22,7 +22,6 @@ var selected_sex := ""
 var tweens: Dictionary = {}
 
 @onready var background: TextureRect = %Background
-@onready var vignette: TextureRect = %Vignette
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
 @onready var info_panel: PanelContainer = %InfoPanel
@@ -42,7 +41,6 @@ var tweens: Dictionary = {}
 
 func _ready() -> void:
 	_setup_background()
-	_setup_vignette()
 
 	var nation_color: Color = FACTION_COLORS.get(selected_faction, Color(0.85, 0.72, 0.45, 1.0))
 	faction_name_label.text = selected_faction
@@ -176,19 +174,3 @@ func _setup_background() -> void:
 	gradient_texture.width = 512
 	gradient_texture.height = 512
 	background.texture = gradient_texture
-
-
-func _setup_vignette() -> void:
-	var gradient := Gradient.new()
-	gradient.colors = PackedColorArray([
-		Color(0.0, 0.0, 0.0, 0.0),
-		Color(0.0, 0.0, 0.0, 0.4),
-	])
-	gradient.offsets = PackedFloat32Array([0.0, 1.0])
-	var gradient_texture := GradientTexture2D.new()
-	gradient_texture.gradient = gradient
-	gradient_texture.fill_from = Vector2(0.5, 0.4)
-	gradient_texture.fill_to = Vector2(0.5, 1.0)
-	gradient_texture.width = 4
-	gradient_texture.height = 512
-	vignette.texture = gradient_texture
