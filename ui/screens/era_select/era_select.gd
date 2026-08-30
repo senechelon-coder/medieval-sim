@@ -1,6 +1,7 @@
 extends Control
 
 const MAIN_MENU_SCENE := "res://ui/screens/main_menu/main_menu.tscn"
+const FACTION_SELECT_SCENE := "res://ui/screens/faction_select/faction_select.tscn"
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
 const PRESS_SCALE := Vector2(0.97, 0.97)
 const PRESS_DURATION := 0.10
@@ -74,6 +75,8 @@ func _return_to_main_menu() -> void:
 func _select_era_632() -> void:
 	era_632.text = "632  —  SELECTED"
 	subtitle.text = "Your life will begin in the year 632."
+	await get_tree().create_timer(RELEASE_DURATION).timeout
+	get_tree().change_scene_to_file(FACTION_SELECT_SCENE)
 
 
 func _update_button_pivot(button: Button) -> void:

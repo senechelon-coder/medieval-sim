@@ -1,0 +1,192 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://ui/screens/faction_select/faction_select.gd" id="1"]
+[ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2"]
+[ext_resource type="Texture2D" path="res://art/backgrounds/main_menu_panel_v1.png" id="3"]
+[ext_resource type="Texture2D" path="res://art/maps/factions_632_v1.png" id="4"]
+[ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="5"]
+[ext_resource type="AudioStream" path="res://audio/ui/soft_ui_click.mp3" id="6"]
+[ext_resource type="PackedScene" path="res://ui/components/placeholder_popup.tscn" id="7"]
+
+[node name="FactionSelect" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2")
+script = ExtResource("1")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("3")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Center" type="CenterContainer" parent="SafeArea"]
+layout_mode = 2
+
+[node name="Composition" type="VBoxContainer" parent="SafeArea/Center"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 14
+
+[node name="Brand" type="Label" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+text = "WORLDLY LIFE"
+horizontal_alignment = 1
+
+[node name="Era" type="Label" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "632 AD"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "CHOOSE YOUR HOMELAND"
+horizontal_alignment = 1
+
+[node name="Divider" type="Control" parent="SafeArea/Center/Composition"]
+custom_minimum_size = Vector2(420, 18)
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("5")
+
+[node name="MapFrame" type="PanelContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+clip_contents = true
+
+[node name="MapOverlay" type="Control" parent="SafeArea/Center/Composition/MapFrame"]
+layout_mode = 2
+
+[node name="Map" type="TextureRect" parent="SafeArea/Center/Composition/MapFrame/MapOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("4")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="RashidunButton" type="Button" parent="SafeArea/Center/Composition/MapFrame/MapOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.34
+anchor_top = 0.55
+anchor_right = 0.68
+anchor_bottom = 0.75
+text = "RASHIDUN CALIPHATE"
+
+[node name="ByzantineButton" type="Button" parent="SafeArea/Center/Composition/MapFrame/MapOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.04
+anchor_top = 0.12
+anchor_right = 0.40
+anchor_bottom = 0.31
+text = "BYZANTINE EMPIRE"
+
+[node name="SasanianButton" type="Button" parent="SafeArea/Center/Composition/MapFrame/MapOverlay"]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_left = 0.62
+anchor_top = 0.17
+anchor_right = 0.96
+anchor_bottom = 0.36
+text = "SASANIAN EMPIRE"
+
+[node name="InfoPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/InfoPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 28
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 28
+theme_override_constants/margin_bottom = 20
+
+[node name="Info" type="VBoxContainer" parent="SafeArea/Center/Composition/InfoPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="FactionName" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SELECT A HOMELAND"
+horizontal_alignment = 1
+
+[node name="Availability" type="RichTextLabel" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+fit_content = true
+scroll_active = false
+text = "[center]THREE REALMS AVAILABLE[/center]"
+
+[node name="Description" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Choose the society that will shape your character's life."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="Traits" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CULTURE  •  FAITH  •  WORK  •  HISTORICAL PRESSURE"
+horizontal_alignment = 1
+
+[node name="SelectLabel" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SELECT HOMELAND"
+horizontal_alignment = 1
+
+[node name="Actions" type="HBoxContainer" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 26
+
+[node name="BackButton" type="Button" parent="SafeArea/Center/Composition/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BACK"
+
+[node name="ContinueButton" type="Button" parent="SafeArea/Center/Composition/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "CONTINUE"
+
+[node name="ClickSound" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("6")
+volume_db = -8.0
+
+[node name="PlaceholderPopup" parent="." instance=ExtResource("7")]
+unique_name_in_owner = true
