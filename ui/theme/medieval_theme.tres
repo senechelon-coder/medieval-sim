@@ -1,0 +1,120 @@
+[gd_resource type="Theme" load_steps=8 format=3]
+
+[ext_resource type="FontFile" path="res://ui/theme/fonts/Cinzel-Variable.ttf" id="1_cinzel"]
+[ext_resource type="FontFile" path="res://ui/theme/fonts/IMFellEnglish-Regular.ttf" id="2_imfell"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
+bg_color = Color(0.169, 0.106, 0.067, 0.92)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.788, 0.635, 0.294, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 24.0
+content_margin_top = 16.0
+content_margin_right = 24.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
+bg_color = Color(0.224, 0.153, 0.094, 0.95)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.898, 0.769, 0.404, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 24.0
+content_margin_top = 16.0
+content_margin_right = 24.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
+bg_color = Color(0.11, 0.071, 0.043, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.678, 0.545, 0.235, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 24.0
+content_margin_top = 16.0
+content_margin_right = 24.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_disabled"]
+bg_color = Color(0.145, 0.145, 0.145, 0.55)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.4, 0.4, 0.4, 0.5)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+content_margin_left = 24.0
+content_margin_top = 16.0
+content_margin_right = 24.0
+content_margin_bottom = 16.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+bg_color = Color(0.106, 0.071, 0.047, 0.96)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.788, 0.635, 0.294, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+content_margin_left = 32.0
+content_margin_top = 24.0
+content_margin_right = 32.0
+content_margin_bottom = 24.0
+
+[resource]
+default_font = ExtResource("2_imfell")
+default_font_size = 34
+
+TitleLabel/base_type = &"Label"
+TitleLabel/fonts/font = ExtResource("1_cinzel")
+TitleLabel/font_sizes/font_size = 92
+TitleLabel/colors/font_color = Color(0.898, 0.769, 0.404, 1)
+TitleLabel/colors/font_shadow_color = Color(0, 0, 0, 0.6)
+TitleLabel/constants/shadow_offset_x = 0
+TitleLabel/constants/shadow_offset_y = 4
+
+VersionLabel/base_type = &"Label"
+VersionLabel/fonts/font = ExtResource("2_imfell")
+VersionLabel/font_sizes/font_size = 22
+VersionLabel/colors/font_color = Color(0.7, 0.63, 0.5, 0.8)
+
+Button/fonts/font = ExtResource("2_imfell")
+Button/font_sizes/font_size = 40
+Button/colors/font_color = Color(0.898, 0.769, 0.404, 1)
+Button/colors/font_hover_color = Color(1, 0.937, 0.784, 1)
+Button/colors/font_pressed_color = Color(0.788, 0.635, 0.294, 1)
+Button/colors/font_disabled_color = Color(0.55, 0.5, 0.42, 0.55)
+Button/styles/normal = SubResource("StyleBoxFlat_btn_normal")
+Button/styles/hover = SubResource("StyleBoxFlat_btn_hover")
+Button/styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+Button/styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
+Button/styles/focus = SubResource("StyleBoxFlat_btn_hover")
+
+Label/fonts/font = ExtResource("2_imfell")
+Label/colors/font_color = Color(0.914, 0.827, 0.647, 1)
+
+Panel/styles/panel = SubResource("StyleBoxFlat_panel")
+
+PopupPanel/styles/panel = SubResource("StyleBoxFlat_panel")
