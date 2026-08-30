@@ -6,6 +6,8 @@ var provinces: Dictionary = {}
 var settlements: Dictionary = {}
 var local_characters: Dictionary = {}
 var dynasties: Dictionary = {}
+var wars: Dictionary = {}
+var armies: Dictionary = {}
 
 
 func create_player(profile: Dictionary) -> PlayerCharacter:
@@ -48,6 +50,8 @@ func clear() -> void:
 	settlements.clear()
 	local_characters.clear()
 	dynasties.clear()
+	wars.clear()
+	armies.clear()
 
 
 func seed_local_world() -> void:
@@ -56,6 +60,8 @@ func seed_local_world() -> void:
 	settlements.clear()
 	local_characters.clear()
 	dynasties.clear()
+	wars.clear()
+	armies.clear()
 	var realm_id := player.homeland.to_lower().replace(" ", "_")
 	var province_name := _province_for_birthplace(player.birthplace)
 	var province_id := province_name.to_lower().replace(" ", "_")
@@ -176,16 +182,20 @@ func world_to_dict() -> Dictionary:
 		"settlements": _registry_to_dict(settlements),
 		"local_characters": _registry_to_dict(local_characters),
 		"dynasties": _registry_to_dict(dynasties),
+		"wars": _registry_to_dict(wars),
+		"armies": _registry_to_dict(armies),
 	}
 
 
 func load_world(data: Dictionary) -> void:
-	kingdoms.clear(); provinces.clear(); settlements.clear(); local_characters.clear(); dynasties.clear()
+	kingdoms.clear(); provinces.clear(); settlements.clear(); local_characters.clear(); dynasties.clear(); wars.clear(); armies.clear()
 	for id in data.get("kingdoms", {}): kingdoms[id] = Kingdom.from_dict(data.kingdoms[id])
 	for id in data.get("provinces", {}): provinces[id] = Province.from_dict(data.provinces[id])
 	for id in data.get("settlements", {}): settlements[id] = Settlement.from_dict(data.settlements[id])
 	for id in data.get("local_characters", {}): local_characters[id] = LocalCharacter.from_dict(data.local_characters[id])
 	for id in data.get("dynasties", {}): dynasties[id] = Dynasty.from_dict(data.dynasties[id])
+	for id in data.get("wars", {}): wars[id] = War.from_dict(data.wars[id])
+	for id in data.get("armies", {}): armies[id] = Army.from_dict(data.armies[id])
 	if settlements.is_empty():
 		seed_local_world()
 	else:
@@ -455,6 +465,21 @@ func _reprice_after_shipment(settlement: Settlement, good_id: String) -> void:
 	var condition := MarketService.stock_condition(int(settlement.goods_stock[good_id]))
 	var adjustment := 1 if condition == "SHORTAGE" else (-1 if condition == "SURPLUS" else 0)
 	settlement.goods_prices[good_id] = clampi(int(settlement.goods_prices[good_id]) + adjustment, int(good.minimum), int(good.maximum))
+
+
+func get_active_war() -> War:
+	for war: War in wars.values():
+		if war.active:
+			return war
+	return null
+
+
+func get_player_army() -> Army:
+	var realm_id := player.homeland.to_lower().replace(" ", "_")
+	for army: Army in armies.values():
+		if army.kingdom_id == realm_id:
+			return army
+	return null
 
 
 func get_regional_price_comparison() -> Array[String]:

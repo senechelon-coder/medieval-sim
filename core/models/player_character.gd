@@ -25,6 +25,8 @@ var occupation_id := ""
 var occupation_experience := 0
 var trade_reputation := 0
 var trade_tier := "peddler"
+var in_army := false
+var has_fought := false
 var inventory: Dictionary = {}
 var cargo_capacity := 10
 var chronicle: Array[String] = []
@@ -41,7 +43,7 @@ func to_dict() -> Dictionary:
 		"birth_season": birth_season, "appearance_seed": appearance_seed,
 		"health": health, "wealth": wealth, "standing": standing,
 		"upbringing": upbringing, "primary_trait": primary_trait,
-		"apprenticeship": apprenticeship, "occupation_id": occupation_id, "occupation_experience": occupation_experience, "trade_reputation": trade_reputation, "trade_tier": trade_tier, "inventory": inventory.duplicate(), "cargo_capacity": cargo_capacity, "chronicle": chronicle.duplicate(),
+		"apprenticeship": apprenticeship, "occupation_id": occupation_id, "occupation_experience": occupation_experience, "trade_reputation": trade_reputation, "trade_tier": trade_tier, "in_army": in_army, "has_fought": has_fought, "inventory": inventory.duplicate(), "cargo_capacity": cargo_capacity, "chronicle": chronicle.duplicate(),
 		"completed_events": completed_events.duplicate(),
 		"local_action_years": local_action_years.duplicate(),
 	}
@@ -72,6 +74,8 @@ func apply_dict(data: Dictionary) -> void:
 	occupation_experience = int(data.get("occupation_experience", occupation_experience))
 	trade_reputation = int(data.get("trade_reputation", trade_reputation))
 	trade_tier = str(data.get("trade_tier", trade_tier))
+	in_army = bool(data.get("in_army", in_army))
+	has_fought = bool(data.get("has_fought", has_fought))
 	inventory.clear()
 	for good_id in data.get("inventory", {}):
 		inventory[str(good_id)] = int(data.inventory[good_id])

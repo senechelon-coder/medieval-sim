@@ -26,6 +26,11 @@ var occupation_id := ""
 var occupation_experience := 0
 var trade_reputation := 0
 var pending_event := ""
+var pending_recruitment: Dictionary = {}
+var battle_beat_index := 0
+var battle_morale := 0.0
+var battle_rival_name := ""
+var battle_log: Array[String] = []
 
 @onready var background: TextureRect = %Background
 @onready var era_label: Label = %Era
@@ -103,6 +108,17 @@ var pending_event := ""
 @onready var pause_overlay: Control = %PauseOverlay
 @onready var resume_button: Button = %ResumeButton
 @onready var main_menu_button: Button = %MainMenuButton
+@onready var recruitment_panel: PanelContainer = %RecruitmentPanel
+@onready var recruitment_title: Label = %RecruitmentTitle
+@onready var recruitment_description: Label = %RecruitmentDescription
+@onready var join_levy_button: Button = %JoinLevyButton
+@onready var decline_levy_button: Button = %DeclineLevyButton
+@onready var battle_overlay: Control = %BattleOverlay
+@onready var battle_title_value: Label = %BattleTitleValue
+@onready var battle_time_value: Label = %BattleTimeValue
+@onready var battle_narration_value: Label = %BattleNarrationValue
+@onready var battle_choice_a_button: Button = %BattleChoiceAButton
+@onready var battle_choice_b_button: Button = %BattleChoiceBButton
 
 
 func _ready() -> void:
@@ -140,6 +156,10 @@ func _ready() -> void:
 	close_world_button.pressed.connect(func(): world_overlay.hide())
 	resume_button.pressed.connect(_resume_game)
 	main_menu_button.pressed.connect(_save_and_return_to_menu)
+	join_levy_button.pressed.connect(_resolve_recruitment.bind(true))
+	decline_levy_button.pressed.connect(_resolve_recruitment.bind(false))
+	battle_choice_a_button.pressed.connect(_resolve_battle_choice.bind(0))
+	battle_choice_b_button.pressed.connect(_resolve_battle_choice.bind(1))
 	_restore_pending_milestone()
 	SaveManager.save_game()
 	resized.connect(_apply_layout)
@@ -169,6 +189,16 @@ func _advance_year() -> void:
 		occupation_panel.show()
 		advance_button.disabled = true
 	else:
+		var war_news := WarSim.maybe_declare_war(TimeManager.current_date.year)
+		if war_news != "":
+			_append_chronicle(war_news)
+		var war_progress_news := WarSim.advance_war(TimeManager.current_date.year)
+		if war_progress_news != "":
+			_append_chronicle(war_progress_news)
+		var recruit_check := WarSim.attempt_recruit_player(TimeManager.current_date.year)
+		if bool(recruit_check.get("eligible", false)):
+			_show_recruitment_call(recruit_check)
+			return
 		var event := EventResolver.event_for_age(character_age, WorldState.player.completed_events)
 		if event.is_empty():
 			_append_chronicle("Age %d, %s\nAnother year of childhood passes." % [character_age, TimeManager.year_label()])
@@ -238,18 +268,107 @@ func _resolve_decision(choice: int) -> void:
 		pending_event = ""
 		return
 	var selected_choice: Dictionary = event.choices[choice]
-	var effects: Dictionary = selected_choice.get("effects", {})
+	_apply_event_effects(selected_choice.get("effects", {}))
+	_append_chronicle("%s\n%s" % [selected_choice.result, selected_choice.summary])
+	if WorldState.has_player() and pending_event not in WorldState.player.completed_events:
+		WorldState.player.completed_events.append(pending_event)
+	pending_event = ""
+	_refresh_stats()
+	_sync_character_state()
+
+
+func _apply_event_effects(effects: Dictionary) -> void:
 	health = clampi(health + int(effects.get("health", 0)), 0, 100)
 	wealth = maxi(wealth + int(effects.get("wealth", 0)), 0)
 	if effects.has("standing"):
 		standing = str(effects.standing)
 	if effects.has("trait"):
 		primary_trait = str(effects.trait)
-	_append_chronicle("%s\n%s" % [selected_choice.result, selected_choice.summary])
-	if WorldState.has_player() and pending_event not in WorldState.player.completed_events:
-		WorldState.player.completed_events.append(pending_event)
-	pending_event = ""
+
+
+func _show_recruitment_call(context: Dictionary) -> void:
+	pending_recruitment = context
+	var event := WarEventData.recruitment_call(str(context.get("rival_name", "the enemy")), bool(context.get("is_soldier", false)))
+	recruitment_title.text = str(event.title)
+	recruitment_description.text = str(event.description)
+	join_levy_button.text = str(event.choices[0].text)
+	decline_levy_button.text = str(event.choices[1].text)
+	recruitment_panel.show()
+	advance_button.disabled = true
+
+
+func _resolve_recruitment(join: bool) -> void:
+	recruitment_panel.hide()
+	var rival_name := str(pending_recruitment.get("rival_name", "the enemy"))
+	var is_soldier := bool(pending_recruitment.get("is_soldier", false))
+	var event := WarEventData.recruitment_call(rival_name, is_soldier)
+	pending_recruitment = {}
+	if join:
+		var choice: Dictionary = event.choices[0]
+		_apply_event_effects(choice.get("effects", {}))
+		_append_chronicle("%s\n%s" % [choice.result, "You march to join the levy against the %s." % rival_name])
+		WorldState.player.in_army = true
+		_refresh_stats()
+		_sync_character_state()
+		_begin_battle(rival_name)
+	else:
+		var choice: Dictionary = event.choices[1]
+		_apply_event_effects(choice.get("effects", {}))
+		_append_chronicle(choice.result)
+		advance_button.disabled = false
+		_refresh_stats()
+		_sync_character_state()
+
+
+func _begin_battle(rival_name: String) -> void:
+	battle_beat_index = 0
+	battle_morale = 0.0
+	battle_rival_name = rival_name
+	battle_log.clear()
+	battle_title_value.text = "BATTLE AGAINST THE %s" % rival_name.to_upper()
+	battle_overlay.show()
+	advance_button.disabled = true
+	_show_battle_beat()
+
+
+func _show_battle_beat() -> void:
+	var beat: Dictionary = BattleEventData.BEATS[battle_beat_index]
+	battle_time_value.text = str(beat.time)
+	battle_narration_value.text = str(beat.narration)
+	battle_choice_a_button.text = str(beat.choices[0].text)
+	battle_choice_b_button.text = str(beat.choices[1].text)
+
+
+func _resolve_battle_choice(choice_index: int) -> void:
+	var beat: Dictionary = BattleEventData.BEATS[battle_beat_index]
+	var choice: Dictionary = beat.choices[choice_index]
+	var effects: Dictionary = choice.get("effects", {})
+	health = clampi(health + int(effects.get("health", 0)), 0, 100)
+	battle_morale += float(effects.get("morale", 0))
+	battle_log.append("%s — %s" % [str(beat.time), str(choice.result)])
 	_refresh_stats()
+	battle_beat_index += 1
+	if battle_beat_index < BattleEventData.BEATS.size():
+		_show_battle_beat()
+	else:
+		_resolve_battle_outcome()
+
+
+func _resolve_battle_outcome() -> void:
+	var outcome := WarSim.resolve_battle_outcome(health, battle_morale)
+	wealth += int(outcome.get("wealth", 0))
+	if outcome.has("health_floor"):
+		health = maxi(health, int(outcome.health_floor))
+	if outcome.has("standing"):
+		standing = str(outcome.standing)
+	WorldState.player.in_army = false
+	WorldState.player.has_fought = true
+	battle_log.append(str(outcome.get("summary", "")))
+	_append_chronicle("Battle against the %s, %s\n%s" % [battle_rival_name, TimeManager.year_label(), "\n".join(battle_log)])
+	_refresh_stats()
+	_sync_character_state()
+	battle_overlay.hide()
+	advance_button.disabled = false
 	_sync_character_state()
 
 
