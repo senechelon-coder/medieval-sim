@@ -3,14 +3,15 @@ extends Control
 const ERA_SCENE := "res://ui/screens/era_select/era_select.tscn"
 const RELEASE_DURATION := 0.13
 const FACTIONS := {
-	"RASHIDUN CALIPHATE": ["A young realm emerging from Arabia, held together by faith, tribal relationships and rapid political change.", "CARAVANS  •  TRIBAL LIFE  •  FAITH  •  EXPANSION"],
-	"BYZANTINE EMPIRE": ["An old Christian empire of fortified cities, imperial law and Mediterranean commerce, weakened by decades of war.", "CITIES  •  IMPERIAL LAW  •  TRADE  •  FRONTIER WAR"],
-	"SASANIAN EMPIRE": ["A wealthy Persian empire of royal courts, farming estates and ancient traditions, now facing internal instability.", "COURTLY LIFE  •  AGRICULTURE  •  CRAFTS  •  POLITICAL CRISIS"],
+	"RASHIDUN CALIPHATE": ["A young realm emerging from Arabia,\nheld together by faith, tribal relationships\nand rapid political change.", "CARAVANS  •  TRIBAL LIFE\nFAITH  •  EXPANSION"],
+	"BYZANTINE EMPIRE": ["An old Christian empire of fortified cities,\nimperial law and Mediterranean commerce,\nweakened by decades of war.", "CITIES  •  IMPERIAL LAW\nTRADE  •  FRONTIER WAR"],
+	"SASANIAN EMPIRE": ["A wealthy Persian empire of royal courts,\nfarming estates and ancient traditions,\nnow facing internal instability.", "COURTLY LIFE  •  AGRICULTURE\nCRAFTS  •  POLITICAL CRISIS"],
 }
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
 @onready var map_frame: PanelContainer = %MapFrame
+@onready var info_panel: PanelContainer = %InfoPanel
 @onready var title: Label = %Title
 @onready var faction_name: Label = %FactionName
 @onready var availability: RichTextLabel = %Availability
@@ -103,8 +104,11 @@ func _apply_layout() -> void:
 	var width := clampf((canvas.x - edge * 2.0) * 0.90, 600.0, 920.0)
 	composition.custom_minimum_size.x = width
 	map_frame.custom_minimum_size = Vector2(width, width * 0.56)
+	info_panel.custom_minimum_size = Vector2(width, clampf(canvas.y * 0.205, 320.0, 380.0))
 	title.add_theme_font_size_override("font_size", roundi(clampf(width * 0.05, 38.0, 50.0)))
 	faction_name.add_theme_font_size_override("font_size", roundi(clampf(width * 0.034, 25.0, 34.0)))
+	description.add_theme_font_size_override("font_size", roundi(clampf(width * 0.026, 19.0, 25.0)))
+	traits.add_theme_font_size_override("font_size", roundi(clampf(width * 0.024, 18.0, 23.0)))
 	for button in faction_buttons:
 		button.add_theme_font_size_override("font_size", roundi(clampf(width * 0.024, 18.0, 23.0)))
 	for button in [back_button, continue_button]:

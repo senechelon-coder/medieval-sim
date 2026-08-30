@@ -121,6 +121,7 @@ anchor_bottom = 0.36
 text = "SASANIAN EMPIRE"
 
 [node name="InfoPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/InfoPanel"]
@@ -150,16 +151,19 @@ text = "[center]THREE REALMS AVAILABLE[/center]"
 
 [node name="Description" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
-text = "Choose the society that will shape your character's life."
+text = "Choose the society that will shape\nyour character's life and determine\nits earliest opportunities."
 horizontal_alignment = 1
-autowrap_mode = 2
+vertical_alignment = 1
 
 [node name="Traits" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
-text = "CULTURE  •  FAITH  •  WORK  •  HISTORICAL PRESSURE"
+text = "CULTURE  •  FAITH\nWORK  •  HISTORICAL PRESSURE"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="SelectLabel" type="Label" parent="SafeArea/Center/Composition/InfoPanel/Margin/Info"]
 unique_name_in_owner = true
