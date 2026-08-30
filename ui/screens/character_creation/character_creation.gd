@@ -159,10 +159,9 @@ func _set_pivot(button: Button) -> void:
 
 
 func _generate_name() -> void:
-	if selected_sex == "":
-		selected_sex = "MALE" if randi() % 2 == 0 else "FEMALE"
-		male_button.button_pressed = selected_sex == "MALE"
-		female_button.button_pressed = selected_sex == "FEMALE"
+	selected_sex = "MALE" if randi() % 2 == 0 else "FEMALE"
+	male_button.button_pressed = selected_sex == "MALE"
+	female_button.button_pressed = selected_sex == "FEMALE"
 	generated_profile = CharacterNameData.generate_profile(selected_faction, selected_sex)
 	name_field.text = generated_profile.given_name
 	lineage_field.text = generated_profile.lineage
@@ -209,8 +208,19 @@ func _update_begin_availability() -> void:
 	var has_lineage := lineage_field.text.strip_edges() != ""
 	var has_sex := selected_sex != ""
 	var has_birthplace := birthplace_field.selected > 0
-	var has_profile := not generated_profile.is_empty()
+	var has_profile := _has_complete_birth_profile()
 	begin_button.disabled = not (has_name and has_lineage and has_sex and has_birthplace and has_profile)
+
+
+func _has_complete_birth_profile() -> bool:
+	if generated_profile.is_empty():
+		return false
+	for key in ["given_name", "lineage", "full_name", "father", "mother", "culture", "faith", "season", "family_origin", "appearance_seed"]:
+		if not generated_profile.has(key):
+			return false
+		if key != "appearance_seed" and str(generated_profile[key]).strip_edges() == "":
+			return false
+	return true
 
 
 func _go_back() -> void:
@@ -220,23 +230,22 @@ func _go_back() -> void:
 
 func _begin_life() -> void:
 	await get_tree().create_timer(RELEASE_DURATION).timeout
-	var next_scene: PackedScene = load(LIFE_SCREEN_SCENE)
-	var next: LifeScreen = next_scene.instantiate()
-	next.character_name = full_name_preview.text
-	next.character_age = int(age_field.text)
-	next.character_sex = selected_sex
-	next.homeland = selected_faction
-	next.birthplace = birthplace_field.get_item_text(birthplace_field.selected)
-	next.social_origin = generated_profile.family_origin
-	next.father_name = generated_profile.father
-	next.mother_name = generated_profile.mother
-	next.culture = generated_profile.culture
-	next.faith = generated_profile.faith
-	next.birth_season = generated_profile.season
-	next.appearance_seed = generated_profile.appearance_seed
-	get_tree().root.add_child(next)
-	get_tree().current_scene.queue_free()
-	get_tree().current_scene = next
+	TimeManager.start_new_game(632)
+	WorldState.create_player({
+		"full_name": full_name_preview.text,
+		"age": int(age_field.text),
+		"sex": selected_sex,
+		"homeland": selected_faction,
+		"birthplace": birthplace_field.get_item_text(birthplace_field.selected),
+		"family_origin": generated_profile.family_origin,
+		"father_name": generated_profile.father,
+		"mother_name": generated_profile.mother,
+		"culture": generated_profile.culture,
+		"faith": generated_profile.faith,
+		"birth_season": generated_profile.season,
+		"appearance_seed": generated_profile.appearance_seed,
+	})
+	get_tree().change_scene_to_file(LIFE_SCREEN_SCENE)
 
 
 func _setup_background() -> void:

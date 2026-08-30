@@ -52,6 +52,7 @@ text = "WORLDLY LIFE"
 horizontal_alignment = 1
 
 [node name="Era" type="Label" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"VersionLabel"
 text = "632 AD"
@@ -140,13 +141,15 @@ horizontal_alignment = 2
 layout_mode = 2
 text = "HEALTH"
 [node name="HealthValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+unique_name_in_owner = true
 layout_mode = 2
-text = "100%"
+text = "90%"
 horizontal_alignment = 2
 [node name="Wealth" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 layout_mode = 2
 text = "WEALTH"
 [node name="WealthValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "10"
 horizontal_alignment = 2
@@ -154,8 +157,17 @@ horizontal_alignment = 2
 layout_mode = 2
 text = "SOCIAL STANDING"
 [node name="StandingValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "Unknown"
+horizontal_alignment = 2
+[node name="Trait" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+layout_mode = 2
+text = "TRAIT"
+[node name="TraitValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Undeveloped"
 horizontal_alignment = 2
 [node name="Occupation" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 layout_mode = 2
@@ -175,19 +187,169 @@ horizontal_alignment = 1
 custom_minimum_size = Vector2(0, 240)
 layout_mode = 2
 
-[node name="EventPlaceholder" type="Label" parent="SafeArea/Center/Composition/ChroniclePanel"]
+[node name="ChronicleScroll" type="ScrollContainer" parent="SafeArea/Center/Composition/ChroniclePanel"]
 unique_name_in_owner = true
 layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="EventPlaceholder" type="Label" parent="SafeArea/Center/Composition/ChroniclePanel/ChronicleScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 text = "Your chronicle begins here."
 horizontal_alignment = 1
 vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="DecisionPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/DecisionPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/DecisionPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="DecisionTitle" type="Label" parent="SafeArea/Center/Composition/DecisionPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "A LOST PURSE"
+horizontal_alignment = 1
+
+[node name="DecisionDescription" type="Label" parent="SafeArea/Center/Composition/DecisionPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "A merchant's purse lies unattended beside the market road. What will you do?"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="ReturnPurseButton" type="Button" parent="SafeArea/Center/Composition/DecisionPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "RETURN IT TO THE MERCHANT"
+
+[node name="KeepPurseButton" type="Button" parent="SafeArea/Center/Composition/DecisionPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BRING IT HOME"
+
+[node name="UpbringingPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/UpbringingPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/UpbringingPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="SafeArea/Center/Composition/UpbringingPanel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "CHOOSE EARLY UPBRINGING"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="SafeArea/Center/Composition/UpbringingPanel/Margin/Content"]
+layout_mode = 2
+text = "At age five, the direction of your childhood begins to take shape."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="FamilyDutiesButton" type="Button" parent="SafeArea/Center/Composition/UpbringingPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "FAMILY DUTIES"
+metadata/upbringing = "Family Duties"
+
+[node name="ReligiousSchoolingButton" type="Button" parent="SafeArea/Center/Composition/UpbringingPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "RELIGIOUS SCHOOLING"
+metadata/upbringing = "Religious Schooling"
+
+[node name="MarketUpbringingButton" type="Button" parent="SafeArea/Center/Composition/UpbringingPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MARKET UPBRINGING"
+metadata/upbringing = "Market Upbringing"
+
+[node name="MartialUpbringingButton" type="Button" parent="SafeArea/Center/Composition/UpbringingPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MARTIAL UPBRINGING"
+metadata/upbringing = "Martial Upbringing"
+
+[node name="ApprenticeshipPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/ApprenticeshipPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/ApprenticeshipPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 9
+
+[node name="Title" type="Label" parent="SafeArea/Center/Composition/ApprenticeshipPanel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = "CHOOSE YOUR TRAINING"
+horizontal_alignment = 1
+
+[node name="Description" type="Label" parent="SafeArea/Center/Composition/ApprenticeshipPanel/Margin/Content"]
+layout_mode = 2
+text = "Your upbringing may guide you, but it does not decide your future."
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="CraftApprenticeshipButton" type="Button" parent="SafeArea/Center/Composition/ApprenticeshipPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "HOUSEHOLD CRAFT"
+metadata/path = "craft"
+
+[node name="ScholarlyApprenticeshipButton" type="Button" parent="SafeArea/Center/Composition/ApprenticeshipPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "SCHOLARLY TRAINING"
+metadata/path = "scholar"
+
+[node name="TradeApprenticeshipButton" type="Button" parent="SafeArea/Center/Composition/ApprenticeshipPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MERCHANT TRAINING"
+metadata/path = "trade"
+
+[node name="MartialApprenticeshipButton" type="Button" parent="SafeArea/Center/Composition/ApprenticeshipPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "MARTIAL TRAINING"
+metadata/path = "martial"
 
 [node name="AdvanceButton" type="Button" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
-disabled = true
-text = "ADVANCE TIME"
+text = "AGE UP"
 
 [node name="BottomNav" type="HBoxContainer" parent="SafeArea/Center/Composition"]
 layout_mode = 2

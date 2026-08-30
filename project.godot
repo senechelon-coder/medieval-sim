@@ -19,6 +19,12 @@ run/main_scene="res://ui/screens/main_menu/main_menu.tscn"
 config/features=PackedStringArray("4.7", "Mobile")
 config/icon="res://icon_transparent.png"
 
+[autoload]
+
+MusicManager="*res://audio/music/music_manager.gd"
+TimeManager="*res://core/time/time_manager.gd"
+WorldState="*res://core/world/world_state.gd"
+
 [display]
 
 window/size/viewport_width=1080

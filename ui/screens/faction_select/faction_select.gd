@@ -3,11 +3,6 @@ extends Control
 const ERA_SCENE := "res://ui/screens/era_select/era_select.tscn"
 const CHARACTER_CREATION_SCENE := "res://ui/screens/character_creation/character_creation.tscn"
 const RELEASE_DURATION := 0.13
-const FACTION_MUSIC := {
-	"RASHIDUN CALIPHATE": "res://audio/music/rashidun_caliphate.mp3",
-	"BYZANTINE EMPIRE": "res://audio/music/byzantine_empire.mp3",
-	"SASANIAN EMPIRE": "res://audio/music/sasanian_empire.mp3",
-}
 const FACTION_COLORS := {
 	"RASHIDUN CALIPHATE": Color(0.45, 0.78, 0.48, 1.0),
 	"BYZANTINE EMPIRE": Color(0.72, 0.58, 0.88, 1.0),
@@ -26,7 +21,6 @@ const BODY_FONT_PATH := "res://ui/theme/fonts/IMFellEnglish-Regular.ttf"
 @onready var back_button: Button = %BackButton
 @onready var continue_button: Button = %ContinueButton
 @onready var click_sound: AudioStreamPlayer = %ClickSound
-@onready var music_player: AudioStreamPlayer = %MusicPlayer
 
 var selected_faction := ""
 var faction_buttons: Array[Button]
@@ -89,18 +83,7 @@ func _select_faction(button: Button) -> void:
 	continue_button.disabled = false
 	for item in faction_buttons:
 		item.theme_type_variation = &"AvailableButton" if item == button else &"Button"
-	_play_faction_music(selected_faction)
-
-
-func _play_faction_music(faction: String) -> void:
-	var music_path: String = FACTION_MUSIC.get(faction, "")
-	if music_path == "":
-		return
-	var stream: AudioStream = load(music_path)
-	if stream is AudioStreamMP3:
-		(stream as AudioStreamMP3).loop = true
-	music_player.stream = stream
-	music_player.play()
+	MusicManager.play_faction_music(selected_faction)
 
 
 func _go_back() -> void:
