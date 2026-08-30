@@ -78,6 +78,8 @@ var pending_event := ""
 @onready var activities_button: Button = %Activities
 @onready var activities_overlay: Control = %ActivitiesOverlay
 @onready var market_summary: Label = %MarketSummary
+@onready var upgrade_label: Label = %UpgradeLabel
+@onready var upgrade_button: Button = %UpgradeButton
 @onready var regional_prices: Label = %RegionalPrices
 @onready var market_rows: VBoxContainer = %MarketRows
 @onready var market_message: Label = %MarketMessage
@@ -130,6 +132,7 @@ func _ready() -> void:
 	close_character_button.pressed.connect(func(): character_overlay.hide())
 	activities_button.pressed.connect(_open_activities)
 	close_activities_button.pressed.connect(func(): activities_overlay.hide())
+	upgrade_button.pressed.connect(_attempt_upgrade_tier)
 	world_button.pressed.connect(_open_world)
 	visit_family_button.pressed.connect(_perform_local_action.bind("family"))
 	help_trader_button.pressed.connect(_perform_local_action.bind("trader"))
@@ -455,8 +458,10 @@ func _rebuild_market_rows() -> void:
 	var occupation := OccupationData.get_occupation(WorldState.player.occupation_id)
 	var rank := OccupationData.rank_for_experience(WorldState.player.occupation_experience)
 	var work_text := "No occupation" if occupation.is_empty() else "%s %s" % [rank.name, occupation.name]
-	market_summary.text = "%s MARKET\nWealth: %d  •  Cargo: %d / %d\nWork: %s  •  Trade Reputation: %d" % [settlement.name.to_upper(), WorldState.player.wealth, MarketService.inventory_count(), WorldState.player.cargo_capacity, work_text, WorldState.player.trade_reputation]
+	var tier: Dictionary = TradeTierData.get_tier(WorldState.player.trade_tier)
+	market_summary.text = "%s MARKET\nWealth: %d  •  Cargo: %d / %d\nWork: %s  •  %s  •  Reputation: %d" % [settlement.name.to_upper(), WorldState.player.wealth, MarketService.inventory_count(), WorldState.player.cargo_capacity, work_text, tier.name, WorldState.player.trade_reputation]
 	regional_prices.text = "\n".join(WorldState.get_regional_price_comparison())
+	_refresh_upgrade_row()
 	for good_id in GoodData.GOODS:
 		var good := GoodData.get_good(good_id)
 		var row := HBoxContainer.new()
@@ -479,6 +484,35 @@ func _rebuild_market_rows() -> void:
 		row.add_child(buy_button)
 		row.add_child(sell_button)
 		market_rows.add_child(row)
+
+
+func _refresh_upgrade_row() -> void:
+	var status := MarketService.upgrade_status()
+	if status.is_empty() or bool(status.get("maxed", false)):
+		var current: Dictionary = status.get("current", {})
+		upgrade_label.text = "You have reached the highest trade standing: %s." % str(current.get("name", "Ship Owner"))
+		upgrade_button.hide()
+		return
+	var next_tier: Dictionary = status.next
+	if bool(status.eligible):
+		upgrade_label.text = "Eligible to become a %s." % str(next_tier.name)
+		upgrade_button.text = "BECOME %s — %d WEALTH" % [str(next_tier.name).to_upper(), int(next_tier.cost)]
+		upgrade_button.disabled = not bool(status.affordable)
+		upgrade_button.show()
+	else:
+		upgrade_label.text = "Trade Reputation %d / %d needed to become a %s." % [WorldState.player.trade_reputation, int(next_tier.reputation_required), str(next_tier.name)]
+		upgrade_button.hide()
+
+
+func _attempt_upgrade_tier() -> void:
+	var result := MarketService.attempt_upgrade_tier()
+	market_message.text = result.message
+	wealth = WorldState.player.wealth
+	_refresh_stats()
+	if bool(result.ok):
+		_append_chronicle("Trade standing, %s\n%s" % [TimeManager.year_label(), result.message])
+	SaveManager.save_game()
+	_rebuild_market_rows()
 
 
 func _trade_good(good_id: String, buying: bool) -> void:

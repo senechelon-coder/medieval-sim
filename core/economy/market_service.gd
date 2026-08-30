@@ -49,6 +49,41 @@ static func inventory_count() -> int:
 	return total
 
 
+static func upgrade_status() -> Dictionary:
+	if not WorldState.has_player():
+		return {}
+	var current_id := WorldState.player.trade_tier
+	var next_id := TradeTierData.next_tier_id(current_id)
+	if next_id == "":
+		return {"current": TradeTierData.get_tier(current_id), "maxed": true}
+	var next_tier := TradeTierData.get_tier(next_id)
+	var eligible: bool = WorldState.player.trade_reputation >= int(next_tier.reputation_required)
+	var affordable: bool = WorldState.player.wealth >= int(next_tier.cost)
+	return {
+		"current": TradeTierData.get_tier(current_id),
+		"next": next_tier,
+		"next_id": next_id,
+		"eligible": eligible,
+		"affordable": affordable,
+		"maxed": false,
+	}
+
+
+static func attempt_upgrade_tier() -> Dictionary:
+	var status := upgrade_status()
+	if status.is_empty() or bool(status.get("maxed", false)):
+		return {"ok": false, "message": "You have reached the highest trade standing."}
+	if not bool(status.eligible):
+		return {"ok": false, "message": "Your trade reputation is not yet high enough."}
+	if not bool(status.affordable):
+		return {"ok": false, "message": "You cannot afford this yet."}
+	var next_tier: Dictionary = status.next
+	WorldState.player.wealth -= int(next_tier.cost)
+	WorldState.player.trade_tier = str(status.next_id)
+	WorldState.player.cargo_capacity = int(next_tier.cargo_capacity)
+	return {"ok": true, "message": "You are now a %s. Cargo capacity: %d." % [next_tier.name, next_tier.cargo_capacity]}
+
+
 static func stock_condition(stock: int) -> String:
 	if stock <= 4: return "SHORTAGE"
 	if stock >= 16: return "SURPLUS"

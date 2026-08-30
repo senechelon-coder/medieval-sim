@@ -298,7 +298,7 @@ Implemented: `SimDate` and persistent `TimeManager`; a centralized `PlayerCharac
 **Phase 2 — Local world & events — COMPLETE**
 Implemented serializable `Kingdom`, `Province`, `Settlement`, `Dynasty`, and Tier-1 `LocalCharacter` models; realm-specific seed geography with neighboring provinces and settlements; a usable World tab; named parents, elders, traders, spouses, siblings, and children; saved relationship scores and annual local activities; independent NPC aging, mortality, marriage, and births; independent settlement population/prosperity changes with local reports; and a data-driven event resolver with persistent choices and stat consequences. **Exit criterion met:** settlement life produces meaningful decision events, the surrounding population and economy continue changing independently, and all local-world state survives save/load.
 
-**Phase 3 — Occupation & economy seed — IN PROGRESS**
+**Phase 3 — Occupation & economy seed — COMPLETE**
 `OccupationDef`/`GoodDef` tables, basic job assignment (peasant/farmer/soldier/trader start), wage/income tick, simple regional `goods_prices` per settlement. Traders can buy and sell goods, build trade reputation, and progress from travelling peddler toward caravan or ship ownership. **Exit criterion:** player can work an occupation, earn/spend wealth, and see prices differ between at least two settlements.
 
 **Phase 4 — Travel, trade & piracy**

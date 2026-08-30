@@ -816,6 +816,22 @@ layout_mode = 2
 text = "LOCAL MARKET"
 horizontal_alignment = 1
 
+[node name="UpgradeLabel" type="Label" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+text = ""
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="UpgradeButton" type="Button" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 68)
+layout_mode = 2
+theme_type_variation = &"AvailableButton"
+visible = false
+text = ""
+
 [node name="RegionalTitle" type="Label" parent="ActivitiesOverlay/Center/Panel/Margin/Content"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
