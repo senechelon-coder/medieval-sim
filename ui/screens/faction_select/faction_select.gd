@@ -7,6 +7,11 @@ const FACTIONS := {
 	"BYZANTINE EMPIRE": ["An old Christian empire of fortified cities,\nimperial law and Mediterranean commerce,\nweakened by decades of war.", "CITIES  •  IMPERIAL LAW\nTRADE  •  FRONTIER WAR"],
 	"SASANIAN EMPIRE": ["A wealthy Persian empire of royal courts,\nfarming estates and ancient traditions,\nnow facing internal instability.", "COURTLY LIFE  •  AGRICULTURE\nCRAFTS  •  POLITICAL CRISIS"],
 }
+const FACTION_MUSIC := {
+	"RASHIDUN CALIPHATE": "res://audio/music/rashidun_caliphate.mp3",
+	"BYZANTINE EMPIRE": "res://audio/music/byzantine_empire.mp3",
+	"SASANIAN EMPIRE": "res://audio/music/sasanian_empire.mp3",
+}
 
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
@@ -22,6 +27,7 @@ const FACTIONS := {
 @onready var continue_button: Button = %ContinueButton
 @onready var popup: Control = %PlaceholderPopup
 @onready var click_sound: AudioStreamPlayer = %ClickSound
+@onready var music_player: AudioStreamPlayer = %MusicPlayer
 
 var selected_faction := ""
 var faction_buttons: Array[Button]
@@ -79,6 +85,18 @@ func _select_faction(button: Button) -> void:
 	continue_button.disabled = false
 	for item in faction_buttons:
 		item.theme_type_variation = &"AvailableButton" if item == button else &"Button"
+	_play_faction_music(selected_faction)
+
+
+func _play_faction_music(faction: String) -> void:
+	var music_path: String = FACTION_MUSIC.get(faction, "")
+	if music_path == "":
+		return
+	var stream: AudioStream = load(music_path)
+	if stream is AudioStreamMP3:
+		(stream as AudioStreamMP3).loop = true
+	music_player.stream = stream
+	music_player.play()
 
 
 func _go_back() -> void:

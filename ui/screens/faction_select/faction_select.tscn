@@ -193,5 +193,9 @@ unique_name_in_owner = true
 stream = ExtResource("6")
 volume_db = -8.0
 
+[node name="MusicPlayer" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+volume_db = -10.0
+
 [node name="PlaceholderPopup" parent="." instance=ExtResource("7")]
 unique_name_in_owner = true
