@@ -2,11 +2,6 @@ extends Control
 
 const ERA_SCENE := "res://ui/screens/era_select/era_select.tscn"
 const RELEASE_DURATION := 0.13
-const FACTIONS := {
-	"RASHIDUN CALIPHATE": ["A young realm emerging from Arabia,\nheld together by faith, tribal relationships\nand rapid political change.", "CARAVANS  •  TRIBAL LIFE\nFAITH  •  EXPANSION"],
-	"BYZANTINE EMPIRE": ["An old Christian empire of fortified cities,\nimperial law and Mediterranean commerce,\nweakened by decades of war.", "CITIES  •  IMPERIAL LAW\nTRADE  •  FRONTIER WAR"],
-	"SASANIAN EMPIRE": ["A wealthy Persian empire of royal courts,\nfarming estates and ancient traditions,\nnow facing internal instability.", "COURTLY LIFE  •  AGRICULTURE\nCRAFTS  •  POLITICAL CRISIS"],
-}
 const FACTION_MUSIC := {
 	"RASHIDUN CALIPHATE": "res://audio/music/rashidun_caliphate.mp3",
 	"BYZANTINE EMPIRE": "res://audio/music/byzantine_empire.mp3",
@@ -26,8 +21,6 @@ const BODY_FONT_PATH := "res://ui/theme/fonts/IMFellEnglish-Regular.ttf"
 @onready var title: Label = %Title
 @onready var faction_name: Label = %FactionName
 @onready var availability: RichTextLabel = %Availability
-@onready var description: Label = %Description
-@onready var traits: Label = %Traits
 @onready var select_label: Label = %SelectLabel
 @onready var back_button: Button = %BackButton
 @onready var continue_button: Button = %ContinueButton
@@ -87,14 +80,11 @@ func _animate(button: Button, scale_to: Vector2, tint: Color, duration: float) -
 
 func _select_faction(button: Button) -> void:
 	selected_faction = button.text
-	var data: Array = FACTIONS[selected_faction]
 	var nation_color: Color = FACTION_COLORS.get(selected_faction, Color(0.87, 0.83, 0.76, 1.0))
 	faction_name.text = selected_faction
 	faction_name.add_theme_color_override("font_color", nation_color)
 	faction_name.add_theme_font_override("font", bold_body_font)
 	availability.text = "[center][color=#7aad4c]●[/color]  [color=#%s]AVAILABLE[/color][/center]" % nation_color.to_html(false)
-	description.text = data[0]
-	traits.text = data[1]
 	select_label.text = "HOMELAND SELECTED  •  %s" % selected_faction
 	continue_button.disabled = false
 	for item in faction_buttons:
@@ -136,11 +126,9 @@ func _apply_layout() -> void:
 	var width := clampf((canvas.x - edge * 2.0) * 0.90, 600.0, 920.0)
 	composition.custom_minimum_size.x = width
 	map_frame.custom_minimum_size = Vector2(width, width * 0.56)
-	info_panel.custom_minimum_size = Vector2(width, clampf(canvas.y * 0.205, 320.0, 380.0))
+	info_panel.custom_minimum_size = Vector2(width, clampf(canvas.y * 0.1, 150.0, 190.0))
 	title.add_theme_font_size_override("font_size", roundi(clampf(width * 0.05, 38.0, 50.0)))
 	faction_name.add_theme_font_size_override("font_size", roundi(clampf(width * 0.034, 25.0, 34.0)))
-	description.add_theme_font_size_override("font_size", roundi(clampf(width * 0.026, 19.0, 25.0)))
-	traits.add_theme_font_size_override("font_size", roundi(clampf(width * 0.024, 18.0, 23.0)))
 	for button in faction_buttons:
 		button.add_theme_font_size_override("font_size", roundi(clampf(width * 0.024, 18.0, 23.0)))
 	for button in [back_button, continue_button]:
