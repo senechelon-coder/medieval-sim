@@ -1,6 +1,6 @@
 extends Control
 
-const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_bg.png"
+const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
 const SAVE_DIR := "user://saves/"
 const GAME_VERSION := "v 0.1.0"
 const BUTTON_PRESS_SCALE := Vector2(0.97, 0.97)
@@ -125,10 +125,12 @@ func _apply_responsive_layout() -> void:
 
 	var available_width := viewport_size.x - edge_padding * 2.0
 	var available_height := viewport_size.y - edge_padding * 2.0
-	var button_width := clampf(available_width * 0.86, minf(320.0, available_width), 980.0)
-	var button_height := clampf(available_height * 0.052, 48.0, 116.0)
-	var button_gap := clampf(button_height * 0.17, 8.0, 22.0)
-	var button_font_size := roundi(clampf(button_height * 0.34, 18.0, 40.0))
+	# The menu is deliberately narrower and denser than the in-game panels.
+	# This mirrors the tall, premium manuscript composition in the reference.
+	var button_width := clampf(available_width * 0.68, minf(320.0, available_width), 760.0)
+	var button_height := clampf(available_height * 0.047, 58.0, 92.0)
+	var button_gap := clampf(button_height * 0.13, 8.0, 14.0)
+	var button_font_size := roundi(clampf(button_height * 0.30, 18.0, 28.0))
 
 	button_column.custom_minimum_size = Vector2(button_width, 0.0)
 	button_column.add_theme_constant_override("separation", roundi(button_gap))
@@ -138,21 +140,21 @@ func _apply_responsive_layout() -> void:
 	_update_button_pivots.call_deferred()
 
 	var menu_height := button_height * 5.0 + button_gap * 4.0
-	var detail_height := clampf(available_height * 0.07, 64.0, 138.0)
-	var logo_height_budget := available_height * 0.88 - menu_height - detail_height
-	var logo_minimum := minf(300.0, available_height * 0.32)
-	var logo_height := clampf(logo_height_budget, logo_minimum, available_height * 0.50)
+	var detail_height := clampf(available_height * 0.065, 60.0, 120.0)
+	var logo_height_budget := available_height * 0.84 - menu_height - detail_height
+	var logo_minimum := minf(300.0, available_height * 0.30)
+	var logo_height := clampf(logo_height_budget, logo_minimum, available_height * 0.43)
 	var logo_width := logo_height * 0.657
 	logo_image.custom_minimum_size = Vector2(logo_width, logo_height)
 
-	var divider_width := clampf(button_width * 0.58, minf(240.0, available_width * 0.72), 620.0)
+	var divider_width := clampf(button_width * 0.52, minf(220.0, available_width * 0.60), 440.0)
 	var divider_height := clampf(available_height * 0.012, 14.0, 26.0)
 	divider_top.custom_minimum_size = Vector2(divider_width, divider_height)
 	divider_bottom.custom_minimum_size = Vector2(divider_width, divider_height)
 
 	logo_to_divider_gap.custom_minimum_size.y = clampf(available_height * 0.006, 8.0, 14.0)
-	divider_to_menu_gap.custom_minimum_size.y = clampf(available_height * 0.014, 18.0, 30.0)
-	menu_to_footer_gap.custom_minimum_size.y = clampf(available_height * 0.018, 24.0, 38.0)
+	divider_to_menu_gap.custom_minimum_size.y = clampf(available_height * 0.012, 16.0, 24.0)
+	menu_to_footer_gap.custom_minimum_size.y = clampf(available_height * 0.014, 20.0, 30.0)
 	version_gap.custom_minimum_size.y = clampf(available_height * 0.006, 8.0, 14.0)
 	version_label.add_theme_font_size_override("font_size", roundi(clampf(button_font_size * 0.68, 14.0, 26.0)))
 

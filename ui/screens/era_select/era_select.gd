@@ -1,7 +1,6 @@
 extends Control
 
 const MAIN_MENU_SCENE := "res://ui/screens/main_menu/main_menu.tscn"
-const HOMELAND_SELECT_SCENE := "res://ui/screens/homeland_select/homeland_select.tscn"
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_bg.png"
 const PRESS_SCALE := Vector2(0.97, 0.97)
 const PRESS_DURATION := 0.10
@@ -32,7 +31,7 @@ func _ready() -> void:
 	_setup_vignette()
 	_setup_interactive_button(era_632)
 	_setup_interactive_button(back_button)
-	era_632.pressed.connect(_open_homeland_select)
+	era_632.pressed.connect(_select_era_632)
 	back_button.pressed.connect(_return_to_main_menu)
 	resized.connect(_apply_responsive_layout)
 	_apply_responsive_layout()
@@ -72,9 +71,9 @@ func _return_to_main_menu() -> void:
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 
-func _open_homeland_select() -> void:
-	await get_tree().create_timer(RELEASE_DURATION).timeout
-	get_tree().change_scene_to_file(HOMELAND_SELECT_SCENE)
+func _select_era_632() -> void:
+	era_632.text = "632  —  SELECTED"
+	subtitle.text = "Your life will begin in the year 632."
 
 
 func _update_button_pivot(button: Button) -> void:
