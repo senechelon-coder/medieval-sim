@@ -1,0 +1,179 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://ui/screens/birthplace_select/birthplace_select.gd" id="1_script"]
+[ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
+[ext_resource type="Script" path="res://ui/screens/main_menu/background_motif.gd" id="3_motif"]
+[ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="4_divider"]
+[ext_resource type="AudioStream" path="res://audio/ui/soft_ui_click.mp3" id="5_click"]
+[ext_resource type="PackedScene" path="res://ui/components/placeholder_popup.tscn" id="6_popup"]
+
+[node name="BirthplaceSelect" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="Background" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 6
+
+[node name="Motifs" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("3_motif")
+
+[node name="Vignette" type="TextureRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+
+[node name="ScreenFrame" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_type_variation = &"ScreenFrame"
+
+[node name="SafeArea" type="MarginContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Center" type="CenterContainer" parent="SafeArea"]
+layout_mode = 2
+
+[node name="Composition" type="VBoxContainer" parent="SafeArea/Center"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 10
+
+[node name="BrandLabel" type="Label" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+text = "WORLDLY LIFE"
+horizontal_alignment = 1
+
+[node name="EraLabel" type="Label" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+text = "ERA 632  •  ARABIAN PENINSULA"
+horizontal_alignment = 1
+
+[node name="Title" type="Label" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+text = "CHOOSE YOUR BIRTHPLACE"
+horizontal_alignment = 1
+
+[node name="Subtitle" type="Label" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Where does your story begin?"
+horizontal_alignment = 1
+
+[node name="Divider" type="Control" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+script = ExtResource("4_divider")
+
+[node name="BirthplaceList" type="VBoxContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="Medina" type="Button" parent="SafeArea/Center/Composition/BirthplaceList"]
+layout_mode = 2
+text = "MEDINA\nOASIS CITY  •  FAITH  •  POLITICS"
+[node name="Mecca" type="Button" parent="SafeArea/Center/Composition/BirthplaceList"]
+layout_mode = 2
+text = "MECCA\nSANCTUARY  •  PILGRIMAGE  •  TRADE"
+[node name="Taif" type="Button" parent="SafeArea/Center/Composition/BirthplaceList"]
+layout_mode = 2
+text = "TA'IF\nHIGHLAND TOWN  •  ORCHARDS  •  TRADE"
+[node name="Khaybar" type="Button" parent="SafeArea/Center/Composition/BirthplaceList"]
+layout_mode = 2
+text = "KHAYBAR\nFORTIFIED OASIS  •  FARMING  •  FRONTIER"
+[node name="Sanaa" type="Button" parent="SafeArea/Center/Composition/BirthplaceList"]
+layout_mode = 2
+text = "SANA'A\nSOUTHERN CITY  •  CRAFTS  •  OLD ROADS"
+[node name="Najran" type="Button" parent="SafeArea/Center/Composition/BirthplaceList"]
+layout_mode = 2
+text = "NAJRAN\nOASIS CITY  •  FAITHS  •  CARAVANS"
+[node name="Yamama" type="Button" parent="SafeArea/Center/Composition/BirthplaceList"]
+layout_mode = 2
+text = "AL-YAMAMA\nCENTRAL OASIS  •  TRIBES  •  FARMING"
+[node name="Nomadic" type="Button" parent="SafeArea/Center/Composition/BirthplaceList"]
+layout_mode = 2
+text = "NOMADIC ENCAMPMENT\nPASTORAL LIFE  •  KINSHIP  •  MOBILITY"
+
+[node name="SelectionLabel" type="Label" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "CHOOSE A BIRTHPLACE — OR LET FATE DECIDE"
+horizontal_alignment = 1
+
+[node name="Actions" type="HBoxContainer" parent="SafeArea/Center/Composition"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/separation = 14
+
+[node name="BackButton" type="Button" parent="SafeArea/Center/Composition/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "BACK"
+[node name="FateButton" type="Button" parent="SafeArea/Center/Composition/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"AvailableButton"
+text = "FATE DECIDE"
+[node name="ContinueButton" type="Button" parent="SafeArea/Center/Composition/Actions"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+text = "CONTINUE"
+
+[node name="ClickSound" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+stream = ExtResource("5_click")
+volume_db = -8.0
+
+[node name="PlaceholderPopup" parent="." instance=ExtResource("6_popup")]
+unique_name_in_owner = true

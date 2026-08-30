@@ -1,6 +1,7 @@
 extends Control
 
 const ERA_SELECT_SCENE := "res://ui/screens/era_select/era_select.tscn"
+const BIRTHPLACE_SELECT_SCENE := "res://ui/screens/birthplace_select/birthplace_select.tscn"
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_bg.png"
 const PRESS_SCALE := Vector2(0.97, 0.97)
 const PRESS_DURATION := 0.10
@@ -33,6 +34,7 @@ func _ready() -> void:
 	_setup_vignette()
 	_setup_interactive_button(arabia_button)
 	_setup_interactive_button(back_button)
+	arabia_button.pressed.connect(_open_birthplace_select)
 	back_button.pressed.connect(_return_to_era_select)
 	resized.connect(_apply_responsive_layout)
 	_apply_responsive_layout()
@@ -70,6 +72,11 @@ func _tween_button(button: Button, target_scale: Vector2, target_tint: Color, du
 func _return_to_era_select() -> void:
 	await get_tree().create_timer(RELEASE_DURATION).timeout
 	get_tree().change_scene_to_file(ERA_SELECT_SCENE)
+
+
+func _open_birthplace_select() -> void:
+	await get_tree().create_timer(RELEASE_DURATION).timeout
+	get_tree().change_scene_to_file(BIRTHPLACE_SELECT_SCENE)
 
 
 func _update_button_pivot(button: Button) -> void:
