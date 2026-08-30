@@ -2,7 +2,7 @@ extends Control
 
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_bg.png"
 const SAVE_DIR := "user://saves/"
-const GAME_VERSION := "v0.1.0"
+const GAME_VERSION := "v 0.1.0"
 
 @onready var background: TextureRect = %Background
 @onready var vignette: TextureRect = %Vignette
@@ -10,6 +10,7 @@ const GAME_VERSION := "v0.1.0"
 @onready var load_game_button: Button = %LoadGameButton
 @onready var options_button: Button = %OptionsButton
 @onready var credits_button: Button = %CreditsButton
+@onready var store_button: Button = %StoreButton
 @onready var version_label: Label = %VersionLabel
 @onready var placeholder_popup: PopupPanel = %PlaceholderPopup
 
@@ -24,6 +25,7 @@ func _ready() -> void:
 	load_game_button.pressed.connect(_on_load_game_pressed)
 	options_button.pressed.connect(_on_options_pressed)
 	credits_button.pressed.connect(_on_credits_pressed)
+	store_button.pressed.connect(_on_store_pressed)
 
 
 func _setup_background() -> void:
@@ -31,19 +33,21 @@ func _setup_background() -> void:
 		background.texture = load(BACKGROUND_ART_PATH)
 		return
 
+	# Warm gold glow fading to near-black, radiating from the top.
 	var gradient := Gradient.new()
 	gradient.colors = PackedColorArray([
-		Color(0.078, 0.086, 0.157, 1.0),
-		Color(0.31, 0.22, 0.29, 1.0),
-		Color(0.71, 0.47, 0.24, 1.0),
+		Color(0.48, 0.36, 0.18, 1.0),
+		Color(0.1, 0.08, 0.11, 1.0),
+		Color(0.043, 0.035, 0.055, 1.0),
 	])
-	gradient.offsets = PackedFloat32Array([0.0, 0.55, 1.0])
+	gradient.offsets = PackedFloat32Array([0.0, 0.35, 1.0])
 
 	var gradient_texture := GradientTexture2D.new()
 	gradient_texture.gradient = gradient
-	gradient_texture.fill_from = Vector2(0.5, 0.0)
-	gradient_texture.fill_to = Vector2(0.5, 1.0)
-	gradient_texture.width = 4
+	gradient_texture.fill = GradientTexture2D.FILL_RADIAL
+	gradient_texture.fill_from = Vector2(0.5, 0.08)
+	gradient_texture.fill_to = Vector2(0.5, 0.55)
+	gradient_texture.width = 512
 	gradient_texture.height = 512
 	background.texture = gradient_texture
 
@@ -52,13 +56,13 @@ func _setup_vignette() -> void:
 	var gradient := Gradient.new()
 	gradient.colors = PackedColorArray([
 		Color(0.0, 0.0, 0.0, 0.0),
-		Color(0.0, 0.0, 0.0, 0.75),
+		Color(0.0, 0.0, 0.0, 0.4),
 	])
 	gradient.offsets = PackedFloat32Array([0.0, 1.0])
 
 	var gradient_texture := GradientTexture2D.new()
 	gradient_texture.gradient = gradient
-	gradient_texture.fill_from = Vector2(0.5, 0.35)
+	gradient_texture.fill_from = Vector2(0.5, 0.4)
 	gradient_texture.fill_to = Vector2(0.5, 1.0)
 	gradient_texture.width = 4
 	gradient_texture.height = 512
@@ -93,4 +97,8 @@ func _on_options_pressed() -> void:
 
 
 func _on_credits_pressed() -> void:
-	placeholder_popup.show_message("Medieval Life\n\nA text-driven medieval life simulator.")
+	placeholder_popup.show_message("Worldly Life\n\nA text-driven medieval life simulator.")
+
+
+func _on_store_pressed() -> void:
+	placeholder_popup.show_message("There's no store yet —\nand nothing planned to sell.")

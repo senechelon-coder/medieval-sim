@@ -1,83 +1,95 @@
-[gd_resource type="Theme" load_steps=8 format=3]
+[gd_resource type="Theme" load_steps=11 format=3]
 
 [ext_resource type="FontFile" path="res://ui/theme/fonts/Cinzel-Variable.ttf" id="1_cinzel"]
 [ext_resource type="FontFile" path="res://ui/theme/fonts/IMFellEnglish-Regular.ttf" id="2_imfell"]
 
+[sub_resource type="FontVariation" id="FontVariation_title"]
+base_font = ExtResource("1_cinzel")
+spacing_glyph = 10
+
+[sub_resource type="FontVariation" id="FontVariation_button"]
+base_font = ExtResource("1_cinzel")
+spacing_glyph = 5
+
+[sub_resource type="FontVariation" id="FontVariation_version"]
+base_font = ExtResource("1_cinzel")
+spacing_glyph = 4
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_normal"]
-bg_color = Color(0.169, 0.106, 0.067, 0.92)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.788, 0.635, 0.294, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-content_margin_left = 24.0
-content_margin_top = 16.0
-content_margin_right = 24.0
-content_margin_bottom = 16.0
+bg_color = Color(1, 1, 1, 0.0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.75, 0.63, 0.40, 0.85)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_hover"]
-bg_color = Color(0.224, 0.153, 0.094, 0.95)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.898, 0.769, 0.404, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-content_margin_left = 24.0
-content_margin_top = 16.0
-content_margin_right = 24.0
-content_margin_bottom = 16.0
+bg_color = Color(0.85, 0.72, 0.45, 0.08)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.93, 0.84, 0.62, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_pressed"]
-bg_color = Color(0.11, 0.071, 0.043, 1)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.678, 0.545, 0.235, 1)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-content_margin_left = 24.0
-content_margin_top = 16.0
-content_margin_right = 24.0
-content_margin_bottom = 16.0
+bg_color = Color(0.85, 0.72, 0.45, 0.16)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.75, 0.63, 0.40, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_disabled"]
-bg_color = Color(0.145, 0.145, 0.145, 0.55)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.4, 0.4, 0.4, 0.5)
-corner_radius_top_left = 6
-corner_radius_top_right = 6
-corner_radius_bottom_right = 6
-corner_radius_bottom_left = 6
-content_margin_left = 24.0
-content_margin_top = 16.0
-content_margin_right = 24.0
-content_margin_bottom = 16.0
+bg_color = Color(1, 1, 1, 0.0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.45, 0.35, 0.4)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+content_margin_left = 20.0
+content_margin_top = 12.0
+content_margin_right = 20.0
+content_margin_bottom = 12.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.106, 0.071, 0.047, 0.96)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
-border_color = Color(0.788, 0.635, 0.294, 1)
-corner_radius_top_left = 10
-corner_radius_top_right = 10
-corner_radius_bottom_right = 10
-corner_radius_bottom_left = 10
+bg_color = Color(0.055, 0.045, 0.07, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.75, 0.63, 0.40, 0.9)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 content_margin_left = 32.0
 content_margin_top = 24.0
 content_margin_right = 32.0
@@ -85,27 +97,27 @@ content_margin_bottom = 24.0
 
 [resource]
 default_font = ExtResource("2_imfell")
-default_font_size = 34
+default_font_size = 32
 
 TitleLabel/base_type = &"Label"
-TitleLabel/fonts/font = ExtResource("1_cinzel")
-TitleLabel/font_sizes/font_size = 92
-TitleLabel/colors/font_color = Color(0.898, 0.769, 0.404, 1)
-TitleLabel/colors/font_shadow_color = Color(0, 0, 0, 0.6)
+TitleLabel/fonts/font = SubResource("FontVariation_title")
+TitleLabel/font_sizes/font_size = 84
+TitleLabel/colors/font_color = Color(0.85, 0.72, 0.45, 1)
+TitleLabel/colors/font_shadow_color = Color(0, 0, 0, 0.5)
 TitleLabel/constants/shadow_offset_x = 0
-TitleLabel/constants/shadow_offset_y = 4
+TitleLabel/constants/shadow_offset_y = 3
 
 VersionLabel/base_type = &"Label"
-VersionLabel/fonts/font = ExtResource("2_imfell")
-VersionLabel/font_sizes/font_size = 22
-VersionLabel/colors/font_color = Color(0.7, 0.63, 0.5, 0.8)
+VersionLabel/fonts/font = SubResource("FontVariation_version")
+VersionLabel/font_sizes/font_size = 20
+VersionLabel/colors/font_color = Color(0.6, 0.55, 0.45, 0.7)
 
-Button/fonts/font = ExtResource("2_imfell")
-Button/font_sizes/font_size = 40
-Button/colors/font_color = Color(0.898, 0.769, 0.404, 1)
-Button/colors/font_hover_color = Color(1, 0.937, 0.784, 1)
-Button/colors/font_pressed_color = Color(0.788, 0.635, 0.294, 1)
-Button/colors/font_disabled_color = Color(0.55, 0.5, 0.42, 0.55)
+Button/fonts/font = SubResource("FontVariation_button")
+Button/font_sizes/font_size = 26
+Button/colors/font_color = Color(0.85, 0.72, 0.45, 1)
+Button/colors/font_hover_color = Color(0.93, 0.84, 0.62, 1)
+Button/colors/font_pressed_color = Color(0.75, 0.63, 0.40, 1)
+Button/colors/font_disabled_color = Color(0.5, 0.45, 0.35, 0.5)
 Button/styles/normal = SubResource("StyleBoxFlat_btn_normal")
 Button/styles/hover = SubResource("StyleBoxFlat_btn_hover")
 Button/styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
@@ -113,7 +125,7 @@ Button/styles/disabled = SubResource("StyleBoxFlat_btn_disabled")
 Button/styles/focus = SubResource("StyleBoxFlat_btn_hover")
 
 Label/fonts/font = ExtResource("2_imfell")
-Label/colors/font_color = Color(0.914, 0.827, 0.647, 1)
+Label/colors/font_color = Color(0.87, 0.83, 0.76, 1)
 
 Panel/styles/panel = SubResource("StyleBoxFlat_panel")
 

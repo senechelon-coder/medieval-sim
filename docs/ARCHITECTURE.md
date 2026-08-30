@@ -1,4 +1,4 @@
-# Medieval Life Simulator — Architecture & Foundation Plan
+# Worldly Life — Architecture & Foundation Plan
 
 ## Context
 
