@@ -256,6 +256,7 @@ func _ready() -> void:
 	SaveManager.save_game()
 	resized.connect(_apply_layout)
 	location_panel.resized.connect(_position_map_marker)
+	event_placeholder.resized.connect(_scroll_chronicle_to_bottom)
 	_apply_layout()
 	_position_map_marker.call_deferred()
 	_bind_button_feedback.call_deferred()
@@ -630,8 +631,27 @@ func _chronicle_bbcode(entry: String) -> String:
 	return "[center][color=#%s]%s[/color][/center]" % [color, entry]
 
 
+var _chronicle_scroll_pending := false
+
+
 func _scroll_chronicle_to_bottom() -> void:
-	chronicle_scroll.scroll_vertical = int(chronicle_scroll.get_v_scroll_bar().max_value)
+	if _chronicle_scroll_pending:
+		return
+	_chronicle_scroll_pending = true
+	var last_max := -1
+	var stable_frames := 0
+	var safety := 0
+	while stable_frames < 3 and safety < 30:
+		await get_tree().process_frame
+		var current_max := int(chronicle_scroll.get_v_scroll_bar().max_value)
+		if current_max == last_max:
+			stable_frames += 1
+		else:
+			stable_frames = 0
+			last_max = current_max
+		safety += 1
+	chronicle_scroll.scroll_vertical = last_max
+	_chronicle_scroll_pending = false
 
 
 func _starting_occupation() -> String:
