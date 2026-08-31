@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://dqx8m2h5n1kfr"]
+[gd_scene load_steps=16 format=3 uid="uid://dqx8m2h5n1kfr"]
 
 [ext_resource type="Script" path="res://ui/screens/main_menu/main_menu.gd" id="1_main"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2_theme"]
@@ -7,6 +7,63 @@
 [ext_resource type="Script" path="res://ui/screens/main_menu/divider.gd" id="5_divider"]
 [ext_resource type="PackedScene" path="res://ui/components/placeholder_popup.tscn" id="6_popup"]
 [ext_resource type="AudioStream" path="res://audio/ui/soft_ui_click.mp3" id="7_click"]
+[ext_resource type="Texture2D" path="res://art/ui/icons/new_game_compass.svg" id="8_new_game_icon"]
+[ext_resource type="Texture2D" path="res://art/ui/icons/load_game_hourglass.svg" id="9_load_icon"]
+[ext_resource type="Texture2D" path="res://art/ui/icons/options_cog.svg" id="10_options_icon"]
+[ext_resource type="Texture2D" path="res://art/ui/icons/credits_quill.svg" id="11_credits_icon"]
+[ext_resource type="Texture2D" path="res://art/ui/icons/store_scales.svg" id="12_store_icon"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_menu_action_normal"]
+bg_color = Color(0.105882, 0.090196, 0.062745, 0.96)
+border_width_left = 3
+border_width_top = 2
+border_width_right = 3
+border_width_bottom = 2
+border_color = Color(0.501961, 0.376471, 0.176471, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+content_margin_left = 28.0
+content_margin_top = 14.0
+content_margin_right = 28.0
+content_margin_bottom = 14.0
+shadow_color = Color(0, 0, 0, 0.62)
+shadow_size = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_menu_action_hover"]
+bg_color = Color(0.105882, 0.090196, 0.062745, 1)
+border_width_left = 3
+border_width_top = 2
+border_width_right = 3
+border_width_bottom = 2
+border_color = Color(0.721569, 0.541176, 0.231373, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+content_margin_left = 28.0
+content_margin_top = 14.0
+content_margin_right = 28.0
+content_margin_bottom = 14.0
+shadow_color = Color(0.22, 0.12, 0.025, 0.7)
+shadow_size = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_menu_action_pressed"]
+bg_color = Color(0.128, 0.102, 0.058, 1)
+border_width_left = 3
+border_width_top = 2
+border_width_right = 3
+border_width_bottom = 2
+border_color = Color(0.823529, 0.72549, 0.509804, 1)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+content_margin_left = 28.0
+content_margin_top = 15.0
+content_margin_right = 28.0
+content_margin_bottom = 13.0
 
 [node name="MainMenu" type="Control"]
 anchors_preset = 15
@@ -86,10 +143,37 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 theme_override_constants/separation = 0
 
-[node name="LogoImage" type="TextureRect" parent="SafeArea/CompositionCenter/Composition"]
+[node name="LogoStage" type="Control" parent="SafeArea/CompositionCenter/Composition"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
+mouse_filter = 2
+
+[node name="LogoGlow" type="TextureRect" parent="SafeArea/CompositionCenter/Composition/LogoStage"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="LogoImage" type="TextureRect" parent="SafeArea/CompositionCenter/Composition/LogoStage"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 18.0
+offset_top = 18.0
+offset_right = -18.0
+offset_bottom = -18.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 texture = ExtResource("3_logo")
 expand_mode = 1
 stretch_mode = 5
@@ -98,8 +182,15 @@ stretch_mode = 5
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"TitleLabel"
+theme_override_colors/font_color = Color(0.847059, 0.776471, 0.611765, 1)
+theme_override_colors/font_outline_color = Color(0.05098, 0.047059, 0.035294, 0.95)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.82)
+theme_override_constants/outline_size = 2
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 4
 text = "WORLDLY LIFE"
 horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="LogoToDividerGap" type="Control" parent="SafeArea/CompositionCenter/Composition"]
 unique_name_in_owner = true
@@ -124,28 +215,71 @@ theme_override_constants/separation = 16
 [node name="NewGameButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_colors/font_color = Color(0.847059, 0.776471, 0.611765, 1)
+theme_override_colors/font_hover_color = Color(0.847059, 0.776471, 0.611765, 1)
+theme_override_colors/font_pressed_color = Color(0.823529, 0.72549, 0.509804, 1)
+theme_override_constants/icon_max_width = 46
+theme_override_constants/outline_size = 1
+theme_override_styles/normal = SubResource("StyleBoxFlat_menu_action_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_menu_action_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_menu_action_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_menu_action_hover")
 text = "NEW GAME"
+icon = ExtResource("8_new_game_icon")
+expand_icon = true
 
 [node name="LoadGameButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
 layout_mode = 2
 disabled = true
+theme_override_constants/icon_max_width = 46
+theme_override_constants/outline_size = 1
+theme_override_styles/normal = SubResource("StyleBoxFlat_menu_action_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_menu_action_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_menu_action_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_menu_action_hover")
 text = "LOAD GAME"
+icon = ExtResource("9_load_icon")
+expand_icon = true
 
 [node name="OptionsButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/icon_max_width = 46
+theme_override_constants/outline_size = 1
+theme_override_styles/normal = SubResource("StyleBoxFlat_menu_action_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_menu_action_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_menu_action_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_menu_action_hover")
 text = "OPTIONS"
+icon = ExtResource("10_options_icon")
+expand_icon = true
 
 [node name="CreditsButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/icon_max_width = 46
+theme_override_constants/outline_size = 1
+theme_override_styles/normal = SubResource("StyleBoxFlat_menu_action_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_menu_action_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_menu_action_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_menu_action_hover")
 text = "CREDITS"
+icon = ExtResource("11_credits_icon")
+expand_icon = true
 
 [node name="StoreButton" type="Button" parent="SafeArea/CompositionCenter/Composition/ButtonColumn"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_constants/icon_max_width = 46
+theme_override_constants/outline_size = 1
+theme_override_styles/normal = SubResource("StyleBoxFlat_menu_action_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_menu_action_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_menu_action_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_menu_action_hover")
 text = "STORE"
+icon = ExtResource("12_store_icon")
+expand_icon = true
 
 [node name="MenuToFooterGap" type="Control" parent="SafeArea/CompositionCenter/Composition"]
 unique_name_in_owner = true
@@ -156,6 +290,25 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("5_divider")
+
+[node name="FooterTaglineGap" type="Control" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="FooterTagline" type="Label" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+theme_override_colors/font_color = Color(0.721569, 0.541176, 0.231373, 1)
+text = "EVERY LIFE LEAVES A MARK ON HISTORY"
+horizontal_alignment = 1
+
+[node name="FooterQuestion" type="Label" parent="SafeArea/CompositionCenter/Composition"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.823529, 0.72549, 0.509804, 1)
+text = "What legacy will you leave behind?"
+horizontal_alignment = 1
 
 [node name="VersionGap" type="Control" parent="SafeArea/CompositionCenter/Composition"]
 unique_name_in_owner = true
