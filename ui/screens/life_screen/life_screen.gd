@@ -78,6 +78,9 @@ var next_year_label: Label
 @onready var header_wealth_value: Label = %HeaderWealthValue
 @onready var header_standing_value: Label = %HeaderStandingValue
 @onready var header_trait_value: Label = %HeaderTraitValue
+@onready var char_strip_health_value: Label = %CharStripHealthValue
+@onready var char_strip_standing_value: Label = %CharStripStandingValue
+@onready var char_strip_life_stage_value: Label = %CharStripLifeStageValue
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
 @onready var divider_top: Control = $SafeArea/Center/Composition/DividerTop
@@ -218,7 +221,7 @@ func _ready() -> void:
 	_refresh_character_display()
 	_refresh_stats()
 	homeland_label.text = homeland
-	occupation_value.text = _starting_occupation()
+	_set_occupation_display(_starting_occupation())
 	portrait.female = character_sex == "FEMALE"
 	portrait.variant_seed = appearance_seed
 	if WorldState.player.chronicle.is_empty():
@@ -413,7 +416,7 @@ func _advance_year() -> void:
 	WorldState.advance_local_year(TimeManager.current_date.year)
 	_sync_character_state()
 	_refresh_character_display()
-	occupation_value.text = _starting_occupation()
+	_set_occupation_display(_starting_occupation())
 	_apply_annual_income()
 	if _roll_for_death():
 		_handle_death()
@@ -455,7 +458,7 @@ func _choose_upbringing(button: Button) -> void:
 			consequence = "+3 Health • Promising standing"
 	upbringing_panel.hide()
 	advance_button.disabled = false
-	occupation_value.text = _starting_occupation()
+	_set_occupation_display(_starting_occupation())
 	_refresh_stats()
 	_append_chronicle("Your family begins raising you through %s.\n%s" % [upbringing.to_lower(), consequence])
 	_sync_character_state()
@@ -471,6 +474,16 @@ func _refresh_stats() -> void:
 	header_wealth_value.text = str(wealth)
 	header_standing_value.text = standing
 	header_trait_value.text = primary_trait
+	char_strip_health_value.text = _health_label(health)
+	char_strip_standing_value.text = standing
+
+
+func _health_label(value: int) -> String:
+	if value >= 85: return "Excellent"
+	if value >= 65: return "Good"
+	if value >= 45: return "Fair"
+	if value >= 25: return "Poor"
+	return "Critical"
 
 
 func _show_decision(event: Dictionary) -> void:
@@ -678,6 +691,11 @@ func _starting_occupation() -> String:
 		_: return "Child"
 
 
+func _set_occupation_display(text: String) -> void:
+	occupation_value.text = text
+	char_strip_life_stage_value.text = text
+
+
 func _choose_apprenticeship(button: Button) -> void:
 	var path: String = button.get_meta("path", "")
 	match path:
@@ -702,7 +720,7 @@ func _choose_apprenticeship(button: Button) -> void:
 			_append_chronicle("You begin disciplined training in weapons, riding, and service.\nOccupation: Martial Apprentice • +3 Health • Disciplined standing")
 	apprenticeship_panel.hide()
 	advance_button.disabled = false
-	occupation_value.text = _starting_occupation()
+	_set_occupation_display(_starting_occupation())
 	_refresh_stats()
 	_sync_character_state()
 
@@ -716,7 +734,7 @@ func _choose_occupation(button: Button) -> void:
 	standing = occupation.standing
 	occupation_panel.hide()
 	advance_button.disabled = false
-	occupation_value.text = occupation.name
+	_set_occupation_display(occupation.name)
 	_refresh_stats()
 	_append_chronicle("You begin work as a %s.\n%s • Annual wage: %d Wealth" % [occupation.name, occupation.description, occupation.annual_wage])
 	_sync_character_state()

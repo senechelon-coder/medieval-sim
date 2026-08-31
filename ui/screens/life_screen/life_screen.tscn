@@ -293,8 +293,9 @@ theme_override_constants/separation = 12
 
 [node name="Portrait" type="Control" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(84, 96)
+custom_minimum_size = Vector2(92, 92)
 layout_mode = 2
+size_flags_vertical = 4
 script = ExtResource("4")
 
 [node name="Identity" type="VBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row"]
@@ -306,9 +307,12 @@ theme_override_constants/separation = 4
 [node name="NameLabel" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/Identity"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_type_variation = &"BrandLabel"
+theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.94, 0.8, 0.52, 1)
 text = "Unnamed"
-autowrap_mode = 2
+clip_text = true
+autowrap_mode = 0
 
 [node name="IdentityRow" type="HBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/Identity"]
 layout_mode = 2
@@ -333,6 +337,98 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"VersionLabel"
 text = "Medina  •  632 AD"
+
+[node name="StatusDivider" type="ColorRect" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row"]
+custom_minimum_size = Vector2(2, 0)
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.56, 0.43, 0.24, 0.55)
+
+[node name="StatusColumn" type="VBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row"]
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_constants/separation = 3
+
+[node name="HealthRow" type="HBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="HealthIcon" type="Control" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn/HealthRow"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("8")
+icon_type = "health"
+
+[node name="HealthLabel" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn/HealthRow"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+theme_override_font_sizes/font_size = 12
+text = "HEALTH"
+
+[node name="CharStripHealthValue" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn/HealthRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.9, 0.85, 0.72, 1)
+horizontal_alignment = 2
+clip_text = true
+text = "Good"
+
+[node name="StandingRow" type="HBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="StandingIcon" type="Control" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn/StandingRow"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("8")
+icon_type = "standing"
+
+[node name="StandingLabel" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn/StandingRow"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+theme_override_font_sizes/font_size = 12
+text = "STANDING"
+
+[node name="CharStripStandingValue" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn/StandingRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.9, 0.85, 0.72, 1)
+horizontal_alignment = 2
+clip_text = true
+text = "Unknown"
+
+[node name="LifeStageRow" type="HBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="LifeStageIcon" type="Control" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn/LifeStageRow"]
+custom_minimum_size = Vector2(14, 14)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("8")
+icon_type = "occupation"
+
+[node name="LifeStageLabel" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn/LifeStageRow"]
+layout_mode = 2
+theme_type_variation = &"FieldLabel"
+theme_override_font_sizes/font_size = 12
+text = "LIFE STAGE"
+
+[node name="CharStripLifeStageValue" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/StatusColumn/LifeStageRow"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.9, 0.85, 0.72, 1)
+horizontal_alignment = 2
+clip_text = true
+text = "Child"
 
 [node name="StatsPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
 layout_mode = 2
