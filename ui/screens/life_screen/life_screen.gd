@@ -405,12 +405,10 @@ func _season_name(month: int) -> String:
 func _advance_year() -> void:
 	TimeManager.advance_year()
 	character_age += 1
-	var local_news := WorldState.advance_local_year(TimeManager.current_date.year)
+	WorldState.advance_local_year(TimeManager.current_date.year)
 	_sync_character_state()
 	_refresh_character_display()
 	occupation_value.text = _starting_occupation()
-	for news in local_news:
-		_append_chronicle("Local news, %s\n%s" % [TimeManager.year_label(), news])
 	_apply_annual_income()
 	if _roll_for_death():
 		_handle_death()
