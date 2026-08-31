@@ -1100,18 +1100,18 @@ func _perform_local_action(action_id: String) -> void:
 
 func _apply_layout() -> void:
 	var canvas := Vector2(get_window().content_scale_size)
-	if canvas.x <= 0.0: canvas = Vector2(1920, 1080)
-	var horizontal_edge := clampf(canvas.x * 0.035, 48.0, 84.0)
-	var top_edge := clampf(canvas.y * 0.022, 22.0, 34.0)
-	var bottom_edge := clampf(canvas.y * 0.034, 32.0, 46.0)
+	if canvas.x <= 0.0: canvas = Vector2(1080, 1920)
+	var horizontal_edge := clampf(canvas.x * 0.045, 24.0, 72.0)
+	var top_edge := clampf(canvas.y * 0.018, 20.0, 34.0)
+	var bottom_edge := clampf(canvas.y * 0.024, 26.0, 42.0)
 	safe_area.add_theme_constant_override("margin_left", roundi(horizontal_edge))
 	safe_area.add_theme_constant_override("margin_right", roundi(horizontal_edge))
 	safe_area.add_theme_constant_override("margin_top", roundi(top_edge))
 	safe_area.add_theme_constant_override("margin_bottom", roundi(bottom_edge))
-	var width := clampf((canvas.x - horizontal_edge * 2.0) * 0.985, 1100.0, 2240.0)
+	var width := clampf((canvas.x - horizontal_edge * 2.0) * 0.98, 480.0, 1000.0)
 	composition.custom_minimum_size.x = width
-	portrait.custom_minimum_size = Vector2.ONE * clampf(canvas.x * 0.075, 132.0, 156.0)
-	location_panel.custom_minimum_size.y = clampf(canvas.y * 0.48, 440.0, 560.0)
+	portrait.custom_minimum_size = Vector2.ONE * clampf(canvas.x * 0.12, 132.0, 176.0)
+	location_panel.custom_minimum_size.y = clampf(canvas.y * 0.3, 440.0, 700.0)
 	chronicle_scroll.custom_minimum_size.y = clampf(canvas.y * 0.1, 96.0, 120.0)
 	var age_button_size := clampf(canvas.y * 0.125, 124.0, 142.0)
 	advance_button.custom_minimum_size = Vector2.ONE * age_button_size

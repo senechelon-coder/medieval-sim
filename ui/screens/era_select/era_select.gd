@@ -84,7 +84,7 @@ func _update_button_pivot(button: Button) -> void:
 func _apply_responsive_layout() -> void:
 	var canvas_size := Vector2(get_window().content_scale_size)
 	if canvas_size.x <= 0.0 or canvas_size.y <= 0.0:
-		canvas_size = Vector2(1920.0, 1080.0)
+		canvas_size = Vector2(1080.0, 1920.0)
 	var edge_padding := clampf(canvas_size.x * 0.045, 24.0, 72.0)
 	for margin_name in [&"margin_left", &"margin_top", &"margin_right", &"margin_bottom"]:
 		safe_area.add_theme_constant_override(margin_name, roundi(edge_padding))

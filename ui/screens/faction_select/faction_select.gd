@@ -107,7 +107,7 @@ func _set_pivot(button: Button) -> void:
 
 func _apply_layout() -> void:
 	var canvas := Vector2(get_window().content_scale_size)
-	if canvas.x <= 0.0: canvas = Vector2(1920, 1080)
+	if canvas.x <= 0.0: canvas = Vector2(1080, 1920)
 	var edge := clampf(canvas.x * 0.045, 26.0, 54.0)
 	for side in [&"margin_left", &"margin_top", &"margin_right", &"margin_bottom"]:
 		safe_area.add_theme_constant_override(side, roundi(edge))
