@@ -69,6 +69,8 @@ var landscape_events: VBoxContainer
 var landscape_time: HBoxContainer
 var season_label: Label
 var next_year_label: Label
+var _base_font_sizes: Dictionary = {}
+var _base_icon_sizes: Dictionary = {}
 
 @onready var background: TextureRect = %Background
 @onready var era_label: Label = %Era
@@ -81,6 +83,9 @@ var next_year_label: Label
 @onready var char_strip_health_value: Label = %CharStripHealthValue
 @onready var char_strip_standing_value: Label = %CharStripStandingValue
 @onready var char_strip_life_stage_value: Label = %CharStripLifeStageValue
+@onready var header_left_section: Control = %LeftSection
+@onready var header_center_section: Control = %CenterSection
+@onready var header_right_section: Control = %RightSection
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
 @onready var divider_top: Control = $SafeArea/Center/Composition/DividerTop
@@ -1118,16 +1123,36 @@ func _apply_layout() -> void:
 	safe_area.add_theme_constant_override("margin_right", roundi(horizontal_edge))
 	safe_area.add_theme_constant_override("margin_top", roundi(top_edge))
 	safe_area.add_theme_constant_override("margin_bottom", roundi(bottom_edge))
-	var width := clampf((canvas.x - horizontal_edge * 2.0) * 0.98, 480.0, 1000.0)
+	var width := clampf(canvas.x * 0.76, 480.0, 1800.0)
 	composition.custom_minimum_size.x = width
-	portrait.custom_minimum_size = Vector2.ONE * clampf(canvas.x * 0.08, 78.0, 100.0)
-	location_panel.custom_minimum_size.y = 60.0
+	var text_scale := clampf(1.15 + maxf(width - 820.0, 0.0) / 1300.0, 1.15, 1.85)
+	portrait.custom_minimum_size = Vector2.ONE * clampf(canvas.x * 0.08, 78.0, 100.0) * text_scale
+	character_panel.custom_minimum_size.y = 116.0 * text_scale
+	location_panel.custom_minimum_size.y = 60.0 * text_scale
 	chronicle_scroll.custom_minimum_size.y = clampf(canvas.y * 0.1, 96.0, 120.0)
 	var age_button_size := clampf(canvas.y * 0.125, 124.0, 142.0)
 	advance_button.custom_minimum_size = Vector2.ONE * age_button_size
-	name_label.add_theme_font_size_override("font_size", roundi(clampf(canvas.x * 0.019, 30.0, 38.0)))
+	name_label.add_theme_font_size_override("font_size", roundi(clampf(canvas.x * 0.019, 30.0, 38.0) * text_scale))
+	_scale_readability(text_scale)
 	for button in find_children("*", "Button", true, false):
 		(button as Button).pivot_offset = (button as Button).size * 0.5
+
+
+func _scale_readability(scale: float) -> void:
+	for container in [header_left_section, header_center_section, header_right_section, character_panel, stats_panel, location_panel]:
+		for label in container.find_children("*", "Label", true, false):
+			var lbl := label as Label
+			if lbl == name_label:
+				continue
+			if not _base_font_sizes.has(lbl):
+				var current_size := lbl.get_theme_font_size(&"font_size")
+				_base_font_sizes[lbl] = current_size if current_size > 0 else 18
+			lbl.add_theme_font_size_override("font_size", roundi(int(_base_font_sizes[lbl]) * scale))
+		for control in container.find_children("*", "Control", true, false):
+			if control is StatIcon or control is CompassEmblem:
+				if not _base_icon_sizes.has(control):
+					_base_icon_sizes[control] = control.custom_minimum_size
+				control.custom_minimum_size = (_base_icon_sizes[control] as Vector2) * scale
 
 
 func _setup_background() -> void:
