@@ -835,13 +835,14 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.01, 0.008, 0.012, 0.94)
 
-[node name="Center" type="CenterContainer" parent="WorldOverlay"]
+[node name="Center" type="ScrollContainer" parent="WorldOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
 
 [node name="PanelCenter" type="CenterContainer" parent="WorldOverlay/Center"]
 layout_mode = 2
@@ -1101,13 +1102,14 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.01, 0.008, 0.012, 0.94)
 
-[node name="Center" type="CenterContainer" parent="BattleOverlay"]
+[node name="Center" type="ScrollContainer" parent="BattleOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
 
 [node name="PanelCenter" type="CenterContainer" parent="BattleOverlay/Center"]
 layout_mode = 2
@@ -1276,13 +1278,14 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.01, 0.008, 0.012, 0.94)
 
-[node name="Center" type="CenterContainer" parent="CharacterOverlay"]
+[node name="Center" type="ScrollContainer" parent="CharacterOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
 
 [node name="PanelCenter" type="CenterContainer" parent="CharacterOverlay/Center"]
 layout_mode = 2
@@ -1410,13 +1413,14 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.01, 0.008, 0.012, 0.96)
 
-[node name="Center" type="CenterContainer" parent="DeathOverlay"]
+[node name="Center" type="ScrollContainer" parent="DeathOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
 
 [node name="PanelCenter" type="CenterContainer" parent="DeathOverlay/Center"]
 layout_mode = 2
@@ -1490,13 +1494,14 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.01, 0.008, 0.012, 0.94)
 
-[node name="Center" type="CenterContainer" parent="ActivitiesOverlay"]
+[node name="Center" type="ScrollContainer" parent="ActivitiesOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
 
 [node name="PanelCenter" type="CenterContainer" parent="ActivitiesOverlay/Center"]
 layout_mode = 2

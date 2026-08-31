@@ -133,7 +133,7 @@ var next_year_label: Label
 @onready var more_button: Button = %More
 @onready var character_button: Button = %Character
 @onready var character_overlay: Control = %CharacterOverlay
-@onready var character_scroll: CenterContainer = $CharacterOverlay/Center
+@onready var character_scroll: ScrollContainer = $CharacterOverlay/Center
 @onready var character_overlay_portrait: CharacterPortrait = %CharacterOverlayPortrait
 @onready var character_summary_value: Label = %CharacterSummaryValue
 @onready var character_status_value: Label = %CharacterStatusValue
@@ -142,7 +142,7 @@ var next_year_label: Label
 @onready var close_character_button: Button = %CloseCharacterButton
 @onready var activities_button: Button = %Activities
 @onready var activities_overlay: Control = %ActivitiesOverlay
-@onready var activities_scroll: CenterContainer = $ActivitiesOverlay/Center
+@onready var activities_scroll: ScrollContainer = $ActivitiesOverlay/Center
 @onready var activity_context: Label = %ActivityContext
 @onready var activity_occupation_title: Label = %ActivityOccupationTitle
 @onready var activity_occupation_description: Label = %ActivityOccupationDescription
@@ -157,7 +157,7 @@ var next_year_label: Label
 @onready var close_activities_button: Button = %CloseActivitiesButton
 @onready var world_button: Button = %World
 @onready var world_overlay: Control = %WorldOverlay
-@onready var world_scroll: CenterContainer = $WorldOverlay/Center
+@onready var world_scroll: ScrollContainer = $WorldOverlay/Center
 @onready var world_realm_value: Label = %WorldRealmValue
 @onready var world_province_value: Label = %WorldProvinceValue
 @onready var world_settlement_value: Label = %WorldSettlementValue
@@ -179,6 +179,7 @@ var next_year_label: Label
 @onready var resume_button: Button = %ResumeButton
 @onready var main_menu_button: Button = %MainMenuButton
 @onready var death_overlay: Control = %DeathOverlay
+@onready var death_scroll: ScrollContainer = $DeathOverlay/Center
 @onready var death_epitaph_value: Label = %DeathEpitaphValue
 @onready var death_summary_value: Label = %DeathSummaryValue
 @onready var return_to_menu_button: Button = %ReturnToMenuButton
@@ -188,7 +189,7 @@ var next_year_label: Label
 @onready var join_levy_button: Button = %JoinLevyButton
 @onready var decline_levy_button: Button = %DeclineLevyButton
 @onready var battle_overlay: Control = %BattleOverlay
-@onready var battle_scroll: CenterContainer = $BattleOverlay/Center
+@onready var battle_scroll: ScrollContainer = $BattleOverlay/Center
 @onready var battle_title_value: Label = %BattleTitleValue
 @onready var battle_time_value: Label = %BattleTimeValue
 @onready var battle_narration_value: Label = %BattleNarrationValue
@@ -1156,10 +1157,22 @@ func _reveal_overlay(overlay: Control) -> void:
 		var child := overlay.get_node_or_null(NodePath(child_name))
 		if child is Control:
 			_force_full_rect(child)
+	_sync_panel_center.call_deferred(overlay)
 	overlay.modulate.a = 0.0
 	overlay.show()
 	var tween := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(overlay, "modulate:a", 1.0, 0.14)
+
+
+func _sync_panel_center(overlay: Control) -> void:
+	var center := overlay.get_node_or_null(NodePath("Center"))
+	if not (center is Control):
+		return
+	var panel_center := center.get_node_or_null(NodePath("PanelCenter"))
+	if panel_center is Control:
+		panel_center.custom_minimum_size = center.size
+		if not center.resized.is_connected(_sync_panel_center.bind(overlay)):
+			center.resized.connect(_sync_panel_center.bind(overlay))
 
 
 func _force_full_rect(control: Control) -> void:
