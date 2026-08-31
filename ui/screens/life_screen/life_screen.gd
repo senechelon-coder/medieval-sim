@@ -61,14 +61,6 @@ var battle_rival_name := ""
 var battle_log: Array[String] = []
 var battle_beats: Array[Dictionary] = []
 var button_tweens: Dictionary = {}
-var landscape_main: HBoxContainer
-var landscape_left: VBoxContainer
-var landscape_world: VBoxContainer
-var landscape_bottom: HBoxContainer
-var landscape_events: VBoxContainer
-var landscape_time: HBoxContainer
-var season_label: Label
-var next_year_label: Label
 var _base_font_sizes: Dictionary = {}
 var _base_icon_sizes: Dictionary = {}
 
@@ -88,7 +80,6 @@ var _base_icon_sizes: Dictionary = {}
 @onready var header_right_section: Control = %RightSection
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
-@onready var divider_top: Control = $SafeArea/Center/Composition/DividerTop
 @onready var character_panel: PanelContainer = $SafeArea/Center/Composition/CharacterPanel
 @onready var portrait: CharacterPortrait = %Portrait
 @onready var character_backdrop: TextureRect = %CharacterBackdrop
@@ -108,8 +99,6 @@ var _base_icon_sizes: Dictionary = {}
 @onready var occupation_value: Label = %OccupationValue
 @onready var life_stage_value: Label = %LifeStageValue
 @onready var stats_panel: PanelContainer = $SafeArea/Center/Composition/StatsPanel
-@onready var chronicle_title: Label = $SafeArea/Center/Composition/ChronicleTitle
-@onready var chronicle_panel: PanelContainer = $SafeArea/Center/Composition/ChroniclePanel
 @onready var event_placeholder: RichTextLabel = %EventPlaceholder
 @onready var chronicle_scroll: ScrollContainer = %ChronicleScroll
 @onready var advance_button: Button = %AdvanceButton
@@ -273,95 +262,6 @@ func _ready() -> void:
 	_scroll_chronicle_to_bottom.call_deferred()
 
 
-func _build_landscape_layout() -> void:
-	landscape_main = HBoxContainer.new()
-	landscape_main.name = "LandscapeMain"
-	landscape_main.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	landscape_main.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	landscape_main.add_theme_constant_override("separation", 18)
-
-	landscape_left = VBoxContainer.new()
-	landscape_left.name = "CharacterColumn"
-	landscape_left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	landscape_left.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	landscape_left.size_flags_stretch_ratio = 0.25
-	landscape_left.add_theme_constant_override("separation", 10)
-
-	landscape_world = VBoxContainer.new()
-	landscape_world.name = "WorldColumn"
-	landscape_world.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	landscape_world.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	landscape_world.size_flags_stretch_ratio = 0.75
-	landscape_world.add_theme_constant_override("separation", 8)
-
-	composition.add_child(landscape_main)
-	composition.move_child(landscape_main, divider_top.get_index() + 1)
-	landscape_main.add_child(landscape_left)
-	landscape_main.add_child(landscape_world)
-	character_panel.reparent(landscape_left)
-	stats_panel.reparent(landscape_left)
-	location_panel.reparent(landscape_world)
-
-	landscape_bottom = HBoxContainer.new()
-	landscape_bottom.name = "GameplayStrip"
-	landscape_bottom.custom_minimum_size.y = 158
-	landscape_bottom.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	landscape_bottom.add_theme_constant_override("separation", 18)
-	composition.add_child(landscape_bottom)
-	composition.move_child(landscape_bottom, landscape_main.get_index() + 1)
-
-	landscape_events = VBoxContainer.new()
-	landscape_events.name = "RecentEvents"
-	landscape_events.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	landscape_events.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	landscape_events.size_flags_stretch_ratio = 0.72
-	landscape_events.add_theme_constant_override("separation", 4)
-	landscape_bottom.add_child(landscape_events)
-	chronicle_title.reparent(landscape_events)
-	chronicle_panel.reparent(landscape_events)
-	chronicle_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-
-	landscape_time = HBoxContainer.new()
-	landscape_time.name = "TimeControls"
-	landscape_time.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	landscape_time.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	landscape_time.size_flags_stretch_ratio = 0.28
-	landscape_time.add_theme_constant_override("separation", 12)
-	landscape_bottom.add_child(landscape_time)
-	advance_button.reparent(landscape_time)
-	advance_button.text = "⌛\nAGE UP"
-	advance_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	advance_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	_style_age_button()
-
-	var time_panel := PanelContainer.new()
-	time_panel.name = "DatePanel"
-	time_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	time_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	landscape_time.add_child(time_panel)
-	var time_margin := MarginContainer.new()
-	time_margin.add_theme_constant_override("margin_left", 16)
-	time_margin.add_theme_constant_override("margin_top", 12)
-	time_margin.add_theme_constant_override("margin_right", 16)
-	time_margin.add_theme_constant_override("margin_bottom", 12)
-	time_panel.add_child(time_margin)
-	var date_column := VBoxContainer.new()
-	date_column.alignment = BoxContainer.ALIGNMENT_CENTER
-	date_column.add_theme_constant_override("separation", 10)
-	time_margin.add_child(date_column)
-	season_label = Label.new()
-	season_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	season_label.add_theme_color_override("font_color", Color(0.72, 0.62, 0.42))
-	season_label.add_theme_font_size_override("font_size", 18)
-	date_column.add_child(season_label)
-	next_year_label = Label.new()
-	next_year_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	next_year_label.add_theme_color_override("font_color", Color(0.92, 0.78, 0.48))
-	next_year_label.add_theme_font_size_override("font_size", 22)
-	date_column.add_child(next_year_label)
-	_refresh_time_panel()
-
-
 func _style_age_button() -> void:
 	var normal := StyleBoxFlat.new()
 	normal.bg_color = Color(0.58, 0.4, 0.14, 1.0)
@@ -396,23 +296,6 @@ func _style_decision_panel() -> void:
 	$DecisionOverlay/Center/DecisionPanel/Margin/Content/Eyebrow.add_theme_color_override("font_color", Color(0.34, 0.22, 0.1, 1.0))
 
 
-func _refresh_time_panel() -> void:
-	if season_label == null or next_year_label == null:
-		return
-	season_label.text = "%s\nCURRENT YEAR  •  %s" % [_season_name(TimeManager.current_date.month), TimeManager.year_label()]
-	next_year_label.text = "NEXT YEAR\n%d AD" % (TimeManager.current_date.year + 1)
-
-
-func _season_name(month: int) -> String:
-	if month in [3, 4, 5]:
-		return "SPRING"
-	if month in [6, 7, 8]:
-		return "SUMMER"
-	if month in [9, 10, 11]:
-		return "AUTUMN"
-	return "WINTER"
-
-
 func _advance_year() -> void:
 	TimeManager.advance_year()
 	character_age += 1
@@ -437,7 +320,6 @@ func _refresh_character_display() -> void:
 	life_stage_value.text = _life_stage_label(character_age)
 	activities_button.disabled = character_age < 16
 	map_context_title.text = "%s  •  %s" % [str(HOMELAND_REGION.get(homeland, "YOUR HOMELAND")), TimeManager.year_label()]
-	_refresh_time_panel()
 
 
 func _choose_upbringing(button: Button) -> void:

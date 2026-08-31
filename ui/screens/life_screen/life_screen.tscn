@@ -753,18 +753,15 @@ color = Color(0.01, 0.008, 0.012, 0.28)
 
 [node name="Center" type="CenterContainer" parent="DecisionOverlay"]
 layout_mode = 1
-anchors_preset = 0
-anchor_left = 0.34
-anchor_top = 0.06
+anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 0.78
-offset_right = -34.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
 [node name="DecisionPanel" type="PanelContainer" parent="DecisionOverlay/Center"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(720, 0)
+custom_minimum_size = Vector2(860, 0)
 layout_mode = 2
 
 [node name="Margin" type="MarginContainer" parent="DecisionOverlay/Center/DecisionPanel"]
@@ -1194,7 +1191,7 @@ horizontal_scroll_mode = 0
 layout_mode = 2
 
 [node name="Panel" type="PanelContainer" parent="WorldOverlay/Center/PanelCenter"]
-custom_minimum_size = Vector2(1480, 0)
+custom_minimum_size = Vector2(900, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
@@ -1461,7 +1458,7 @@ horizontal_scroll_mode = 0
 layout_mode = 2
 
 [node name="Panel" type="PanelContainer" parent="BattleOverlay/Center/PanelCenter"]
-custom_minimum_size = Vector2(1120, 0)
+custom_minimum_size = Vector2(900, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
@@ -1637,7 +1634,7 @@ horizontal_scroll_mode = 0
 layout_mode = 2
 
 [node name="Panel" type="PanelContainer" parent="CharacterOverlay/Center/PanelCenter"]
-custom_minimum_size = Vector2(1120, 0)
+custom_minimum_size = Vector2(900, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 
@@ -1853,7 +1850,7 @@ horizontal_scroll_mode = 0
 layout_mode = 2
 
 [node name="Panel" type="PanelContainer" parent="ActivitiesOverlay/Center/PanelCenter"]
-custom_minimum_size = Vector2(1380, 0)
+custom_minimum_size = Vector2(900, 0)
 layout_mode = 2
 size_flags_horizontal = 4
 

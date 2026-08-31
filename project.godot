@@ -30,6 +30,9 @@ SaveManager="*res://core/save/save_manager.gd"
 
 window/size/viewport_width=1080
 window/size/viewport_height=1920
+window/size/window_width_override=360
+window/size/window_height_override=640
+window/size/resizable=false
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation="portrait"
