@@ -1,7 +1,6 @@
 extends Control
 
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
-const LOAD_GAME_SCENE := "res://ui/screens/load_game/load_game.tscn"
 const GAME_VERSION := "v 0.1.0"
 const BUTTON_PRESS_SCALE := Vector2(0.97, 0.97)
 const BUTTON_PRESS_DURATION := 0.10
@@ -36,16 +35,12 @@ var button_tweens: Dictionary = {}
 func _ready() -> void:
 	_setup_background()
 	_setup_vignette()
-	_setup_load_game_availability()
+	_disable_unbuilt_menu_routes()
 	version_label.text = GAME_VERSION
 	resized.connect(_apply_responsive_layout)
 	_apply_responsive_layout()
 
 	_setup_menu_button(new_game_button, _on_new_game_pressed)
-	_setup_menu_button(load_game_button, _on_load_game_pressed)
-	_setup_menu_button(options_button, _on_options_pressed)
-	_setup_menu_button(credits_button, _on_credits_pressed)
-	_setup_menu_button(store_button, _on_store_pressed)
 	_update_button_pivots.call_deferred()
 
 
@@ -135,12 +130,12 @@ func _apply_responsive_layout() -> void:
 
 	button_column.custom_minimum_size = Vector2(button_width, 0.0)
 	button_column.add_theme_constant_override("separation", roundi(button_gap))
-	for button in [new_game_button, load_game_button, options_button, credits_button, store_button]:
+	for button in [new_game_button]:
 		button.custom_minimum_size = Vector2(button_width, button_height)
 		button.add_theme_font_size_override("font_size", button_font_size)
 	_update_button_pivots.call_deferred()
 
-	var menu_height := button_height * 5.0 + button_gap * 4.0
+	var menu_height := button_height
 	var detail_height := clampf(available_height * 0.12, 110.0, 190.0)
 	var logo_height_budget := available_height * 0.84 - menu_height - detail_height
 	var logo_minimum := minf(300.0, available_height * 0.30)
@@ -205,16 +200,14 @@ func _setup_vignette() -> void:
 	vignette.texture = gradient_texture
 
 
-func _setup_load_game_availability() -> void:
-	load_game_button.disabled = not SaveManager.has_save()
+func _disable_unbuilt_menu_routes() -> void:
+	for button in [load_game_button, options_button, credits_button, store_button]:
+		button.disabled = true
+		button.hide()
 
 
 func _on_new_game_pressed() -> void:
 	get_tree().change_scene_to_file("res://ui/screens/era_select/era_select.tscn")
-
-
-func _on_load_game_pressed() -> void:
-	get_tree().change_scene_to_file(LOAD_GAME_SCENE)
 
 
 func _on_options_pressed() -> void:

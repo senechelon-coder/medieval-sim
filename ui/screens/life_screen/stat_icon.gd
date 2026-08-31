@@ -30,6 +30,10 @@ func _draw() -> void:
 		"trait": _draw_gem(w, h, line_w)
 		"occupation": _draw_tools(w, h, line_w)
 		"life_stage": _draw_house(w, h, line_w)
+		"life": _draw_tree(w, h, line_w)
+		"world": _draw_world(w, h, line_w)
+		"character": _draw_person(w, h, line_w)
+		"more": _draw_grid(w, h)
 
 
 func _draw_hourglass(w: float, h: float, line_w: float) -> void:
@@ -96,3 +100,33 @@ func _draw_house(w: float, h: float, line_w: float) -> void:
 	draw_line(Vector2(w * 0.44, h * 0.86), Vector2(w * 0.44, h * 0.6), icon_color, line_w * 0.8)
 	draw_line(Vector2(w * 0.56, h * 0.86), Vector2(w * 0.56, h * 0.6), icon_color, line_w * 0.8)
 	draw_line(Vector2(w * 0.44, h * 0.6), Vector2(w * 0.56, h * 0.6), icon_color, line_w * 0.8)
+
+
+func _draw_tree(w: float, h: float, line_w: float) -> void:
+	draw_line(Vector2(w * 0.5, h * 0.38), Vector2(w * 0.5, h * 0.9), icon_color, line_w)
+	draw_arc(Vector2(w * 0.5, h * 0.34), w * 0.29, 0.0, TAU, 24, icon_color, line_w)
+	draw_line(Vector2(w * 0.25, h * 0.9), Vector2(w * 0.75, h * 0.9), icon_color, line_w)
+	draw_line(Vector2(w * 0.5, h * 0.62), Vector2(w * 0.32, h * 0.49), icon_color, line_w * 0.75)
+	draw_line(Vector2(w * 0.5, h * 0.55), Vector2(w * 0.7, h * 0.4), icon_color, line_w * 0.75)
+
+
+func _draw_world(w: float, h: float, line_w: float) -> void:
+	var center := Vector2(w * 0.5, h * 0.5)
+	var radius := minf(w, h) * 0.38
+	draw_arc(center, radius, 0.0, TAU, 28, icon_color, line_w)
+	draw_arc(center, radius * 0.48, 0.0, TAU, 24, icon_color, line_w * 0.7)
+	draw_line(Vector2(center.x - radius, center.y), Vector2(center.x + radius, center.y), icon_color, line_w * 0.7)
+	draw_line(Vector2(center.x, center.y - radius), Vector2(center.x, center.y + radius), icon_color, line_w * 0.7)
+
+
+func _draw_person(w: float, h: float, line_w: float) -> void:
+	draw_arc(Vector2(w * 0.5, h * 0.3), w * 0.17, 0.0, TAU, 20, icon_color, line_w)
+	draw_arc(Vector2(w * 0.5, h * 0.82), w * 0.32, PI, TAU, 20, icon_color, line_w)
+	draw_line(Vector2(w * 0.18, h * 0.82), Vector2(w * 0.82, h * 0.82), icon_color, line_w)
+
+
+func _draw_grid(w: float, h: float) -> void:
+	var radius := minf(w, h) * 0.065
+	for row in range(3):
+		for column in range(3):
+			draw_circle(Vector2(w * (0.25 + column * 0.25), h * (0.25 + row * 0.25)), radius, icon_color)

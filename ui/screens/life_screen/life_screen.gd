@@ -14,8 +14,8 @@ const HOMELAND_ART := {
 }
 const HOMELAND_MAP := {
 	"RASHIDUN CALIPHATE": "res://art/maps/arabia_632_life_map_v1.png",
-	"BYZANTINE EMPIRE": "res://art/locations/byzantine_632_life_v1.png",
-	"SASANIAN EMPIRE": "res://art/locations/sasanian_632_life_v1.png",
+	"BYZANTINE EMPIRE": "res://art/maps/byzantine_632_life_map_v1.png",
+	"SASANIAN EMPIRE": "res://art/maps/sasanian_632_life_map_v1.png",
 }
 const HOMELAND_REGION := {
 	"RASHIDUN CALIPHATE": "ARABIA",
@@ -80,6 +80,8 @@ var _base_icon_sizes: Dictionary = {}
 @onready var header_right_section: Control = %RightSection
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
+@onready var top_hud: PanelContainer = %TopHUD
+@onready var header_menu_button: Button = %HeaderMenuButton
 @onready var character_panel: PanelContainer = $SafeArea/Center/Composition/CharacterPanel
 @onready var portrait: CharacterPortrait = %Portrait
 @onready var character_backdrop: TextureRect = %CharacterBackdrop
@@ -99,9 +101,19 @@ var _base_icon_sizes: Dictionary = {}
 @onready var occupation_value: Label = %OccupationValue
 @onready var life_stage_value: Label = %LifeStageValue
 @onready var stats_panel: PanelContainer = $SafeArea/Center/Composition/StatsPanel
-@onready var event_placeholder: RichTextLabel = %EventPlaceholder
+@onready var chronicle_entries: VBoxContainer = %ChronicleEntries
 @onready var chronicle_scroll: ScrollContainer = %ChronicleScroll
+@onready var people_rows: HBoxContainer = %PeopleRows
+@onready var location_settlement_name: Label = %LocationSettlementName
+@onready var location_realm_name: Label = %LocationRealmName
+@onready var location_province_value: Label = %LocationProvinceValue
+@onready var location_population_value: Label = %LocationPopulationValue
+@onready var location_prosperity_value: Label = %LocationProsperityValue
+@onready var location_safety_value: Label = %LocationSafetyValue
+@onready var location_situation_value: Label = %LocationSituationValue
 @onready var advance_button: Button = %AdvanceButton
+@onready var next_year_value: Label = %NextYearValue
+@onready var life_button: Button = %Life
 @onready var upbringing_panel: PanelContainer = %UpbringingPanel
 @onready var upbringing_buttons: Array[Button] = [
 	%FamilyDutiesButton,
@@ -218,14 +230,13 @@ func _ready() -> void:
 	portrait.variant_seed = appearance_seed
 	if WorldState.player.chronicle.is_empty():
 		WorldState.player.chronicle.append("Age 1, %s\nYou begin life in %s." % [TimeManager.year_label(), birthplace])
-	var chronicle_blocks: Array[String] = []
-	for entry in WorldState.player.chronicle:
-		chronicle_blocks.append(_chronicle_bbcode(entry))
-	event_placeholder.text = "\n\n".join(chronicle_blocks)
+	_rebuild_chronicle()
+	_rebuild_people_around()
+	_refresh_current_location()
 	advance_button.disabled = false
-	advance_button.text = "AGE UP"
 	advance_button.pressed.connect(_advance_year)
 	_style_age_button()
+	_style_bottom_navigation()
 	for button in upbringing_buttons:
 		button.pressed.connect(_choose_upbringing.bind(button))
 	return_purse_button.pressed.connect(_resolve_decision.bind(0))
@@ -235,6 +246,7 @@ func _ready() -> void:
 	for button in occupation_buttons:
 		button.pressed.connect(_choose_occupation.bind(button))
 	more_button.pressed.connect(_open_pause_menu)
+	header_menu_button.pressed.connect(_open_pause_menu)
 	character_button.pressed.connect(_open_character)
 	close_character_button.pressed.connect(func(): character_overlay.hide())
 	activities_button.pressed.connect(_open_activities)
@@ -255,7 +267,7 @@ func _ready() -> void:
 	SaveManager.save_game()
 	resized.connect(_apply_layout)
 	location_panel.resized.connect(_position_map_marker)
-	event_placeholder.resized.connect(_scroll_chronicle_to_bottom)
+	chronicle_entries.resized.connect(_scroll_chronicle_to_bottom)
 	_apply_layout()
 	_position_map_marker.call_deferred()
 	_bind_button_feedback.call_deferred()
@@ -264,42 +276,75 @@ func _ready() -> void:
 
 func _style_age_button() -> void:
 	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.58, 0.4, 0.14, 1.0)
-	normal.border_color = Color(0.92, 0.72, 0.32, 1.0)
+	normal.bg_color = Color(0.035, 0.026, 0.017, 0.99)
+	normal.border_color = Color(0.62, 0.45, 0.21, 1.0)
 	normal.set_border_width_all(3)
-	normal.set_corner_radius_all(70)
+	normal.set_corner_radius_all(2)
+	normal.shadow_color = Color(0.0, 0.0, 0.0, 0.62)
+	normal.shadow_size = 7
 	var hover := normal.duplicate() as StyleBoxFlat
-	hover.bg_color = Color(0.68, 0.49, 0.2, 1.0)
+	hover.bg_color = Color(0.09, 0.065, 0.032, 1.0)
+	hover.border_color = Color(0.82, 0.62, 0.28, 1.0)
 	var pressed := normal.duplicate() as StyleBoxFlat
-	pressed.bg_color = Color(0.45, 0.29, 0.1, 1.0)
+	pressed.bg_color = Color(0.13, 0.085, 0.035, 1.0)
+	var disabled := normal.duplicate() as StyleBoxFlat
+	disabled.bg_color = Color(0.025, 0.02, 0.017, 0.88)
+	disabled.border_color = Color(0.3, 0.25, 0.18, 0.72)
 	advance_button.add_theme_stylebox_override("normal", normal)
 	advance_button.add_theme_stylebox_override("hover", hover)
 	advance_button.add_theme_stylebox_override("pressed", pressed)
 	advance_button.add_theme_stylebox_override("focus", hover)
-	advance_button.add_theme_color_override("font_color", Color(0.96, 0.84, 0.58))
-	advance_button.add_theme_font_size_override("font_size", 22)
+	advance_button.add_theme_stylebox_override("disabled", disabled)
+
+
+func _style_bottom_navigation() -> void:
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0.018, 0.014, 0.011, 0.96)
+	normal.border_color = Color(0.35, 0.27, 0.16, 0.82)
+	normal.set_border_width_all(1)
+	normal.set_corner_radius_all(1)
+	var hover := normal.duplicate() as StyleBoxFlat
+	hover.bg_color = Color(0.075, 0.054, 0.027, 0.98)
+	hover.border_color = Color(0.62, 0.45, 0.21, 1.0)
+	var pressed := hover.duplicate() as StyleBoxFlat
+	pressed.bg_color = Color(0.12, 0.078, 0.03, 1.0)
+	var disabled := normal.duplicate() as StyleBoxFlat
+	disabled.bg_color = Color(0.014, 0.012, 0.01, 0.82)
+	disabled.border_color = Color(0.25, 0.21, 0.16, 0.64)
+	for button in [world_button, activities_button, character_button, more_button]:
+		button.add_theme_stylebox_override("normal", normal)
+		button.add_theme_stylebox_override("hover", hover)
+		button.add_theme_stylebox_override("pressed", pressed)
+		button.add_theme_stylebox_override("focus", hover)
+		button.add_theme_stylebox_override("disabled", disabled)
+	var active := normal.duplicate() as StyleBoxFlat
+	active.bg_color = Color(0.13, 0.085, 0.028, 0.98)
+	active.border_color = Color(0.78, 0.57, 0.24, 1.0)
+	active.set_border_width_all(2)
+	life_button.add_theme_stylebox_override("disabled", active)
 
 
 func _style_decision_panel() -> void:
-	var parchment := StyleBoxFlat.new()
-	parchment.bg_color = Color(0.72, 0.63, 0.47, 0.98)
-	parchment.border_color = Color(0.25, 0.16, 0.07, 1.0)
-	parchment.set_border_width_all(4)
-	parchment.set_corner_radius_all(6)
-	parchment.shadow_color = Color(0.0, 0.0, 0.0, 0.72)
-	parchment.shadow_size = 14
-	decision_panel.add_theme_stylebox_override("panel", parchment)
-	var ink := Color(0.16, 0.09, 0.035, 1.0)
-	%DecisionTitle.add_theme_color_override("font_color", ink)
-	%DecisionDescription.add_theme_color_override("font_color", ink)
-	$DecisionOverlay/Center/DecisionPanel/Margin/Content/ChoicePrompt.add_theme_color_override("font_color", Color(0.28, 0.17, 0.07, 1.0))
-	$DecisionOverlay/Center/DecisionPanel/Margin/Content/Eyebrow.add_theme_color_override("font_color", Color(0.34, 0.22, 0.1, 1.0))
+	var frame := StyleBoxFlat.new()
+	frame.bg_color = Color(0.027, 0.02, 0.014, 0.99)
+	frame.border_color = Color(0.62, 0.44, 0.2, 1.0)
+	frame.set_border_width_all(3)
+	frame.set_corner_radius_all(2)
+	frame.shadow_color = Color(0.0, 0.0, 0.0, 0.72)
+	frame.shadow_size = 10
+	decision_panel.add_theme_stylebox_override("panel", frame)
+	%DecisionTitle.add_theme_color_override("font_color", Color(0.92, 0.77, 0.48))
+	%DecisionDescription.add_theme_color_override("font_color", Color(0.82, 0.77, 0.68))
+	$SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content/ChoicePrompt.add_theme_color_override("font_color", Color(0.72, 0.57, 0.32))
+	$SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content/Eyebrow.add_theme_color_override("font_color", Color(0.62, 0.48, 0.25))
 
 
 func _advance_year() -> void:
 	TimeManager.advance_year()
 	character_age += 1
 	WorldState.advance_local_year(TimeManager.current_date.year)
+	_rebuild_people_around()
+	_refresh_current_location()
 	_sync_character_state()
 	_refresh_character_display()
 	_set_occupation_display(_starting_occupation())
@@ -315,8 +360,9 @@ func _refresh_character_display() -> void:
 	identity_label.text = "%s  •  AGE %d" % [character_sex.capitalize(), character_age]
 	era_label.text = TimeManager.year_label()
 	header_date_label.text = TimeManager.date_label()
-	birthplace_label.text = "%s  •  %s" % [birthplace, TimeManager.year_label()]
+	birthplace_label.text = "CURRENT LOCATION  •  %s" % _current_settlement_name().to_upper()
 	header_age_value.text = str(character_age)
+	next_year_value.text = "%d AD" % (TimeManager.current_date.year + 1)
 	life_stage_value.text = _life_stage_label(character_age)
 	activities_button.disabled = character_age < 16
 	map_context_title.text = "%s  •  %s" % [str(HOMELAND_REGION.get(homeland, "YOUR HOMELAND")), TimeManager.year_label()]
@@ -351,6 +397,7 @@ func _choose_upbringing(button: Button) -> void:
 
 func _refresh_stats() -> void:
 	health_value.text = _health_label(health)
+	health_value.add_theme_color_override("font_color", _health_color(health))
 	wealth_value.text = str(wealth)
 	standing_value.text = standing
 	life_stage_value.text = _life_stage_label(character_age)
@@ -360,6 +407,13 @@ func _refresh_stats() -> void:
 	header_trait_value.text = primary_trait
 	char_strip_health_value.text = _health_label(health)
 	char_strip_standing_value.text = standing
+	char_strip_life_stage_value.text = _life_stage_label(character_age)
+
+
+func _health_color(value: int) -> Color:
+	if value >= 65: return Color(0.65, 0.78, 0.42)
+	if value >= 45: return Color(0.88, 0.69, 0.34)
+	return Color(0.82, 0.34, 0.26)
 
 
 func _health_label(value: int) -> String:
@@ -385,12 +439,14 @@ func _show_decision(event: Dictionary) -> void:
 	return_purse_button.text = str(event.choices[0].text)
 	keep_purse_button.text = str(event.choices[1].text)
 	decision_art.texture = character_backdrop.texture
-	_reveal_overlay(decision_overlay)
+	decision_overlay.show()
+	_apply_layout()
 	advance_button.disabled = true
 
 
 func _resolve_decision(choice: int) -> void:
 	decision_overlay.hide()
+	_apply_layout()
 	advance_button.disabled = false
 	var event := EventResolver.event_by_id(pending_event)
 	if event.is_empty():
@@ -524,24 +580,237 @@ func _resolve_battle_outcome() -> void:
 
 
 func _append_chronicle(entry: String) -> void:
-	event_placeholder.text += "\n\n" + _chronicle_bbcode(entry)
 	if WorldState.has_player():
 		WorldState.player.chronicle.append(entry)
 		SaveManager.save_game()
+	_add_chronicle_card(entry)
 	_scroll_chronicle_to_bottom.call_deferred()
 
 
-func _chronicle_bbcode(entry: String) -> String:
-	var color := "ded3c2"
-	if entry.findn("battle") != -1 or entry.findn("wounded") != -1 or entry.findn("rob") != -1 or entry.findn("attack") != -1 or entry.findn("has died") != -1:
-		color = "d1524a"
-	elif entry.findn("married") != -1 or entry.findn("welcomed a child") != -1 or entry.findn("younger sibling") != -1:
-		color = "8cbf66"
-	elif entry.findn("journey to") != -1 or entry.findn("arrive in") != -1 or entry.findn("road") != -1:
-		color = "6fa8c9"
-	elif entry.findn("bought") != -1 or entry.findn("sold") != -1 or entry.findn("trade standing") != -1 or entry.findn("wage") != -1 or entry.findn("earns") != -1:
-		color = "e0c26e"
-	return "[center][color=#%s]%s[/color][/center]" % [color, entry]
+func _rebuild_chronicle() -> void:
+	for child in chronicle_entries.get_children():
+		child.queue_free()
+	for entry in WorldState.player.chronicle:
+		_add_chronicle_card(str(entry))
+
+
+func _add_chronicle_card(entry: String) -> void:
+	var parsed := _parse_chronicle_entry(entry)
+	var card := PanelContainer.new()
+	card.custom_minimum_size.y = 128.0
+	var card_style := StyleBoxFlat.new()
+	card_style.bg_color = Color(0.045, 0.033, 0.022, 0.96)
+	card_style.border_width_left = 3
+	card_style.border_width_bottom = 1
+	card_style.border_color = _chronicle_accent(entry)
+	card_style.content_margin_left = 16.0
+	card_style.content_margin_top = 13.0
+	card_style.content_margin_right = 18.0
+	card_style.content_margin_bottom = 13.0
+	card.add_theme_stylebox_override("panel", card_style)
+	chronicle_entries.add_child(card)
+
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 16)
+	card.add_child(row)
+	var date_label := Label.new()
+	date_label.custom_minimum_size.x = 150.0
+	date_label.text = str(parsed.meta)
+	date_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	date_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	date_label.add_theme_font_size_override("font_size", 16)
+	date_label.add_theme_color_override("font_color", Color(0.68, 0.57, 0.4))
+	row.add_child(date_label)
+	var icon := StatIcon.new()
+	icon.custom_minimum_size = Vector2(46, 46)
+	icon.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	icon.icon_type = _chronicle_icon_type(entry)
+	icon.icon_color = _chronicle_accent(entry)
+	row.add_child(icon)
+	var copy := VBoxContainer.new()
+	copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	copy.add_theme_constant_override("separation", 6)
+	row.add_child(copy)
+	var title := Label.new()
+	title.text = str(parsed.title)
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.add_theme_font_size_override("font_size", 22)
+	title.add_theme_color_override("font_color", Color(0.9, 0.76, 0.48))
+	copy.add_child(title)
+	if not str(parsed.description).is_empty():
+		var description := Label.new()
+		description.text = str(parsed.description)
+		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		description.add_theme_font_size_override("font_size", 17)
+		description.add_theme_color_override("font_color", Color(0.79, 0.74, 0.66))
+		copy.add_child(description)
+
+
+func _parse_chronicle_entry(entry: String) -> Dictionary:
+	var lines := entry.split("\n", false)
+	if lines.is_empty():
+		return {"meta": "LIFE EVENT", "title": "A MEMORY", "description": ""}
+	var first := str(lines[0]).strip_edges()
+	var meta := "AGE %d  •  %s" % [character_age, TimeManager.year_label()]
+	var title := first.to_upper()
+	var description_lines: PackedStringArray = []
+	var first_is_metadata := first.to_lower().begins_with("age ") or (first.contains(",") and first.contains("AD"))
+	if first_is_metadata:
+		meta = first.replace(",", "  •").to_upper()
+		if lines.size() > 1:
+			title = str(lines[1]).strip_edges().to_upper()
+			for index in range(2, lines.size()):
+				description_lines.append(str(lines[index]).strip_edges())
+	else:
+		for index in range(1, lines.size()):
+			description_lines.append(str(lines[index]).strip_edges())
+	return {"meta": meta, "title": title, "description": "\n".join(description_lines)}
+
+
+func _chronicle_accent(entry: String) -> Color:
+	var lowered := entry.to_lower()
+	if "battle" in lowered or "wounded" in lowered or "attack" in lowered or "has died" in lowered:
+		return Color(0.72, 0.29, 0.24)
+	if "married" in lowered or "child" in lowered or "family" in lowered or "sibling" in lowered:
+		return Color(0.5, 0.67, 0.32)
+	if "journey" in lowered or "arrive" in lowered or "road" in lowered:
+		return Color(0.36, 0.58, 0.72)
+	if "trade" in lowered or "wealth" in lowered or "wage" in lowered or "earns" in lowered:
+		return Color(0.84, 0.66, 0.31)
+	return Color(0.62, 0.46, 0.24)
+
+
+func _chronicle_icon_type(entry: String) -> String:
+	var lowered := entry.to_lower()
+	if "ill" in lowered or "wounded" in lowered or "died" in lowered: return "health"
+	if "trade" in lowered or "wealth" in lowered or "wage" in lowered: return "wealth"
+	if "work" in lowered or "occupation" in lowered: return "occupation"
+	if "family" in lowered or "married" in lowered or "sibling" in lowered: return "standing"
+	return "age"
+
+
+func _rebuild_people_around() -> void:
+	for child in people_rows.get_children():
+		people_rows.remove_child(child)
+		child.queue_free()
+	if not WorldState.has_player():
+		return
+	var residents: Array[LocalCharacter] = []
+	for character: LocalCharacter in WorldState.local_characters.values():
+		if character.alive and character.location_id == WorldState.player.location_id:
+			residents.append(character)
+	residents.sort_custom(func(a: LocalCharacter, b: LocalCharacter) -> bool:
+		var a_priority := _people_priority(a)
+		var b_priority := _people_priority(b)
+		return a_priority < b_priority if a_priority != b_priority else a.relationship_to_player > b.relationship_to_player
+	)
+	for index in range(mini(residents.size(), 4)):
+		if index > 0:
+			var divider := ColorRect.new()
+			divider.custom_minimum_size.x = 2.0
+			divider.size_flags_vertical = Control.SIZE_EXPAND_FILL
+			divider.color = Color(0.5, 0.36, 0.18, 0.55)
+			people_rows.add_child(divider)
+		_add_person_card(residents[index])
+
+
+func _people_priority(character: LocalCharacter) -> int:
+	match character.role:
+		"Father": return 0
+		"Mother": return 1
+		"Younger Sibling": return 2
+		_: return 3
+
+
+func _add_person_card(character: LocalCharacter) -> void:
+	var card := VBoxContainer.new()
+	card.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card.alignment = BoxContainer.ALIGNMENT_CENTER
+	card.add_theme_constant_override("separation", 5)
+	people_rows.add_child(card)
+	var npc_portrait := CharacterPortrait.new()
+	npc_portrait.custom_minimum_size = Vector2(104, 104)
+	npc_portrait.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	npc_portrait.female = character.sex == "FEMALE"
+	npc_portrait.variant_seed = absi(hash(character.id)) + 1
+	card.add_child(npc_portrait)
+	var person_name := Label.new()
+	person_name.text = character.full_name
+	person_name.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	person_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	person_name.max_lines_visible = 2
+	person_name.add_theme_font_size_override("font_size", 17)
+	person_name.add_theme_color_override("font_color", Color(0.9, 0.75, 0.46))
+	card.add_child(person_name)
+	var role_label := Label.new()
+	role_label.text = "%s  •  AGE %d" % [character.role.to_upper(), character.age]
+	role_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	role_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	role_label.max_lines_visible = 2
+	role_label.add_theme_font_size_override("font_size", 12)
+	role_label.add_theme_color_override("font_color", Color(0.64, 0.56, 0.45))
+	card.add_child(role_label)
+	var bond_label := Label.new()
+	bond_label.text = "●  %s  •  %d" % [_bond_label(character.relationship_to_player), character.relationship_to_player]
+	bond_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	bond_label.add_theme_font_size_override("font_size", 13)
+	bond_label.add_theme_color_override("font_color", _bond_color(character.relationship_to_player))
+	card.add_child(bond_label)
+
+
+func _bond_label(value: int) -> String:
+	if value >= 75: return "CLOSE"
+	if value >= 55: return "TRUSTED"
+	if value >= 30: return "FAMILIAR"
+	return "DISTANT"
+
+
+func _bond_color(value: int) -> Color:
+	if value >= 75: return Color(0.55, 0.75, 0.38)
+	if value >= 55: return Color(0.72, 0.68, 0.38)
+	if value >= 30: return Color(0.72, 0.55, 0.3)
+	return Color(0.58, 0.46, 0.36)
+
+
+func _refresh_current_location() -> void:
+	if not WorldState.has_player():
+		return
+	var context := WorldState.get_home_context()
+	if context.is_empty():
+		return
+	var prosperity := int(context.prosperity)
+	var active_war := WorldState.get_active_war()
+	location_settlement_name.text = str(context.settlement).to_upper()
+	location_realm_name.text = "%s  •  %s" % [str(context.kingdom), str(context.type)]
+	location_province_value.text = str(context.province)
+	location_population_value.text = _format_population(int(context.population))
+	location_prosperity_value.text = "%s  •  %d" % [_prosperity_label(prosperity), prosperity]
+	location_safety_value.text = "UNSETTLED" if active_war else ("SECURE" if prosperity >= 45 else "FRAGILE")
+	location_safety_value.add_theme_color_override("font_color", Color(0.78, 0.39, 0.28) if active_war else Color(0.52, 0.7, 0.36))
+	location_situation_value.text = "WAR NEARBY" if active_war else ("THRIVING" if prosperity >= 65 else ("PEACEFUL" if prosperity >= 40 else "HARDSHIP"))
+
+
+func _prosperity_label(value: int) -> String:
+	if value >= 65: return "Prosperous"
+	if value >= 40: return "Stable"
+	return "Struggling"
+
+
+func _format_population(value: int) -> String:
+	var digits := str(value)
+	var result := ""
+	while digits.length() > 3:
+		result = "," + digits.right(3) + result
+		digits = digits.left(digits.length() - 3)
+	return digits + result
+
+
+func _current_settlement_name() -> String:
+	if WorldState.has_player():
+		var settlement: Settlement = WorldState.settlements.get(WorldState.player.location_id)
+		if settlement:
+			return settlement.name
+	return birthplace
 
 
 var _chronicle_scroll_pending := false
@@ -831,6 +1100,9 @@ func _begin_travel(destination_id: String) -> void:
 	wealth = WorldState.player.wealth
 	_refresh_stats()
 	_refresh_character_display()
+	_rebuild_people_around()
+	_setup_location_banner()
+	_refresh_current_location()
 	SaveManager.save_game()
 	_open_world(false)
 	travel_message.text = "You have arrived in %s." % result.destination
@@ -990,6 +1262,7 @@ func _perform_local_action(action_id: String) -> void:
 	wealth = maxi(wealth + int(result.get("wealth", 0)), 0)
 	_append_chronicle("Age %d, %s\n%s" % [character_age, TimeManager.year_label(), result.chronicle])
 	_refresh_stats()
+	_rebuild_people_around()
 	_sync_character_state()
 	_open_world()
 	world_action_message.text = "Activity completed and recorded in your chronicle."
@@ -1005,16 +1278,19 @@ func _apply_layout() -> void:
 	safe_area.add_theme_constant_override("margin_right", roundi(horizontal_edge))
 	safe_area.add_theme_constant_override("margin_top", roundi(top_edge))
 	safe_area.add_theme_constant_override("margin_bottom", roundi(bottom_edge))
-	var width := clampf(canvas.x * 0.76, 480.0, 1800.0)
+	var width := clampf(canvas.x - horizontal_edge * 2.0, 320.0, 1080.0)
 	composition.custom_minimum_size.x = width
-	var text_scale := clampf(1.15 + maxf(width - 820.0, 0.0) / 1300.0, 1.15, 1.85)
-	portrait.custom_minimum_size = Vector2.ONE * clampf(canvas.x * 0.08, 78.0, 100.0) * text_scale
-	character_panel.custom_minimum_size.y = 116.0 * text_scale
-	location_panel.custom_minimum_size.y = 60.0 * text_scale
-	chronicle_scroll.custom_minimum_size.y = clampf(canvas.y * 0.1, 96.0, 120.0)
-	var age_button_size := clampf(canvas.y * 0.125, 124.0, 142.0)
-	advance_button.custom_minimum_size = Vector2.ONE * age_button_size
-	name_label.add_theme_font_size_override("font_size", roundi(clampf(canvas.x * 0.019, 30.0, 38.0) * text_scale))
+	var text_scale := clampf(1.0 + maxf(width - 820.0, 0.0) / 1600.0, 1.0, 1.4)
+	top_hud.custom_minimum_size.y = clampf(canvas.y * 0.05, 82.0, 104.0)
+	portrait.custom_minimum_size = Vector2(
+		clampf(canvas.x * 0.16, 150.0, 184.0),
+		clampf(canvas.x * 0.17, 160.0, 196.0)
+	) * text_scale
+	character_panel.custom_minimum_size.y = 218.0 * text_scale
+	location_panel.custom_minimum_size.y = 210.0 * text_scale
+	chronicle_scroll.custom_minimum_size.y = 220.0 if decision_overlay.visible else clampf(canvas.y * 0.25, 430.0, 520.0)
+	advance_button.custom_minimum_size = Vector2(0.0, clampf(canvas.y * 0.072, 128.0, 148.0))
+	name_label.add_theme_font_size_override("font_size", roundi(clampf(canvas.x * 0.027, 27.0, 34.0) * text_scale))
 	_scale_readability(text_scale)
 	for button in find_children("*", "Button", true, false):
 		(button as Button).pivot_offset = (button as Button).size * 0.5
@@ -1046,24 +1322,29 @@ func _setup_location_banner() -> void:
 	var map_path := str(HOMELAND_MAP.get(homeland, HOMELAND_MAP["RASHIDUN CALIPHATE"]))
 	if ResourceLoader.exists(map_path):
 		location_art.texture = load(map_path)
-		location_art.self_modulate = Color(1.32, 1.2, 1.02, 1.0)
+		location_art.self_modulate = Color(1.08, 1.02, 0.9, 1.0)
 	var backdrop_path := str(HOMELAND_ART.get(homeland, HOMELAND_ART["RASHIDUN CALIPHATE"]))
 	if ResourceLoader.exists(backdrop_path):
 		character_backdrop.texture = load(backdrop_path)
 	var region := str(HOMELAND_REGION.get(homeland, "YOUR HOMELAND"))
-	map_realm_title.text = birthplace.to_upper()
+	var current_location := _current_settlement_name()
+	map_realm_title.text = current_location.to_upper()
 	map_context_title.text = "%s  •  %s" % [region, TimeManager.year_label()]
-	player_map_marker.text = "◆  %s\nCURRENT LOCATION" % birthplace.to_upper()
-	location_caption.text = "%s  •  %s\nA living settlement shaped by households, markets, faith and power." % [birthplace.to_upper(), region]
+	player_map_marker.text = "◆  %s\nCURRENT LOCATION" % current_location.to_upper()
+	location_caption.text = "%s  •  %s\nA living settlement shaped by households, markets, faith and power." % [current_location.to_upper(), region]
 
 
 func _position_map_marker() -> void:
 	if player_map_marker == null or location_panel.size.x <= 0.0:
 		return
-	var normalized: Vector2 = MAP_MARKER_POSITION.get(birthplace, Vector2(0.5, 0.5))
-	player_map_marker.position = Vector2(
+	var normalized: Vector2 = MAP_MARKER_POSITION.get(_current_settlement_name(), Vector2(0.5, 0.5))
+	var marker_position := Vector2(
 		location_panel.size.x * normalized.x - player_map_marker.size.x * 0.5,
 		location_panel.size.y * normalized.y - player_map_marker.size.y * 0.5
+	)
+	player_map_marker.position = Vector2(
+		clampf(marker_position.x, 12.0, location_panel.size.x - player_map_marker.size.x - 12.0),
+		clampf(marker_position.y, 12.0, location_panel.size.y - player_map_marker.size.y - 72.0)
 	)
 
 

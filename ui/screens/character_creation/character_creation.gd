@@ -2,7 +2,6 @@ class_name CharacterCreation
 extends Control
 
 const FACTION_SELECT_SCENE := "res://ui/screens/faction_select/faction_select.tscn"
-const LIFE_SCREEN_SCENE := "res://ui/screens/life_screen/life_screen.tscn"
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
 const RELEASE_DURATION := 0.13
 
@@ -20,6 +19,7 @@ var selected_faction := "RASHIDUN CALIPHATE"
 var selected_sex := ""
 var generated_profile: Dictionary = {}
 var tweens: Dictionary = {}
+var creation_complete := false
 
 @onready var background: TextureRect = %Background
 @onready var safe_area: MarginContainer = %SafeArea
@@ -193,7 +193,7 @@ func _update_begin_availability() -> void:
 	var has_sex := selected_sex != ""
 	var has_birthplace := birthplace_field.selected > 0
 	var has_profile := _has_complete_birth_profile()
-	begin_button.disabled = not (has_name and has_lineage and has_sex and has_birthplace and has_profile)
+	begin_button.disabled = creation_complete or not (has_name and has_lineage and has_sex and has_birthplace and has_profile)
 
 
 func _has_complete_birth_profile() -> bool:
@@ -231,7 +231,9 @@ func _begin_life() -> void:
 		"appearance_seed": generated_profile.appearance_seed,
 	})
 	SaveManager.save_game()
-	get_tree().change_scene_to_file(LIFE_SCREEN_SCENE)
+	creation_complete = true
+	begin_button.text = "CHARACTER SAVED  •  LIFE PAGE IN DEVELOPMENT"
+	begin_button.disabled = true
 
 
 func _setup_background() -> void:

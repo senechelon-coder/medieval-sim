@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3]
+[gd_scene load_steps=16 format=3]
 
 [ext_resource type="Script" path="res://ui/screens/life_screen/life_screen.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2"]
@@ -15,18 +15,64 @@ bg_color = Color(0.02, 0.017, 0.014, 0.97)
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
-border_width_bottom = 2
-border_color = Color(0.56, 0.43, 0.24, 0.9)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-content_margin_left = 14.0
-content_margin_top = 8.0
+border_width_bottom = 3
+border_color = Color(0.62, 0.46, 0.23, 0.92)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+content_margin_left = 18.0
+content_margin_top = 10.0
 content_margin_right = 14.0
-content_margin_bottom = 8.0
-shadow_color = Color(0, 0, 0, 0.4)
-shadow_size = 3
+content_margin_bottom = 10.0
+shadow_color = Color(0, 0, 0, 0.58)
+shadow_size = 5
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_identity_frame"]
+bg_color = Color(0.025, 0.019, 0.014, 0.97)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.52, 0.38, 0.19, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+shadow_color = Color(0, 0, 0, 0.62)
+shadow_size = 6
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_status_strip"]
+bg_color = Color(0.028, 0.021, 0.015, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.5, 0.36, 0.17, 0.9)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+content_margin_left = 10.0
+content_margin_top = 12.0
+content_margin_right = 10.0
+content_margin_bottom = 11.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_chronicle_frame"]
+bg_color = Color(0.018, 0.014, 0.011, 0.98)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.44, 0.32, 0.16, 0.92)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
 
 [sub_resource type="Gradient" id="Gradient_edge_fade"]
 colors = PackedColorArray(0.018, 0.012, 0.007, 0.8, 0.018, 0.012, 0.007, 0.0)
@@ -79,23 +125,25 @@ size_flags_vertical = 3
 theme_override_constants/separation = 8
 
 [node name="TopHUD" type="PanelContainer" parent="SafeArea/Center/Composition"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 82)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_header_frame")
 
 [node name="Row" type="HBoxContainer" parent="SafeArea/Center/Composition/TopHUD"]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="LeftSection" type="HBoxContainer" parent="SafeArea/Center/Composition/TopHUD/Row"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 35.0
-theme_override_constants/separation = 8
+size_flags_stretch_ratio = 34.0
+theme_override_constants/separation = 12
 alignment = 0
 
 [node name="CompassIcon" type="Control" parent="SafeArea/Center/Composition/TopHUD/Row/LeftSection"]
-custom_minimum_size = Vector2(26, 26)
+custom_minimum_size = Vector2(38, 38)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("9")
@@ -105,7 +153,8 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_type_variation = &"BrandLabel"
-theme_override_font_sizes/font_size = 17
+theme_override_font_sizes/font_size = 23
+theme_override_colors/font_color = Color(0.9, 0.76, 0.46, 1)
 text = "WORLDLY LIFE"
 clip_text = true
 vertical_alignment = 1
@@ -120,7 +169,7 @@ color = Color(0.56, 0.43, 0.24, 0.55)
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 28.0
+size_flags_stretch_ratio = 23.0
 size_flags_vertical = 4
 theme_override_constants/separation = 0
 alignment = 1
@@ -129,7 +178,7 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"VersionLabel"
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 27
 theme_override_colors/font_color = Color(0.9, 0.78, 0.5, 1)
 text = "632 AD"
 horizontal_alignment = 1
@@ -138,8 +187,8 @@ vertical_alignment = 1
 [node name="HeaderDate" type="Label" parent="SafeArea/Center/Composition/TopHUD/Row/CenterSection"]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_font_sizes/font_size = 12
-theme_override_colors/font_color = Color(0.68, 0.6, 0.48, 0.9)
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.78, 0.69, 0.53, 0.95)
 text = "1st of January"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -155,7 +204,8 @@ color = Color(0.56, 0.43, 0.24, 0.55)
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 37.0
+size_flags_stretch_ratio = 43.0
+theme_override_constants/separation = 3
 alignment = 1
 
 [node name="HeaderAgeSlot" type="VBoxContainer" parent="SafeArea/Center/Composition/TopHUD/Row/RightSection"]
@@ -165,7 +215,7 @@ alignment = 1
 theme_override_constants/separation = 1
 
 [node name="HeaderAgeIcon" type="Control" parent="SafeArea/Center/Composition/TopHUD/Row/RightSection/HeaderAgeSlot"]
-custom_minimum_size = Vector2(15, 15)
+custom_minimum_size = Vector2(21, 21)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("8")
@@ -175,7 +225,7 @@ icon_type = "age"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 text = "1"
 
@@ -186,7 +236,7 @@ alignment = 1
 theme_override_constants/separation = 1
 
 [node name="HeaderHealthIcon" type="Control" parent="SafeArea/Center/Composition/TopHUD/Row/RightSection/HeaderHealthSlot"]
-custom_minimum_size = Vector2(15, 15)
+custom_minimum_size = Vector2(21, 21)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("8")
@@ -196,7 +246,7 @@ icon_type = "health"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 text = "90%"
 
@@ -207,7 +257,7 @@ alignment = 1
 theme_override_constants/separation = 1
 
 [node name="HeaderWealthIcon" type="Control" parent="SafeArea/Center/Composition/TopHUD/Row/RightSection/HeaderWealthSlot"]
-custom_minimum_size = Vector2(15, 15)
+custom_minimum_size = Vector2(21, 21)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("8")
@@ -217,7 +267,7 @@ icon_type = "wealth"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 text = "10"
 
@@ -228,7 +278,7 @@ alignment = 1
 theme_override_constants/separation = 1
 
 [node name="HeaderStandingIcon" type="Control" parent="SafeArea/Center/Composition/TopHUD/Row/RightSection/HeaderStandingSlot"]
-custom_minimum_size = Vector2(15, 15)
+custom_minimum_size = Vector2(21, 21)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("8")
@@ -238,7 +288,7 @@ icon_type = "standing"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 clip_text = true
 text = "Unknown"
@@ -250,7 +300,7 @@ alignment = 1
 theme_override_constants/separation = 1
 
 [node name="HeaderTraitIcon" type="Control" parent="SafeArea/Center/Composition/TopHUD/Row/RightSection/HeaderTraitSlot"]
-custom_minimum_size = Vector2(15, 15)
+custom_minimum_size = Vector2(21, 21)
 layout_mode = 2
 size_flags_horizontal = 4
 script = ExtResource("8")
@@ -260,10 +310,26 @@ icon_type = "trait"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 13
+theme_override_font_sizes/font_size = 16
 horizontal_alignment = 1
 clip_text = true
 text = "Undeveloped"
+
+[node name="HeaderMenuDivider" type="ColorRect" parent="SafeArea/Center/Composition/TopHUD/Row"]
+custom_minimum_size = Vector2(2, 0)
+layout_mode = 2
+size_flags_vertical = 3
+color = Color(0.56, 0.43, 0.24, 0.55)
+
+[node name="HeaderMenuButton" type="Button" parent="SafeArea/Center/Composition/TopHUD/Row"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(58, 58)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_colors/font_color = Color(0.86, 0.72, 0.43, 1)
+theme_override_font_sizes/font_size = 26
+text = "≡"
+tooltip_text = "Pause menu"
 
 [node name="DividerTop" type="Control" parent="SafeArea/Center/Composition"]
 custom_minimum_size = Vector2(420, 18)
@@ -272,9 +338,10 @@ size_flags_horizontal = 4
 script = ExtResource("3")
 
 [node name="CharacterPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
-custom_minimum_size = Vector2(0, 116)
+custom_minimum_size = Vector2(0, 218)
 layout_mode = 2
 clip_contents = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_identity_frame")
 
 [node name="CharacterBackdrop" type="TextureRect" parent="SafeArea/Center/Composition/CharacterPanel"]
 unique_name_in_owner = true
@@ -283,27 +350,27 @@ mouse_filter = 2
 texture = ExtResource("6_location")
 expand_mode = 1
 stretch_mode = 6
-modulate = Color(0.52, 0.52, 0.52, 1)
+modulate = Color(0.42, 0.39, 0.34, 1)
 
 [node name="BackdropShade" type="ColorRect" parent="SafeArea/Center/Composition/CharacterPanel"]
 layout_mode = 2
 mouse_filter = 2
-color = Color(0.025, 0.016, 0.01, 0.72)
+color = Color(0.018, 0.012, 0.008, 0.86)
 
 [node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/CharacterPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 14
-theme_override_constants/margin_top = 10
-theme_override_constants/margin_right = 14
-theme_override_constants/margin_bottom = 10
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 16
 
 [node name="Row" type="HBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin"]
 layout_mode = 2
-theme_override_constants/separation = 12
+theme_override_constants/separation = 20
 
 [node name="Portrait" type="Control" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(92, 92)
+custom_minimum_size = Vector2(176, 184)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("4")
@@ -312,49 +379,65 @@ script = ExtResource("4")
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
-theme_override_constants/separation = 4
+theme_override_constants/separation = 8
+alignment = 1
+
+[node name="IdentityEyebrow" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/Identity"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.62, 0.51, 0.34, 1)
+text = "YOUR LIFE"
 
 [node name="NameLabel" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/Identity"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"BrandLabel"
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 29
 theme_override_colors/font_color = Color(0.94, 0.8, 0.52, 1)
 text = "Unnamed"
-clip_text = true
-autowrap_mode = 0
+autowrap_mode = 2
+max_lines_visible = 2
 
-[node name="IdentityRow" type="HBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/Identity"]
+[node name="IdentityRow" type="VBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/Identity"]
 layout_mode = 2
-theme_override_constants/separation = 16
+theme_override_constants/separation = 6
 
 [node name="IdentityLabel" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/Identity/IdentityRow"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.86, 0.79, 0.67, 1)
 text = "Male  •  AGE 1"
 
 [node name="HomelandLabel" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/Identity/IdentityRow"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.82, 0.68, 0.4, 1)
 text = "RASHIDUN CALIPHATE"
-clip_text = true
+autowrap_mode = 2
 
 [node name="BirthplaceLabel" type="Label" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row/Identity"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"VersionLabel"
-text = "Medina  •  632 AD"
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.74, 0.67, 0.56, 1)
+text = "CURRENT LOCATION  •  MEDINA"
+autowrap_mode = 2
 
 [node name="StatusDivider" type="ColorRect" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row"]
+visible = false
 custom_minimum_size = Vector2(2, 0)
 layout_mode = 2
 size_flags_vertical = 3
 color = Color(0.56, 0.43, 0.24, 0.55)
 
 [node name="StatusColumn" type="VBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 4
 theme_override_constants/separation = 3
@@ -441,22 +524,24 @@ clip_text = true
 text = "Child"
 
 [node name="StatsPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
+custom_minimum_size = Vector2(0, 126)
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_header_frame")
+theme_override_styles/panel = SubResource("StyleBoxFlat_status_strip")
 
 [node name="Stats" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
-[node name="HealthSlot" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
+[node name="HealthSlot" type="VBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="HealthIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/Stats/HealthSlot"]
-custom_minimum_size = Vector2(17, 17)
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "health"
@@ -465,9 +550,20 @@ icon_type = "health"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 15
-clip_text = true
+theme_override_font_sizes/font_size = 19
+theme_override_colors/font_color = Color(0.75, 0.82, 0.5, 1)
+horizontal_alignment = 1
+autowrap_mode = 2
+max_lines_visible = 2
 text = "Good"
+
+[node name="HealthCaption" type="Label" parent="SafeArea/Center/Composition/StatsPanel/Stats/HealthSlot"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "HEALTH"
+horizontal_alignment = 1
 
 [node name="Divider1" type="ColorRect" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
 custom_minimum_size = Vector2(2, 0)
@@ -475,15 +571,16 @@ layout_mode = 2
 size_flags_vertical = 3
 color = Color(0.56, 0.43, 0.24, 0.55)
 
-[node name="WealthSlot" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
+[node name="WealthSlot" type="VBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="WealthIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/Stats/WealthSlot"]
-custom_minimum_size = Vector2(17, 17)
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "wealth"
@@ -492,9 +589,18 @@ icon_type = "wealth"
 unique_name_in_owner = true
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 15
-clip_text = true
+theme_override_font_sizes/font_size = 19
+theme_override_colors/font_color = Color(0.9, 0.75, 0.43, 1)
+horizontal_alignment = 1
 text = "10"
+
+[node name="WealthCaption" type="Label" parent="SafeArea/Center/Composition/StatsPanel/Stats/WealthSlot"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "WEALTH"
+horizontal_alignment = 1
 
 [node name="Divider2" type="ColorRect" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
 custom_minimum_size = Vector2(2, 0)
@@ -502,15 +608,16 @@ layout_mode = 2
 size_flags_vertical = 3
 color = Color(0.56, 0.43, 0.24, 0.55)
 
-[node name="StandingSlot" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
+[node name="StandingSlot" type="VBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="StandingIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/Stats/StandingSlot"]
-custom_minimum_size = Vector2(17, 17)
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "standing"
@@ -520,9 +627,20 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 15
-clip_text = true
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.82, 0.72, 0.5, 1)
+horizontal_alignment = 1
+autowrap_mode = 2
+max_lines_visible = 2
 text = "Unknown"
+
+[node name="StandingCaption" type="Label" parent="SafeArea/Center/Composition/StatsPanel/Stats/StandingSlot"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "STANDING"
+horizontal_alignment = 1
 
 [node name="Divider3" type="ColorRect" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
 custom_minimum_size = Vector2(2, 0)
@@ -530,15 +648,16 @@ layout_mode = 2
 size_flags_vertical = 3
 color = Color(0.56, 0.43, 0.24, 0.55)
 
-[node name="OccupationSlot" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
+[node name="OccupationSlot" type="VBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="OccupationIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/Stats/OccupationSlot"]
-custom_minimum_size = Vector2(17, 17)
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "occupation"
@@ -548,9 +667,20 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 15
-clip_text = true
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.82, 0.69, 0.42, 1)
+horizontal_alignment = 1
+autowrap_mode = 2
+max_lines_visible = 2
 text = "Child"
+
+[node name="OccupationCaption" type="Label" parent="SafeArea/Center/Composition/StatsPanel/Stats/OccupationSlot"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "OCCUPATION"
+horizontal_alignment = 1
 
 [node name="Divider4" type="ColorRect" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
 custom_minimum_size = Vector2(2, 0)
@@ -558,15 +688,16 @@ layout_mode = 2
 size_flags_vertical = 3
 color = Color(0.56, 0.43, 0.24, 0.55)
 
-[node name="LifeStageSlot" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
+[node name="LifeStageSlot" type="VBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/Stats"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
-theme_override_constants/separation = 6
+theme_override_constants/separation = 4
 
 [node name="LifeStageIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/Stats/LifeStageSlot"]
-custom_minimum_size = Vector2(17, 17)
+custom_minimum_size = Vector2(28, 28)
 layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "life_stage"
@@ -576,12 +707,23 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 15
-clip_text = true
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.82, 0.72, 0.5, 1)
+horizontal_alignment = 1
+autowrap_mode = 2
+max_lines_visible = 2
 text = "Child"
 
+[node name="LifeStageCaption" type="Label" parent="SafeArea/Center/Composition/StatsPanel/Stats/LifeStageSlot"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "LIFE STAGE"
+horizontal_alignment = 1
+
 [node name="LocationPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
-custom_minimum_size = Vector2(0, 128)
+custom_minimum_size = Vector2(0, 210)
 layout_mode = 2
 clip_contents = true
 theme_override_styles/panel = SubResource("StyleBoxFlat_header_frame")
@@ -596,10 +738,13 @@ stretch_mode = 6
 
 [node name="LeftShade" type="TextureRect" parent="SafeArea/Center/Composition/LocationPanel"]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 0.46
-offset_bottom = 60.0
+anchor_bottom = 1.0
+offset_top = -72.0
 grow_horizontal = 2
+grow_vertical = 0
 mouse_filter = 2
 texture = SubResource("GradientTexture2D_edge_fade")
 expand_mode = 1
@@ -607,11 +752,14 @@ stretch_mode = 1
 
 [node name="RightShade" type="TextureRect" parent="SafeArea/Center/Composition/LocationPanel"]
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 12
 anchor_left = 0.54
+anchor_top = 1.0
 anchor_right = 1.0
-offset_bottom = 60.0
+anchor_bottom = 1.0
+offset_top = -72.0
 grow_horizontal = 2
+grow_vertical = 0
 mouse_filter = 2
 texture = SubResource("GradientTexture2D_edge_fade")
 expand_mode = 1
@@ -621,19 +769,22 @@ flip_h = true
 [node name="MapRealmTitle" type="Label" parent="SafeArea/Center/Composition/LocationPanel"]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 12
+anchor_top = 1.0
 anchor_right = 0.5
+anchor_bottom = 1.0
 offset_left = 30.0
+offset_top = -70.0
 offset_right = -6.0
-offset_bottom = 60.0
 grow_horizontal = 2
+grow_vertical = 0
 theme_type_variation = &"FieldLabel"
 theme_override_colors/font_color = Color(0.96, 0.89, 0.72, 1)
 theme_override_colors/font_shadow_color = Color(0.0, 0.0, 0.0, 0.85)
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 2
 theme_override_constants/shadow_outline_size = 3
-theme_override_font_sizes/font_size = 24
+theme_override_font_sizes/font_size = 28
 text = "RASHIDUN CALIPHATE"
 clip_text = true
 vertical_alignment = 1
@@ -641,20 +792,23 @@ vertical_alignment = 1
 [node name="MapContextTitle" type="Label" parent="SafeArea/Center/Composition/LocationPanel"]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 10
+anchors_preset = 12
 anchor_left = 0.5
+anchor_top = 1.0
 anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 6.0
+offset_top = -70.0
 offset_right = -30.0
-offset_bottom = 60.0
 grow_horizontal = 2
+grow_vertical = 0
 theme_type_variation = &"VersionLabel"
 theme_override_colors/font_color = Color(0.89, 0.82, 0.65, 0.98)
 theme_override_colors/font_shadow_color = Color(0.0, 0.0, 0.0, 0.85)
 theme_override_constants/shadow_offset_x = 0
 theme_override_constants/shadow_offset_y = 2
 theme_override_constants/shadow_outline_size = 3
-theme_override_font_sizes/font_size = 22
+theme_override_font_sizes/font_size = 23
 text = "ARABIA  •  632 AD"
 clip_text = true
 horizontal_alignment = 2
@@ -662,15 +816,14 @@ vertical_alignment = 1
 
 [node name="PlayerMapMarker" type="Label" parent="SafeArea/Center/Composition/LocationPanel"]
 unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(240, 66)
-offset_right = 240.0
-offset_bottom = 66.0
+custom_minimum_size = Vector2(210, 58)
+offset_right = 210.0
+offset_bottom = 58.0
 mouse_filter = 2
 theme_override_colors/font_color = Color(0.94, 0.76, 0.36, 1)
 theme_override_colors/font_outline_color = Color(0.04, 0.025, 0.012, 1)
-theme_override_constants/outline_size = 8
-theme_override_font_sizes/font_size = 22
+theme_override_constants/outline_size = 7
+theme_override_font_sizes/font_size = 18
 text = "◆  MEDINA\nCURRENT LOCATION"
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -709,13 +862,17 @@ autowrap_mode = 2
 
 [node name="ChronicleTitle" type="Label" parent="SafeArea/Center/Composition"]
 layout_mode = 2
-text = "—  LIFE EVENTS  —"
+theme_type_variation = &"BrandLabel"
+theme_override_colors/font_color = Color(0.86, 0.71, 0.42, 1)
+theme_override_font_sizes/font_size = 22
+text = "—  LIFE CHRONICLE  —"
 horizontal_alignment = 1
 
 [node name="ChroniclePanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
-custom_minimum_size = Vector2(0, 0)
+custom_minimum_size = Vector2(0, 470)
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_chronicle_frame")
 
 [node name="ChronicleScroll" type="ScrollContainer" parent="SafeArea/Center/Composition/ChroniclePanel"]
 unique_name_in_owner = true
@@ -723,78 +880,74 @@ layout_mode = 2
 size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
-[node name="EventPlaceholder" type="RichTextLabel" parent="SafeArea/Center/Composition/ChroniclePanel/ChronicleScroll"]
+[node name="ChronicleEntries" type="VBoxContainer" parent="SafeArea/Center/Composition/ChroniclePanel/ChronicleScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-bbcode_enabled = true
-fit_content = true
-scroll_active = false
-text = "[center]Your chronicle begins here.[/center]"
+theme_override_constants/separation = 10
 
-[node name="DecisionOverlay" type="Control" parent="."]
+[node name="DecisionOverlay" type="Control" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
 visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Shade" type="ColorRect" parent="DecisionOverlay"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.01, 0.008, 0.012, 0.28)
-
-[node name="Center" type="CenterContainer" parent="DecisionOverlay"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="DecisionPanel" type="PanelContainer" parent="DecisionOverlay/Center"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(860, 0)
-layout_mode = 2
-
-[node name="Margin" type="MarginContainer" parent="DecisionOverlay/Center/DecisionPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 28
-theme_override_constants/margin_top = 24
-theme_override_constants/margin_right = 28
-theme_override_constants/margin_bottom = 24
-
-[node name="Content" type="VBoxContainer" parent="DecisionOverlay/Center/DecisionPanel/Margin"]
-layout_mode = 2
-theme_override_constants/separation = 14
-
-[node name="Eyebrow" type="Label" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content"]
-layout_mode = 2
-theme_type_variation = &"VersionLabel"
-text = "A MOMENT IN YOUR LIFE"
-horizontal_alignment = 1
-
-[node name="DecisionTitle" type="Label" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_type_variation = &"TitleLabel"
-theme_override_font_sizes/font_size = 36
-text = "A LOST PURSE"
-horizontal_alignment = 1
-
-[node name="DecisionArtPanel" type="PanelContainer" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content"]
-custom_minimum_size = Vector2(0, 190)
+custom_minimum_size = Vector2(0, 430)
 layout_mode = 2
 clip_contents = true
 
-[node name="DecisionArt" type="TextureRect" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content/DecisionArtPanel"]
+[node name="Shade" type="ColorRect" parent="SafeArea/Center/Composition/DecisionOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.012, 0.009, 0.007, 0.96)
+
+[node name="Center" type="CenterContainer" parent="SafeArea/Center/Composition/DecisionOverlay"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DecisionPanel" type="PanelContainer" parent="SafeArea/Center/Composition/DecisionOverlay/Center"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(900, 0)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 22
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 22
+theme_override_constants/margin_bottom = 18
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Eyebrow" type="Label" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content"]
+layout_mode = 2
+theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 14
+text = "—  CURRENT SITUATION  —"
+horizontal_alignment = 1
+
+[node name="DecisionTitle" type="Label" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"TitleLabel"
+theme_override_font_sizes/font_size = 30
+text = "A LOST PURSE"
+horizontal_alignment = 1
+autowrap_mode = 2
+
+[node name="DecisionArtPanel" type="PanelContainer" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 140)
+layout_mode = 2
+clip_contents = true
+
+[node name="DecisionArt" type="TextureRect" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content/DecisionArtPanel"]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
@@ -802,43 +955,188 @@ texture = ExtResource("6_location")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="ArtShade" type="ColorRect" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content/DecisionArtPanel"]
+[node name="ArtShade" type="ColorRect" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content/DecisionArtPanel"]
 layout_mode = 2
 mouse_filter = 2
-color = Color(0.04, 0.025, 0.012, 0.22)
+color = Color(0.04, 0.025, 0.012, 0.38)
 
-[node name="DecisionDescription" type="Label" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content"]
+[node name="DecisionDescription" type="Label" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "A merchant's purse lies unattended beside the market road. What will you do?"
 horizontal_alignment = 1
 autowrap_mode = 2
 
-[node name="ChoicePrompt" type="Label" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content"]
+[node name="ChoicePrompt" type="Label" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
 text = "—  WHAT WILL YOU DO?  —"
 horizontal_alignment = 1
 
-[node name="ChoiceRow" type="HBoxContainer" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content"]
+[node name="ChoiceRow" type="VBoxContainer" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content"]
 layout_mode = 2
-theme_override_constants/separation = 14
+theme_override_constants/separation = 8
 
-[node name="ReturnPurseButton" type="Button" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content/ChoiceRow"]
+[node name="ReturnPurseButton" type="Button" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content/ChoiceRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"PositiveChoiceButton"
 text = "RETURN IT TO THE MERCHANT"
 
-[node name="KeepPurseButton" type="Button" parent="DecisionOverlay/Center/DecisionPanel/Margin/Content/ChoiceRow"]
+[node name="KeepPurseButton" type="Button" parent="SafeArea/Center/Composition/DecisionOverlay/Center/DecisionPanel/Margin/Content/ChoiceRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 62)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_type_variation = &"DangerChoiceButton"
 text = "BRING IT HOME"
+
+[node name="CommunityRow" type="HBoxContainer" parent="SafeArea/Center/Composition"]
+custom_minimum_size = Vector2(0, 238)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="PeopleSection" type="VBoxContainer" parent="SafeArea/Center/Composition/CommunityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.15
+theme_override_constants/separation = 6
+
+[node name="PeopleTitle" type="Label" parent="SafeArea/Center/Composition/CommunityRow/PeopleSection"]
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+theme_override_colors/font_color = Color(0.82, 0.68, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "—  PEOPLE AROUND YOU  —"
+horizontal_alignment = 1
+
+[node name="PeoplePanel" type="PanelContainer" parent="SafeArea/Center/Composition/CommunityRow/PeopleSection"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_status_strip")
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/CommunityRow/PeopleSection/PeoplePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 12
+
+[node name="PeopleRows" type="HBoxContainer" parent="SafeArea/Center/Composition/CommunityRow/PeopleSection/PeoplePanel/Margin"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CurrentLocationSection" type="VBoxContainer" parent="SafeArea/Center/Composition/CommunityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.85
+theme_override_constants/separation = 6
+
+[node name="CurrentLocationTitle" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection"]
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+theme_override_colors/font_color = Color(0.82, 0.68, 0.4, 1)
+theme_override_font_sizes/font_size = 18
+text = "—  CURRENT LOCATION  —"
+horizontal_alignment = 1
+
+[node name="CurrentLocationPanel" type="PanelContainer" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_status_strip")
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin"]
+layout_mode = 2
+theme_override_constants/separation = 7
+
+[node name="LocationSettlementName" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_type_variation = &"BrandLabel"
+theme_override_colors/font_color = Color(0.92, 0.77, 0.48, 1)
+theme_override_font_sizes/font_size = 24
+text = "MEDINA"
+
+[node name="LocationRealmName" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.62, 0.47, 1)
+theme_override_font_sizes/font_size = 15
+text = "Rashidun Caliphate"
+autowrap_mode = 2
+
+[node name="LocationRule" type="ColorRect" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content"]
+custom_minimum_size = Vector2(0, 2)
+layout_mode = 2
+color = Color(0.5, 0.36, 0.18, 0.55)
+
+[node name="LocationDetails" type="GridContainer" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content"]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 5
+columns = 2
+
+[node name="ProvinceLabel" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "PROVINCE"
+[node name="LocationProvinceValue" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Hejaz"
+horizontal_alignment = 2
+
+[node name="PopulationLabel" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "POPULATION"
+[node name="LocationPopulationValue" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "4,200"
+horizontal_alignment = 2
+
+[node name="ProsperityLabel" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "PROSPERITY"
+[node name="LocationProsperityValue" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Stable"
+horizontal_alignment = 2
+
+[node name="SafetyLabel" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "SAFETY"
+[node name="LocationSafetyValue" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Secure"
+horizontal_alignment = 2
+
+[node name="SituationLabel" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.5, 0.39, 1)
+text = "CONDITION"
+[node name="LocationSituationValue" type="Label" parent="SafeArea/Center/Composition/CommunityRow/CurrentLocationSection/CurrentLocationPanel/Margin/Content/LocationDetails"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Peaceful"
+horizontal_alignment = 2
 
 [node name="UpbringingPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
@@ -1048,49 +1346,263 @@ text = "PAY THE EXEMPTION"
 
 [node name="AdvanceButton" type="Button" parent="SafeArea/Center/Composition"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(520, 82)
+custom_minimum_size = Vector2(0, 136)
 layout_mode = 2
-size_flags_horizontal = 4
-theme_type_variation = &"PrimaryButton"
+size_flags_horizontal = 3
+text = ""
+tooltip_text = "Advance your life by one year"
+
+[node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/AdvanceButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 22.0
+offset_top = 14.0
+offset_right = -22.0
+offset_bottom = -14.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Row" type="HBoxContainer" parent="SafeArea/Center/Composition/AdvanceButton/Margin"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 22
+
+[node name="HourglassFrame" type="PanelContainer" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row"]
+custom_minimum_size = Vector2(104, 104)
+layout_mode = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_identity_frame")
+
+[node name="Center" type="CenterContainer" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row/HourglassFrame"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="HourglassIcon" type="Control" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row/HourglassFrame/Center"]
+custom_minimum_size = Vector2(64, 64)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("8")
+icon_type = "age"
+
+[node name="ActionCopy" type="VBoxContainer" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row"]
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+theme_override_constants/separation = 4
+alignment = 1
+
+[node name="ActionTitle" type="Label" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row/ActionCopy"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"BrandLabel"
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.94, 0.79, 0.48, 1)
 text = "AGE UP"
 
-[node name="BottomNav" type="HBoxContainer" parent="SafeArea/Center/Composition"]
+[node name="ActionDescription" type="Label" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row/ActionCopy"]
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 8
+mouse_filter = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.72, 0.65, 0.55, 1)
+text = "Advance your life by one year"
 
-[node name="Life" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
+[node name="NextYearDivider" type="ColorRect" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row"]
+custom_minimum_size = Vector2(2, 0)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+color = Color(0.57, 0.42, 0.2, 0.72)
+
+[node name="NextYear" type="VBoxContainer" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row"]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+mouse_filter = 2
+alignment = 1
+
+[node name="NextYearCaption" type="Label" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row/NextYear"]
+layout_mode = 2
+mouse_filter = 2
+theme_type_variation = &"VersionLabel"
+theme_override_font_sizes/font_size = 13
+theme_override_colors/font_color = Color(0.61, 0.51, 0.36, 1)
+text = "NEXT YEAR"
+horizontal_alignment = 1
+
+[node name="NextYearValue" type="Label" parent="SafeArea/Center/Composition/AdvanceButton/Margin/Row/NextYear"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 24
+theme_override_colors/font_color = Color(0.9, 0.75, 0.44, 1)
+text = "633 AD"
+horizontal_alignment = 1
+
+[node name="BottomNavPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_status_strip")
+
+[node name="BottomNav" type="HBoxContainer" parent="SafeArea/Center/Composition/BottomNavPanel"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_type_variation = &"AvailableButton"
+theme_override_constants/separation = 4
+
+[node name="Life" type="Button" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 104)
+layout_mode = 2
+size_flags_horizontal = 3
 disabled = true
-text = "●\nLIFE"
-[node name="World" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
+text = ""
+
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/Life"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+[node name="Icon" type="Control" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/Life/Content"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("8")
+icon_type = "life"
+icon_color = Color(0.92, 0.74, 0.38, 1)
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/Life/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.94, 0.78, 0.44, 1)
+text = "LIFE"
+horizontal_alignment = 1
+
+[node name="World" type="Button" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 104)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "◎\nWORLD"
-[node name="Activities" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
+text = ""
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/World"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+[node name="Icon" type="Control" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/World/Content"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("8")
+icon_type = "world"
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/World/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.7, 0.61, 0.47, 1)
+text = "WORLD"
+horizontal_alignment = 1
+
+[node name="Activities" type="Button" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 104)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "⚒\nACTIVITIES"
-[node name="Character" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
+text = ""
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/Activities"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+[node name="Icon" type="Control" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/Activities/Content"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("8")
+icon_type = "occupation"
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/Activities/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.7, 0.61, 0.47, 1)
+text = "ACTIVITIES"
+horizontal_alignment = 1
+
+[node name="Character" type="Button" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 104)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "♟\nCHARACTER"
-[node name="More" type="Button" parent="SafeArea/Center/Composition/BottomNav"]
+text = ""
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/Character"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+[node name="Icon" type="Control" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/Character/Content"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("8")
+icon_type = "character"
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/Character/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.7, 0.61, 0.47, 1)
+text = "CHARACTER"
+horizontal_alignment = 1
+
+[node name="More" type="Button" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 72)
+custom_minimum_size = Vector2(0, 104)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "☰\nMORE"
+text = ""
+[node name="Content" type="VBoxContainer" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/More"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+alignment = 1
+[node name="Icon" type="Control" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/More/Content"]
+custom_minimum_size = Vector2(38, 38)
+layout_mode = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+script = ExtResource("8")
+icon_type = "more"
+[node name="Label" type="Label" parent="SafeArea/Center/Composition/BottomNavPanel/BottomNav/More/Content"]
+layout_mode = 2
+mouse_filter = 2
+theme_override_font_sizes/font_size = 15
+theme_override_colors/font_color = Color(0.7, 0.61, 0.47, 1)
+text = "MORE"
+horizontal_alignment = 1
 
 [node name="PauseOverlay" type="Control" parent="."]
 unique_name_in_owner = true
