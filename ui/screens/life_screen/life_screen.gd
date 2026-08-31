@@ -3,6 +3,20 @@ extends Control
 
 const BACKGROUND_ART_PATH := "res://art/backgrounds/main_menu_panel_v1.png"
 const MAIN_MENU_SCENE := "res://ui/screens/main_menu/main_menu.tscn"
+const TOUCH_PRESS_SCALE := Vector2(0.98, 0.98)
+const TOUCH_PRESS_TINT := Color(1.08, 1.04, 0.92, 1.0)
+const TOUCH_PRESS_DURATION := 0.09
+const TOUCH_RELEASE_DURATION := 0.13
+const HOMELAND_ART := {
+	"RASHIDUN CALIPHATE": "res://art/locations/medina_632_life_v1.png",
+	"BYZANTINE EMPIRE": "res://art/locations/byzantine_632_life_v1.png",
+	"SASANIAN EMPIRE": "res://art/locations/sasanian_632_life_v1.png",
+}
+const HOMELAND_REGION := {
+	"RASHIDUN CALIPHATE": "ARABIA",
+	"BYZANTINE EMPIRE": "EASTERN ROMAN REALM",
+	"SASANIAN EMPIRE": "PERSIAN REALM",
+}
 
 var character_name := "Unnamed"
 var character_age := 1
@@ -32,16 +46,23 @@ var battle_morale := 0.0
 var battle_rival_name := ""
 var battle_log: Array[String] = []
 var battle_beats: Array[Dictionary] = []
+var button_tweens: Dictionary = {}
 
 @onready var background: TextureRect = %Background
 @onready var era_label: Label = %Era
+@onready var top_wealth: Label = %TopWealth
+@onready var top_standing: Label = %TopStanding
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
 @onready var portrait: CharacterPortrait = %Portrait
+@onready var character_backdrop: TextureRect = %CharacterBackdrop
 @onready var name_label: Label = %NameLabel
 @onready var identity_label: Label = %IdentityLabel
 @onready var homeland_label: Label = %HomelandLabel
 @onready var birthplace_label: Label = %BirthplaceLabel
+@onready var location_art: TextureRect = %Art
+@onready var location_caption: Label = %Caption
+@onready var location_panel: PanelContainer = $SafeArea/Center/Composition/LocationPanel
 @onready var age_value: Label = %AgeValue
 @onready var health_value: Label = %HealthValue
 @onready var health_bar: StatBar = %HealthBar
@@ -60,6 +81,8 @@ var battle_beats: Array[Dictionary] = []
 	%MartialUpbringingButton,
 ]
 @onready var decision_panel: PanelContainer = %DecisionPanel
+@onready var decision_overlay: Control = %DecisionOverlay
+@onready var decision_art: TextureRect = %DecisionArt
 @onready var return_purse_button: Button = %ReturnPurseButton
 @onready var keep_purse_button: Button = %KeepPurseButton
 @onready var apprenticeship_panel: PanelContainer = %ApprenticeshipPanel
@@ -80,10 +103,19 @@ var battle_beats: Array[Dictionary] = []
 @onready var more_button: Button = %More
 @onready var character_button: Button = %Character
 @onready var character_overlay: Control = %CharacterOverlay
+@onready var character_overlay_portrait: CharacterPortrait = %CharacterOverlayPortrait
+@onready var character_summary_value: Label = %CharacterSummaryValue
+@onready var character_status_value: Label = %CharacterStatusValue
 @onready var character_details_value: Label = %CharacterDetailsValue
+@onready var character_development_value: Label = %CharacterDevelopmentValue
 @onready var close_character_button: Button = %CloseCharacterButton
 @onready var activities_button: Button = %Activities
 @onready var activities_overlay: Control = %ActivitiesOverlay
+@onready var activity_context: Label = %ActivityContext
+@onready var activity_occupation_title: Label = %ActivityOccupationTitle
+@onready var activity_occupation_description: Label = %ActivityOccupationDescription
+@onready var activity_occupation_progress: StatBar = %ActivityOccupationProgress
+@onready var activity_occupation_progress_text: Label = %ActivityOccupationProgressText
 @onready var market_summary: Label = %MarketSummary
 @onready var upgrade_label: Label = %UpgradeLabel
 @onready var upgrade_button: Button = %UpgradeButton
@@ -104,6 +136,9 @@ var battle_beats: Array[Dictionary] = []
 @onready var travel_message: Label = %TravelMessage
 @onready var world_market_value: Label = %WorldMarketValue
 @onready var world_action_message: Label = %WorldActionMessage
+@onready var world_date: Label = %WorldDate
+@onready var world_map_location: Label = %WorldMapLocation
+@onready var realm_tint: ColorRect = %RealmTint
 @onready var visit_family_button: Button = %VisitFamilyButton
 @onready var help_trader_button: Button = %HelpTraderButton
 @onready var close_world_button: Button = %CloseWorldButton
@@ -119,13 +154,23 @@ var battle_beats: Array[Dictionary] = []
 @onready var battle_title_value: Label = %BattleTitleValue
 @onready var battle_time_value: Label = %BattleTimeValue
 @onready var battle_narration_value: Label = %BattleNarrationValue
+@onready var battle_art: TextureRect = %BattleArt
+@onready var battle_player_force: Label = %BattlePlayerForce
+@onready var battle_enemy_force: Label = %BattleEnemyForce
+@onready var battle_health_value: Label = %BattleHealthValue
+@onready var battle_morale_value: Label = %BattleMoraleValue
+@onready var battle_progress: StatBar = %BattleProgress
+@onready var battle_log_value: Label = %BattleLogValue
 @onready var battle_choice_a_button: Button = %BattleChoiceAButton
 @onready var battle_choice_b_button: Button = %BattleChoiceBButton
 
 
 func _ready() -> void:
+	if not _ensure_character_state():
+		return
 	_load_character_state()
 	_setup_background()
+	_setup_location_banner()
 	_refresh_character_display()
 	_refresh_stats()
 	homeland_label.text = homeland
@@ -169,6 +214,7 @@ func _ready() -> void:
 	SaveManager.save_game()
 	resized.connect(_apply_layout)
 	_apply_layout()
+	_bind_button_feedback.call_deferred()
 	_scroll_chronicle_to_bottom.call_deferred()
 
 
@@ -253,6 +299,8 @@ func _refresh_stats() -> void:
 	health_value.text = "%d%%" % health
 	health_bar.ratio = health / 100.0
 	wealth_value.text = str(wealth)
+	top_wealth.text = "◆ %d" % wealth
+	top_standing.text = "⚖ %s" % standing
 	standing_value.text = standing
 	trait_value.text = primary_trait
 
@@ -263,12 +311,13 @@ func _show_decision(event: Dictionary) -> void:
 	%DecisionDescription.text = str(event.description)
 	return_purse_button.text = str(event.choices[0].text)
 	keep_purse_button.text = str(event.choices[1].text)
-	decision_panel.show()
+	decision_art.texture = location_art.texture
+	_reveal_overlay(decision_overlay)
 	advance_button.disabled = true
 
 
 func _resolve_decision(choice: int) -> void:
-	decision_panel.hide()
+	decision_overlay.hide()
 	advance_button.disabled = false
 	var event := EventResolver.event_by_id(pending_event)
 	if event.is_empty():
@@ -336,8 +385,13 @@ func _begin_battle(rival_name: String) -> void:
 	var army := WorldState.get_player_army()
 	if army != null:
 		battle_log.append(_army_flavor_text(army))
+		battle_player_force.text = "YOUR ARMY\n%d MEN  •  %d%% MORALE" % [army.strength, roundi(army.morale)]
+	else:
+		battle_player_force.text = "YOUR ARMY\nLEVY FORCE"
+	battle_enemy_force.text = "%s\nENEMY HOST" % rival_name.to_upper()
+	battle_art.texture = location_art.texture
 	battle_title_value.text = "BATTLE AGAINST THE %s" % rival_name.to_upper()
-	battle_overlay.show()
+	_reveal_overlay(battle_overlay)
 	advance_button.disabled = true
 	_show_battle_beat()
 
@@ -356,6 +410,10 @@ func _show_battle_beat() -> void:
 	battle_narration_value.text = str(beat.narration)
 	battle_choice_a_button.text = str(beat.choices[0].text)
 	battle_choice_b_button.text = str(beat.choices[1].text)
+	battle_health_value.text = "♥ HEALTH  %d%%" % health
+	battle_morale_value.text = "⚑ MORALE  %s" % ("RISING" if battle_morale > 0.0 else ("FALLING" if battle_morale < 0.0 else "STEADY"))
+	battle_progress.ratio = float(battle_beat_index) / float(maxi(battle_beats.size(), 1))
+	battle_log_value.text = "The armies take their positions." if battle_log.is_empty() else battle_log[-1]
 
 
 func _resolve_battle_choice(choice_index: int) -> void:
@@ -491,9 +549,17 @@ func _apply_annual_income() -> void:
 	_append_chronicle("Work, %s\nYour year as a %s earns %d Wealth.\nExperience: %d • Rank: %s" % [TimeManager.year_label(), occupation.name, wage, occupation_experience, rank.name])
 
 
+func _ensure_character_state() -> bool:
+	if WorldState.has_player():
+		return true
+	if SaveManager.has_save() and SaveManager.load_game():
+		return true
+	push_warning("LifeScreen opened without a created or saved character; returning to the main menu.")
+	get_tree().call_deferred("change_scene_to_file", MAIN_MENU_SCENE)
+	return false
+
+
 func _load_character_state() -> void:
-	if not WorldState.has_player():
-		WorldState.create_player({})
 	var state: PlayerCharacter = WorldState.player
 	character_name = state.full_name
 	character_age = state.age
@@ -578,6 +644,15 @@ func _open_world() -> void:
 	world_settlement_value.text = "%s  •  %s" % [context.settlement, context.type]
 	world_population_value.text = str(context.population)
 	world_prosperity_value.text = "%d / 100" % context.prosperity
+	world_date.text = "%s  •  YOUR REGION" % TimeManager.year_label()
+	world_map_location.text = "●  %s\n%s  •  %s" % [str(context.settlement).to_upper(), str(context.kingdom).to_upper(), str(context.province).to_upper()]
+	match homeland:
+		"BYZANTINE EMPIRE":
+			realm_tint.color = Color(0.35, 0.18, 0.42, 0.14)
+		"SASANIAN EMPIRE":
+			realm_tint.color = Color(0.2, 0.42, 0.24, 0.14)
+		_:
+			realm_tint.color = Color(0.56, 0.38, 0.12, 0.12)
 	world_residents_value.text = "\n".join(context.residents)
 	world_reports_value.text = "No major developments yet." if context.reports.is_empty() else "\n".join(context.reports)
 	world_market_value.text = "\n".join(context.market)
@@ -586,7 +661,7 @@ func _open_world() -> void:
 	help_trader_button.disabled = int(WorldState.player.local_action_years.get("trader", 0)) == TimeManager.current_date.year
 	travel_message.text = ""
 	_rebuild_travel_rows()
-	world_overlay.show()
+	_reveal_overlay(world_overlay)
 
 
 func _rebuild_travel_rows() -> void:
@@ -599,15 +674,25 @@ func _rebuild_travel_rows() -> void:
 		var province: Province = WorldState.provinces.get(settlement.province_id)
 		var days := TravelSim.days_to(settlement.id)
 		var row := HBoxContainer.new()
+		row.custom_minimum_size.y = 76
 		row.add_theme_constant_override("separation", 8)
+		var route_icon := Label.new()
+		route_icon.custom_minimum_size.x = 48
+		route_icon.text = "♞"
+		route_icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		route_icon.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		route_icon.add_theme_color_override("font_color", Color(0.67, 0.55, 0.32))
 		var details := Label.new()
 		details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		details.autowrap_mode = TextServer.AUTOWRAP_WORD
-		details.text = "%s  •  %s\n~%d days" % [settlement.name, province.name if province else "Unknown", days]
+		details.text = "%s  •  %s\nROUTE  •  ~%d DAYS" % [settlement.name, province.name if province else "Unknown", days]
+		details.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		var travel_button := Button.new()
 		travel_button.text = "TRAVEL"
 		travel_button.custom_minimum_size = Vector2(140, 68)
+		_bind_tactile_button(travel_button)
 		travel_button.pressed.connect(_begin_travel.bind(settlement.id))
+		row.add_child(route_icon)
 		row.add_child(details)
 		row.add_child(travel_button)
 		travel_rows.add_child(row)
@@ -632,14 +717,20 @@ func _begin_travel(destination_id: String) -> void:
 
 func _open_character() -> void:
 	var context := WorldState.get_character_context()
-	character_details_value.text = "LINEAGE\n%s\n\nDYNASTY\n%s  •  PRESTIGE %d\n\nPARENTS\n%s\n%s\n\nCULTURE\n%s\n\nFAITH\n%s\n\nBORN\n%s  •  %s" % [context.lineage, context.dynasty, context.prestige, context.father, context.mother, context.culture, context.faith, context.birth_season, context.family_origin]
-	character_overlay.show()
+	character_overlay_portrait.female = character_sex == "FEMALE"
+	character_overlay_portrait.variant_seed = appearance_seed
+	character_summary_value.text = "%s\n%s  •  AGE %d\n%s\n%s  •  %s" % [character_name, character_sex.capitalize(), character_age, homeland, birthplace, TimeManager.year_label()]
+	character_status_value.text = "♥  HEALTH  %d%%    ◆  WEALTH  %d\n⚖  STANDING  %s\n✦  TRAIT  %s    ⚒  OCCUPATION  %s" % [health, wealth, standing, primary_trait, _starting_occupation()]
+	character_details_value.text = "DYNASTY  •  %s  •  PRESTIGE %d\nLINEAGE  •  %s\n\nFATHER  •  %s\nMOTHER  •  %s\n\nCULTURE  •  %s    FAITH  •  %s\nBORN  •  %s  •  %s" % [context.dynasty, context.prestige, context.lineage, context.father, context.mother, context.culture, context.faith, context.birth_season, context.family_origin]
+	character_development_value.text = "UPBRINGING  •  %s\nAPPRENTICESHIP  •  %s\nOCCUPATION EXPERIENCE  •  %d\nTRADE REPUTATION  •  %d" % [upbringing, apprenticeship, occupation_experience, trade_reputation]
+	_reveal_overlay(character_overlay)
 
 
 func _open_activities() -> void:
+	_refresh_activity_header()
 	_rebuild_market_rows()
 	market_message.text = "Buy locally now; future travel will let you seek better selling prices."
-	activities_overlay.show()
+	_reveal_overlay(activities_overlay)
 
 
 func _rebuild_market_rows() -> void:
@@ -659,25 +750,70 @@ func _rebuild_market_rows() -> void:
 	for good_id in GoodData.GOODS:
 		var good := GoodData.get_good(good_id)
 		var row := HBoxContainer.new()
+		row.custom_minimum_size.y = 72
 		row.add_theme_constant_override("separation", 8)
+		var icon := Label.new()
+		icon.custom_minimum_size.x = 48
+		icon.text = _good_icon(good_id)
+		icon.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		icon.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		icon.add_theme_font_size_override("font_size", 28)
 		var details := Label.new()
 		details.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		var stock := int(settlement.goods_stock.get(good_id, 0))
-		details.text = "%s  •  %d Wealth  •  %s  •  Owned %d" % [good.name, settlement.goods_prices[good_id], MarketService.stock_condition(stock), int(WorldState.player.inventory.get(good_id, 0))]
+		var condition := MarketService.stock_condition(stock)
+		details.text = "%s\n%d Wealth  •  %s  •  Owned %d" % [good.name, settlement.goods_prices[good_id], condition, int(WorldState.player.inventory.get(good_id, 0))]
+		details.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		if condition.to_lower().contains("short") or condition.to_lower().contains("scarce"):
+			details.add_theme_color_override("font_color", Color(0.88, 0.48, 0.32))
+		elif condition.to_lower().contains("surplus") or condition.to_lower().contains("plent"):
+			details.add_theme_color_override("font_color", Color(0.55, 0.75, 0.38))
 		var buy_button := Button.new()
 		buy_button.text = "BUY"
 		buy_button.custom_minimum_size = Vector2(110, 58)
+		_bind_tactile_button(buy_button)
 		buy_button.disabled = stock <= 0
 		buy_button.pressed.connect(_trade_good.bind(good_id, true))
 		var sell_button := Button.new()
 		sell_button.text = "SELL"
 		sell_button.custom_minimum_size = Vector2(110, 58)
+		_bind_tactile_button(sell_button)
 		sell_button.disabled = int(WorldState.player.inventory.get(good_id, 0)) <= 0
 		sell_button.pressed.connect(_trade_good.bind(good_id, false))
+		row.add_child(icon)
 		row.add_child(details)
 		row.add_child(buy_button)
 		row.add_child(sell_button)
 		market_rows.add_child(row)
+
+
+func _refresh_activity_header() -> void:
+	var settlement: Settlement = WorldState.settlements.get(WorldState.player.location_id)
+	activity_context.text = "%s  •  %s" % [settlement.name.to_upper() if settlement else birthplace.to_upper(), TimeManager.year_label()]
+	var occupation := OccupationData.get_occupation(WorldState.player.occupation_id)
+	if occupation.is_empty():
+		activity_occupation_title.text = "NO OCCUPATION"
+		activity_occupation_description.text = "Your working life has not begun."
+		activity_occupation_progress.ratio = 0.0
+		activity_occupation_progress_text.text = "0 / 3"
+		return
+	var rank := OccupationData.rank_for_experience(WorldState.player.occupation_experience)
+	activity_occupation_title.text = "%s %s" % [str(rank.name).to_upper(), str(occupation.name).to_upper()]
+	activity_occupation_description.text = str(occupation.description)
+	var next_rank_at := 3 if WorldState.player.occupation_experience < 3 else 7
+	activity_occupation_progress.ratio = clampf(float(WorldState.player.occupation_experience) / float(next_rank_at), 0.0, 1.0)
+	activity_occupation_progress_text.text = "%d / %d" % [WorldState.player.occupation_experience, next_rank_at]
+
+
+func _good_icon(good_id: String) -> String:
+	return {
+		"grain": "♨",
+		"dates": "♣",
+		"salt": "◇",
+		"cloth": "▦",
+		"pottery": "◉",
+		"iron": "⚒",
+	}.get(good_id, "◆")
 
 
 func _refresh_upgrade_row() -> void:
@@ -745,10 +881,63 @@ func _apply_layout() -> void:
 	var width := clampf((canvas.x - edge * 2.0) * 0.92, 600.0, 880.0)
 	composition.custom_minimum_size.x = width
 	portrait.custom_minimum_size = Vector2(width * 0.27, width * 0.32)
+	location_panel.custom_minimum_size.y = clampf(canvas.y * 0.09, 150.0, 190.0)
+	chronicle_scroll.custom_minimum_size.y = clampf(canvas.y * 0.105, 190.0, 250.0)
 	advance_button.custom_minimum_size = Vector2(width * 0.62, clampf(canvas.y * 0.052, 76.0, 98.0))
 	name_label.add_theme_font_size_override("font_size", roundi(clampf(width * 0.047, 34.0, 44.0)))
+	for button in find_children("*", "Button", true, false):
+		(button as Button).pivot_offset = (button as Button).size * 0.5
 
 
 func _setup_background() -> void:
 	if ResourceLoader.exists(BACKGROUND_ART_PATH):
 		background.texture = load(BACKGROUND_ART_PATH)
+
+
+func _setup_location_banner() -> void:
+	var art_path := str(HOMELAND_ART.get(homeland, HOMELAND_ART["RASHIDUN CALIPHATE"]))
+	if ResourceLoader.exists(art_path):
+		location_art.texture = load(art_path)
+		character_backdrop.texture = location_art.texture
+	var region := str(HOMELAND_REGION.get(homeland, "YOUR HOMELAND"))
+	location_caption.text = "%s  •  %s\nA living settlement shaped by households, markets, faith and power." % [birthplace.to_upper(), region]
+
+
+func _reveal_overlay(overlay: Control) -> void:
+	overlay.modulate.a = 0.0
+	overlay.show()
+	var tween := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(overlay, "modulate:a", 1.0, 0.14)
+
+
+func _bind_button_feedback() -> void:
+	for node in find_children("*", "Button", true, false):
+		_bind_tactile_button(node as Button)
+
+
+func _bind_tactile_button(button: Button) -> void:
+	if button == null or button.has_meta("life_feedback_bound"):
+		return
+	button.set_meta("life_feedback_bound", true)
+	button.button_down.connect(_press_button.bind(button))
+	button.button_up.connect(_release_button.bind(button))
+	button.resized.connect(func(): button.pivot_offset = button.size * 0.5)
+
+
+func _press_button(button: Button) -> void:
+	_tween_button_feedback(button, TOUCH_PRESS_SCALE, TOUCH_PRESS_TINT, TOUCH_PRESS_DURATION)
+
+
+func _release_button(button: Button) -> void:
+	_tween_button_feedback(button, Vector2.ONE, Color.WHITE, TOUCH_RELEASE_DURATION)
+
+
+func _tween_button_feedback(button: Button, target_scale: Vector2, tint: Color, duration: float) -> void:
+	var existing: Tween = button_tweens.get(button)
+	if existing and existing.is_valid():
+		existing.kill()
+	button.pivot_offset = button.size * 0.5
+	var tween := create_tween().set_parallel(true).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tween.tween_property(button, "scale", target_scale, duration)
+	tween.tween_property(button, "self_modulate", tint, duration)
+	button_tweens[button] = tween

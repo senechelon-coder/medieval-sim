@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=21 format=3]
+[gd_resource type="Theme" load_steps=23 format=3]
 
 [ext_resource type="FontFile" path="res://ui/theme/fonts/Cinzel-Variable.ttf" id="1_cinzel"]
 [ext_resource type="FontFile" path="res://ui/theme/fonts/IMFellEnglish-Regular.ttf" id="2_imfell"]
@@ -244,6 +244,38 @@ content_margin_top = 24.0
 content_margin_right = 32.0
 content_margin_bottom = 24.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_choice_green"]
+bg_color = Color(0.075, 0.19, 0.08, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.42, 0.65, 0.3, 0.96)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 20.0
+content_margin_top = 14.0
+content_margin_right = 20.0
+content_margin_bottom = 14.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_choice_red"]
+bg_color = Color(0.22, 0.065, 0.04, 0.94)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.65, 0.25, 0.16, 0.96)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+content_margin_left = 20.0
+content_margin_top = 14.0
+content_margin_right = 20.0
+content_margin_bottom = 14.0
+
 [resource]
 default_font = ExtResource("2_imfell")
 default_font_size = 32
@@ -283,6 +315,20 @@ Button/styles/focus = SubResource("StyleBoxFlat_focus")
 AvailableButton/base_type = &"Button"
 AvailableButton/styles/normal = SubResource("StyleBoxFlat_available")
 AvailableButton/styles/focus = SubResource("StyleBoxFlat_focus")
+
+PositiveChoiceButton/base_type = &"Button"
+PositiveChoiceButton/colors/font_color = Color(0.9, 0.86, 0.7, 1)
+PositiveChoiceButton/styles/normal = SubResource("StyleBoxFlat_choice_green")
+PositiveChoiceButton/styles/hover = SubResource("StyleBoxFlat_btn_hover")
+PositiveChoiceButton/styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+PositiveChoiceButton/styles/focus = SubResource("StyleBoxFlat_focus")
+
+DangerChoiceButton/base_type = &"Button"
+DangerChoiceButton/colors/font_color = Color(0.93, 0.82, 0.68, 1)
+DangerChoiceButton/styles/normal = SubResource("StyleBoxFlat_choice_red")
+DangerChoiceButton/styles/hover = SubResource("StyleBoxFlat_btn_hover")
+DangerChoiceButton/styles/pressed = SubResource("StyleBoxFlat_btn_pressed")
+DangerChoiceButton/styles/focus = SubResource("StyleBoxFlat_focus")
 
 PrimaryButton/base_type = &"Button"
 PrimaryButton/fonts/font = SubResource("FontVariation_button")
