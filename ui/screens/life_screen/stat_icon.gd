@@ -29,6 +29,7 @@ func _draw() -> void:
 		"standing": _draw_scale(w, h, line_w)
 		"trait": _draw_gem(w, h, line_w)
 		"occupation": _draw_tools(w, h, line_w)
+		"life_stage": _draw_house(w, h, line_w)
 
 
 func _draw_hourglass(w: float, h: float, line_w: float) -> void:
@@ -82,3 +83,16 @@ func _draw_gem(w: float, h: float, line_w: float) -> void:
 func _draw_tools(w: float, h: float, line_w: float) -> void:
 	draw_line(Vector2(w * 0.18, h * 0.18), Vector2(w * 0.82, h * 0.82), icon_color, line_w)
 	draw_line(Vector2(w * 0.82, h * 0.18), Vector2(w * 0.18, h * 0.82), icon_color, line_w)
+
+
+func _draw_house(w: float, h: float, line_w: float) -> void:
+	var roof := PackedVector2Array([
+		Vector2(w * 0.14, h * 0.5), Vector2(w * 0.5, h * 0.14), Vector2(w * 0.86, h * 0.5),
+	])
+	draw_polyline(roof, icon_color, line_w, true)
+	draw_line(Vector2(w * 0.24, h * 0.46), Vector2(w * 0.24, h * 0.86), icon_color, line_w)
+	draw_line(Vector2(w * 0.76, h * 0.46), Vector2(w * 0.76, h * 0.86), icon_color, line_w)
+	draw_line(Vector2(w * 0.24, h * 0.86), Vector2(w * 0.76, h * 0.86), icon_color, line_w)
+	draw_line(Vector2(w * 0.44, h * 0.86), Vector2(w * 0.44, h * 0.6), icon_color, line_w * 0.8)
+	draw_line(Vector2(w * 0.56, h * 0.86), Vector2(w * 0.56, h * 0.6), icon_color, line_w * 0.8)
+	draw_line(Vector2(w * 0.44, h * 0.6), Vector2(w * 0.56, h * 0.6), icon_color, line_w * 0.8)

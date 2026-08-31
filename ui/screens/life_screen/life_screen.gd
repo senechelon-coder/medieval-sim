@@ -97,13 +97,11 @@ var next_year_label: Label
 @onready var map_context_title: Label = %MapContextTitle
 @onready var player_map_marker: Label = %PlayerMapMarker
 @onready var location_panel: PanelContainer = $SafeArea/Center/Composition/LocationPanel
-@onready var age_value: Label = %AgeValue
 @onready var health_value: Label = %HealthValue
-@onready var health_bar: StatBar = %HealthBar
 @onready var wealth_value: Label = %WealthValue
 @onready var standing_value: Label = %StandingValue
-@onready var trait_value: Label = %TraitValue
 @onready var occupation_value: Label = %OccupationValue
+@onready var life_stage_value: Label = %LifeStageValue
 @onready var stats_panel: PanelContainer = $SafeArea/Center/Composition/StatsPanel
 @onready var chronicle_title: Label = $SafeArea/Center/Composition/ChronicleTitle
 @onready var chronicle_panel: PanelContainer = $SafeArea/Center/Composition/ChroniclePanel
@@ -430,8 +428,8 @@ func _refresh_character_display() -> void:
 	era_label.text = TimeManager.year_label()
 	header_date_label.text = TimeManager.date_label()
 	birthplace_label.text = "%s  •  %s" % [birthplace, TimeManager.year_label()]
-	age_value.text = str(character_age)
 	header_age_value.text = str(character_age)
+	life_stage_value.text = _life_stage_label(character_age)
 	activities_button.disabled = character_age < 16
 	map_context_title.text = "%s  •  %s" % [str(HOMELAND_REGION.get(homeland, "YOUR HOMELAND")), TimeManager.year_label()]
 	_refresh_time_panel()
@@ -465,11 +463,10 @@ func _choose_upbringing(button: Button) -> void:
 
 
 func _refresh_stats() -> void:
-	health_value.text = "%d%%" % health
-	health_bar.ratio = health / 100.0
+	health_value.text = _health_label(health)
 	wealth_value.text = str(wealth)
 	standing_value.text = standing
-	trait_value.text = primary_trait
+	life_stage_value.text = _life_stage_label(character_age)
 	header_health_value.text = "%d%%" % health
 	header_wealth_value.text = str(wealth)
 	header_standing_value.text = standing
@@ -484,6 +481,14 @@ func _health_label(value: int) -> String:
 	if value >= 45: return "Fair"
 	if value >= 25: return "Poor"
 	return "Critical"
+
+
+func _life_stage_label(age: int) -> String:
+	if age < 3: return "Infant"
+	if age < 13: return "Child"
+	if age < 18: return "Youth"
+	if age < 60: return "Adult"
+	return "Elder"
 
 
 func _show_decision(event: Dictionary) -> void:
