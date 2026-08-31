@@ -178,6 +178,10 @@ var next_year_label: Label
 @onready var pause_overlay: Control = %PauseOverlay
 @onready var resume_button: Button = %ResumeButton
 @onready var main_menu_button: Button = %MainMenuButton
+@onready var death_overlay: Control = %DeathOverlay
+@onready var death_epitaph_value: Label = %DeathEpitaphValue
+@onready var death_summary_value: Label = %DeathSummaryValue
+@onready var return_to_menu_button: Button = %ReturnToMenuButton
 @onready var recruitment_panel: PanelContainer = %RecruitmentPanel
 @onready var recruitment_title: Label = %RecruitmentTitle
 @onready var recruitment_description: Label = %RecruitmentDescription
@@ -242,6 +246,7 @@ func _ready() -> void:
 	close_world_button.pressed.connect(func(): world_overlay.hide())
 	resume_button.pressed.connect(_resume_game)
 	main_menu_button.pressed.connect(_save_and_return_to_menu)
+	return_to_menu_button.pressed.connect(_return_after_death)
 	join_levy_button.pressed.connect(_resolve_recruitment.bind(true))
 	decline_levy_button.pressed.connect(_resolve_recruitment.bind(false))
 	battle_choice_a_button.pressed.connect(_resolve_battle_choice.bind(0))
@@ -406,6 +411,9 @@ func _advance_year() -> void:
 	for news in local_news:
 		_append_chronicle("Local news, %s\n%s" % [TimeManager.year_label(), news])
 	_apply_annual_income()
+	if _roll_for_death():
+		_handle_death()
+		return
 	if character_age == 5:
 		_append_chronicle("Age 5, %s\nYour early upbringing can now be chosen." % TimeManager.year_label())
 		upbringing_panel.show()
@@ -815,6 +823,39 @@ func _save_and_return_to_menu() -> void:
 	MusicManager.stop_music()
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
+
+func _roll_for_death() -> bool:
+	if health <= 0:
+		return true
+	var age_risk := 0.0
+	if character_age >= 90: age_risk = 0.35
+	elif character_age >= 80: age_risk = 0.18
+	elif character_age >= 70: age_risk = 0.09
+	elif character_age >= 60: age_risk = 0.04
+	elif character_age >= 45: age_risk = 0.015
+	var health_risk := 0.0
+	if health <= 15: health_risk = 0.25
+	elif health <= 30: health_risk = 0.08
+	elif health <= 50: health_risk = 0.02
+	return randf() < clampf(age_risk + health_risk, 0.0, 1.0)
+
+
+func _handle_death() -> void:
+	var cause := "declining health" if health <= 30 else "old age"
+	var birth_year := TimeManager.current_date.year - character_age
+	var death_line := "%s passed away of %s at age %d, in %s." % [character_name, cause, character_age, birthplace]
+	_append_chronicle("Age %d, %s\n%s" % [character_age, TimeManager.year_label(), death_line])
+	death_epitaph_value.text = "%s\n%d – %d AD" % [character_name, birth_year, TimeManager.current_date.year]
+	death_summary_value.text = "%s\n\nAGE %d  •  %s\nWEALTH %d  •  %s" % [death_line, character_age, standing, wealth, _starting_occupation()]
+	advance_button.disabled = true
+	_reveal_overlay(death_overlay)
+
+
+func _return_after_death() -> void:
+	SaveManager.delete_save()
+	get_tree().paused = false
+	MusicManager.stop_music()
+	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 func _open_world(reset_scroll := true) -> void:
 	var context := WorldState.get_home_context()

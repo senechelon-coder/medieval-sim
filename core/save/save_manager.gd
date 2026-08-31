@@ -9,6 +9,11 @@ func has_save() -> bool:
 	return FileAccess.file_exists(SAVE_PATH)
 
 
+func delete_save() -> void:
+	if has_save():
+		DirAccess.remove_absolute(ProjectSettings.globalize_path(SAVE_PATH))
+
+
 func get_save_summary() -> Dictionary:
 	var payload := _read_save_payload()
 	if payload.is_empty():
