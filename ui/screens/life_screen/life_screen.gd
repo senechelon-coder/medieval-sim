@@ -415,35 +415,7 @@ func _advance_year() -> void:
 	if _roll_for_death():
 		_handle_death()
 		return
-	if character_age == 5:
-		_append_chronicle("Age 5, %s\nYour early upbringing can now be chosen." % TimeManager.year_label())
-		upbringing_panel.show()
-		advance_button.disabled = true
-	elif character_age == 12:
-		_append_chronicle("Age 12, %s\nChildhood gives way to responsibility. Your household must decide how you will be trained." % TimeManager.year_label())
-		apprenticeship_panel.show()
-		advance_button.disabled = true
-	elif character_age == 16 and occupation_id == "":
-		_append_chronicle("Age 16, %s\nYour apprenticeship gives way to adult work. You must choose how to earn your living." % TimeManager.year_label())
-		occupation_panel.show()
-		advance_button.disabled = true
-	else:
-		var war_news := WarSim.maybe_declare_war(TimeManager.current_date.year)
-		if war_news != "":
-			_append_chronicle(war_news)
-		var war_progress_news := WarSim.advance_war(TimeManager.current_date.year)
-		if war_progress_news != "":
-			_append_chronicle(war_progress_news)
-		var recruit_check := WarSim.attempt_recruit_player(TimeManager.current_date.year)
-		if bool(recruit_check.get("eligible", false)):
-			_show_recruitment_call(recruit_check)
-			return
-		var event := EventResolver.event_for_age(character_age, WorldState.player.completed_events)
-		if event.is_empty():
-			_append_chronicle("Age %d, %s\nAnother year of childhood passes." % [character_age, TimeManager.year_label()])
-		else:
-			_append_chronicle("Age %d, %s\n%s" % [character_age, TimeManager.year_label(), event.intro])
-			_show_decision(event)
+	_append_chronicle("Age %d, %s\nAnother year passes." % [character_age, TimeManager.year_label()])
 
 
 func _refresh_character_display() -> void:
@@ -792,19 +764,7 @@ func _sync_character_state() -> void:
 
 
 func _restore_pending_milestone() -> void:
-	if character_age == 5 and upbringing == "Undetermined":
-		upbringing_panel.show()
-		advance_button.disabled = true
-	elif character_age == 12 and apprenticeship == "None":
-		apprenticeship_panel.show()
-		advance_button.disabled = true
-	elif character_age == 16 and occupation_id == "":
-		occupation_panel.show()
-		advance_button.disabled = true
-	else:
-		var event := EventResolver.event_for_age(character_age, WorldState.player.completed_events)
-		if not event.is_empty():
-			_show_decision(event)
+	pass
 
 
 func _open_pause_menu() -> void:
