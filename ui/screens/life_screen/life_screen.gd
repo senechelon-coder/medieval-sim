@@ -1110,7 +1110,7 @@ func _apply_layout() -> void:
 	var width := clampf((canvas.x - horizontal_edge * 2.0) * 0.98, 480.0, 1000.0)
 	composition.custom_minimum_size.x = width
 	portrait.custom_minimum_size = Vector2.ONE * clampf(canvas.x * 0.08, 78.0, 100.0)
-	location_panel.custom_minimum_size.y = clampf(canvas.y * 0.1, 150.0, 220.0)
+	location_panel.custom_minimum_size.y = 60.0
 	chronicle_scroll.custom_minimum_size.y = clampf(canvas.y * 0.1, 96.0, 120.0)
 	var age_button_size := clampf(canvas.y * 0.125, 124.0, 142.0)
 	advance_button.custom_minimum_size = Vector2.ONE * age_button_size

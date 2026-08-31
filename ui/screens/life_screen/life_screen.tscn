@@ -176,140 +176,87 @@ layout_mode = 2
 
 [node name="StatsMargin" type="MarginContainer" parent="SafeArea/Center/Composition/StatsPanel"]
 layout_mode = 2
-theme_override_constants/margin_left = 16
+theme_override_constants/margin_left = 14
 theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 16
+theme_override_constants/margin_right = 14
 theme_override_constants/margin_bottom = 8
 
-[node name="Stats" type="GridContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin"]
-layout_mode = 2
-theme_override_constants/h_separation = 18
-theme_override_constants/v_separation = 6
-columns = 4
-
-[node name="AgeRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+[node name="Stats" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin"]
 layout_mode = 2
 theme_override_constants/separation = 6
-[node name="AgeIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/AgeRow"]
-custom_minimum_size = Vector2(16, 16)
+
+[node name="AgeIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+custom_minimum_size = Vector2(15, 15)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "age"
-[node name="Age" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/AgeRow"]
-layout_mode = 2
-theme_type_variation = &"FieldLabel"
-text = "AGE"
 [node name="AgeValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 text = "1"
-horizontal_alignment = 2
-[node name="HealthRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
-layout_mode = 2
-theme_override_constants/separation = 6
-[node name="HealthIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthRow"]
-custom_minimum_size = Vector2(16, 16)
+[node name="HealthIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+custom_minimum_size = Vector2(15, 15)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "health"
-[node name="Health" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthRow"]
-layout_mode = 2
-theme_type_variation = &"FieldLabel"
-text = "HEALTH"
-[node name="HealthValueRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 8
-[node name="HealthBar" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthValueRow"]
+[node name="HealthBar" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(60, 12)
+custom_minimum_size = Vector2(30, 11)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("5")
-[node name="HealthValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthValueRow"]
+[node name="HealthValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "90%"
-horizontal_alignment = 2
-[node name="WealthRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
-layout_mode = 2
-theme_override_constants/separation = 6
-[node name="WealthIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/WealthRow"]
-custom_minimum_size = Vector2(16, 16)
+[node name="WealthIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+custom_minimum_size = Vector2(15, 15)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "wealth"
-[node name="Wealth" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/WealthRow"]
-layout_mode = 2
-theme_type_variation = &"FieldLabel"
-text = "WEALTH"
 [node name="WealthValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 text = "10"
-horizontal_alignment = 2
-[node name="StandingRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
-layout_mode = 2
-theme_override_constants/separation = 6
-[node name="StandingIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/StandingRow"]
-custom_minimum_size = Vector2(16, 16)
+[node name="StandingIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+custom_minimum_size = Vector2(15, 15)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "standing"
-[node name="Standing" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/StandingRow"]
-layout_mode = 2
-theme_type_variation = &"FieldLabel"
-text = "STANDING"
 [node name="StandingValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+clip_text = true
 text = "Unknown"
-horizontal_alignment = 2
-[node name="TraitRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
-layout_mode = 2
-theme_override_constants/separation = 6
-[node name="TraitIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/TraitRow"]
-custom_minimum_size = Vector2(16, 16)
+[node name="TraitIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+custom_minimum_size = Vector2(15, 15)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "trait"
-[node name="Trait" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/TraitRow"]
-layout_mode = 2
-theme_type_variation = &"FieldLabel"
-text = "TRAIT"
 [node name="TraitValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+clip_text = true
 text = "Undeveloped"
-horizontal_alignment = 2
-[node name="OccupationRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
-layout_mode = 2
-theme_override_constants/separation = 6
-[node name="OccupationIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/OccupationRow"]
-custom_minimum_size = Vector2(16, 16)
+[node name="OccupationIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+custom_minimum_size = Vector2(15, 15)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("8")
 icon_type = "occupation"
-[node name="Occupation" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/OccupationRow"]
-layout_mode = 2
-theme_type_variation = &"FieldLabel"
-text = "OCCUPATION"
 [node name="OccupationValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+clip_text = true
 text = "Child"
-horizontal_alignment = 2
 
 [node name="LocationPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
 custom_minimum_size = Vector2(0, 128)
@@ -363,6 +310,7 @@ vertical_alignment = 1
 
 [node name="PlayerMapMarker" type="Label" parent="SafeArea/Center/Composition/LocationPanel"]
 unique_name_in_owner = true
+visible = false
 custom_minimum_size = Vector2(240, 66)
 offset_right = 240.0
 offset_bottom = 66.0
@@ -376,6 +324,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Shade" type="ColorRect" parent="SafeArea/Center/Composition/LocationPanel"]
+visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
@@ -389,6 +338,7 @@ color = Color(0.035, 0.022, 0.012, 0.66)
 
 [node name="Caption" type="Label" parent="SafeArea/Center/Composition/LocationPanel"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 12
 anchor_top = 1.0
