@@ -28,3 +28,24 @@ func advance_days(amount: int) -> void:
 
 func display_year() -> String:
 	return "%d AD" % year
+
+
+const MONTH_NAMES := [
+	"January", "February", "March", "April", "May", "June",
+	"July", "August", "September", "October", "November", "December",
+]
+
+
+func display_date() -> String:
+	var month_name: String = MONTH_NAMES[clampi(month, 1, 12) - 1]
+	return "%s of %s" % [_ordinal(day), month_name]
+
+
+func _ordinal(value: int) -> String:
+	var suffix := "th"
+	if value % 100 < 11 or value % 100 > 13:
+		match value % 10:
+			1: suffix = "st"
+			2: suffix = "nd"
+			3: suffix = "rd"
+	return "%d%s" % [value, suffix]

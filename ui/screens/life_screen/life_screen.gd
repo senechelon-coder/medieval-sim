@@ -72,8 +72,12 @@ var next_year_label: Label
 
 @onready var background: TextureRect = %Background
 @onready var era_label: Label = %Era
-@onready var top_wealth: Label = %TopWealth
-@onready var top_standing: Label = %TopStanding
+@onready var header_date_label: Label = %HeaderDate
+@onready var header_age_value: Label = %HeaderAgeValue
+@onready var header_health_value: Label = %HeaderHealthValue
+@onready var header_wealth_value: Label = %HeaderWealthValue
+@onready var header_standing_value: Label = %HeaderStandingValue
+@onready var header_trait_value: Label = %HeaderTraitValue
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
 @onready var divider_top: Control = $SafeArea/Center/Composition/DividerTop
@@ -421,8 +425,10 @@ func _refresh_character_display() -> void:
 	name_label.text = character_name
 	identity_label.text = "%s  •  AGE %d" % [character_sex.capitalize(), character_age]
 	era_label.text = TimeManager.year_label()
+	header_date_label.text = TimeManager.date_label()
 	birthplace_label.text = "%s  •  %s" % [birthplace, TimeManager.year_label()]
 	age_value.text = str(character_age)
+	header_age_value.text = str(character_age)
 	activities_button.disabled = character_age < 16
 	map_context_title.text = "%s  •  %s" % [str(HOMELAND_REGION.get(homeland, "YOUR HOMELAND")), TimeManager.year_label()]
 	_refresh_time_panel()
@@ -459,10 +465,12 @@ func _refresh_stats() -> void:
 	health_value.text = "%d%%" % health
 	health_bar.ratio = health / 100.0
 	wealth_value.text = str(wealth)
-	top_wealth.text = "◆ %d" % wealth
-	top_standing.text = "⚖ %s" % standing
 	standing_value.text = standing
 	trait_value.text = primary_trait
+	header_health_value.text = "%d%%" % health
+	header_wealth_value.text = str(wealth)
+	header_standing_value.text = standing
+	header_trait_value.text = primary_trait
 
 
 func _show_decision(event: Dictionary) -> void:
