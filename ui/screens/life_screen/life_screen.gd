@@ -12,10 +12,24 @@ const HOMELAND_ART := {
 	"BYZANTINE EMPIRE": "res://art/locations/byzantine_632_life_v1.png",
 	"SASANIAN EMPIRE": "res://art/locations/sasanian_632_life_v1.png",
 }
+const HOMELAND_MAP := {
+	"RASHIDUN CALIPHATE": "res://art/maps/arabia_632_life_map_v1.png",
+	"BYZANTINE EMPIRE": "res://art/locations/byzantine_632_life_v1.png",
+	"SASANIAN EMPIRE": "res://art/locations/sasanian_632_life_v1.png",
+}
 const HOMELAND_REGION := {
 	"RASHIDUN CALIPHATE": "ARABIA",
 	"BYZANTINE EMPIRE": "EASTERN ROMAN REALM",
 	"SASANIAN EMPIRE": "PERSIAN REALM",
+}
+const MAP_MARKER_POSITION := {
+	"Medina": Vector2(0.38, 0.4),
+	"Mecca": Vector2(0.35, 0.52),
+	"Constantinople": Vector2(0.12, 0.24),
+	"Antioch": Vector2(0.25, 0.34),
+	"Alexandria": Vector2(0.14, 0.46),
+	"Ctesiphon": Vector2(0.67, 0.37),
+	"Merv": Vector2(0.82, 0.28),
 }
 
 var character_name := "Unnamed"
@@ -47,6 +61,14 @@ var battle_rival_name := ""
 var battle_log: Array[String] = []
 var battle_beats: Array[Dictionary] = []
 var button_tweens: Dictionary = {}
+var landscape_main: HBoxContainer
+var landscape_left: VBoxContainer
+var landscape_world: VBoxContainer
+var landscape_bottom: HBoxContainer
+var landscape_events: VBoxContainer
+var landscape_time: HBoxContainer
+var season_label: Label
+var next_year_label: Label
 
 @onready var background: TextureRect = %Background
 @onready var era_label: Label = %Era
@@ -54,6 +76,8 @@ var button_tweens: Dictionary = {}
 @onready var top_standing: Label = %TopStanding
 @onready var safe_area: MarginContainer = %SafeArea
 @onready var composition: VBoxContainer = %Composition
+@onready var divider_top: Control = $SafeArea/Center/Composition/DividerTop
+@onready var character_panel: PanelContainer = $SafeArea/Center/Composition/CharacterPanel
 @onready var portrait: CharacterPortrait = %Portrait
 @onready var character_backdrop: TextureRect = %CharacterBackdrop
 @onready var name_label: Label = %NameLabel
@@ -62,6 +86,9 @@ var button_tweens: Dictionary = {}
 @onready var birthplace_label: Label = %BirthplaceLabel
 @onready var location_art: TextureRect = %Art
 @onready var location_caption: Label = %Caption
+@onready var map_realm_title: Label = %MapRealmTitle
+@onready var map_context_title: Label = %MapContextTitle
+@onready var player_map_marker: Label = %PlayerMapMarker
 @onready var location_panel: PanelContainer = $SafeArea/Center/Composition/LocationPanel
 @onready var age_value: Label = %AgeValue
 @onready var health_value: Label = %HealthValue
@@ -70,6 +97,9 @@ var button_tweens: Dictionary = {}
 @onready var standing_value: Label = %StandingValue
 @onready var trait_value: Label = %TraitValue
 @onready var occupation_value: Label = %OccupationValue
+@onready var stats_panel: PanelContainer = $SafeArea/Center/Composition/StatsPanel
+@onready var chronicle_title: Label = $SafeArea/Center/Composition/ChronicleTitle
+@onready var chronicle_panel: PanelContainer = $SafeArea/Center/Composition/ChroniclePanel
 @onready var event_placeholder: RichTextLabel = %EventPlaceholder
 @onready var chronicle_scroll: ScrollContainer = %ChronicleScroll
 @onready var advance_button: Button = %AdvanceButton
@@ -103,6 +133,7 @@ var button_tweens: Dictionary = {}
 @onready var more_button: Button = %More
 @onready var character_button: Button = %Character
 @onready var character_overlay: Control = %CharacterOverlay
+@onready var character_scroll: ScrollContainer = $CharacterOverlay/Center
 @onready var character_overlay_portrait: CharacterPortrait = %CharacterOverlayPortrait
 @onready var character_summary_value: Label = %CharacterSummaryValue
 @onready var character_status_value: Label = %CharacterStatusValue
@@ -111,6 +142,7 @@ var button_tweens: Dictionary = {}
 @onready var close_character_button: Button = %CloseCharacterButton
 @onready var activities_button: Button = %Activities
 @onready var activities_overlay: Control = %ActivitiesOverlay
+@onready var activities_scroll: ScrollContainer = $ActivitiesOverlay/Center
 @onready var activity_context: Label = %ActivityContext
 @onready var activity_occupation_title: Label = %ActivityOccupationTitle
 @onready var activity_occupation_description: Label = %ActivityOccupationDescription
@@ -152,6 +184,7 @@ var button_tweens: Dictionary = {}
 @onready var join_levy_button: Button = %JoinLevyButton
 @onready var decline_levy_button: Button = %DeclineLevyButton
 @onready var battle_overlay: Control = %BattleOverlay
+@onready var battle_scroll: ScrollContainer = $BattleOverlay/Center
 @onready var battle_title_value: Label = %BattleTitleValue
 @onready var battle_time_value: Label = %BattleTimeValue
 @onready var battle_narration_value: Label = %BattleNarrationValue
@@ -170,6 +203,8 @@ func _ready() -> void:
 	if not _ensure_character_state():
 		return
 	_load_character_state()
+	_build_landscape_layout()
+	_style_decision_panel()
 	_setup_background()
 	_setup_location_banner()
 	_refresh_character_display()
@@ -214,9 +249,151 @@ func _ready() -> void:
 	_restore_pending_milestone()
 	SaveManager.save_game()
 	resized.connect(_apply_layout)
+	location_panel.resized.connect(_position_map_marker)
 	_apply_layout()
+	_position_map_marker.call_deferred()
 	_bind_button_feedback.call_deferred()
 	_scroll_chronicle_to_bottom.call_deferred()
+
+
+func _build_landscape_layout() -> void:
+	landscape_main = HBoxContainer.new()
+	landscape_main.name = "LandscapeMain"
+	landscape_main.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	landscape_main.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	landscape_main.add_theme_constant_override("separation", 18)
+
+	landscape_left = VBoxContainer.new()
+	landscape_left.name = "CharacterColumn"
+	landscape_left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	landscape_left.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	landscape_left.size_flags_stretch_ratio = 0.25
+	landscape_left.add_theme_constant_override("separation", 10)
+
+	landscape_world = VBoxContainer.new()
+	landscape_world.name = "WorldColumn"
+	landscape_world.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	landscape_world.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	landscape_world.size_flags_stretch_ratio = 0.75
+	landscape_world.add_theme_constant_override("separation", 8)
+
+	composition.add_child(landscape_main)
+	composition.move_child(landscape_main, divider_top.get_index() + 1)
+	landscape_main.add_child(landscape_left)
+	landscape_main.add_child(landscape_world)
+	character_panel.reparent(landscape_left)
+	stats_panel.reparent(landscape_left)
+	location_panel.reparent(landscape_world)
+
+	landscape_bottom = HBoxContainer.new()
+	landscape_bottom.name = "GameplayStrip"
+	landscape_bottom.custom_minimum_size.y = 158
+	landscape_bottom.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	landscape_bottom.add_theme_constant_override("separation", 18)
+	composition.add_child(landscape_bottom)
+	composition.move_child(landscape_bottom, landscape_main.get_index() + 1)
+
+	landscape_events = VBoxContainer.new()
+	landscape_events.name = "RecentEvents"
+	landscape_events.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	landscape_events.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	landscape_events.size_flags_stretch_ratio = 0.72
+	landscape_events.add_theme_constant_override("separation", 4)
+	landscape_bottom.add_child(landscape_events)
+	chronicle_title.reparent(landscape_events)
+	chronicle_panel.reparent(landscape_events)
+	chronicle_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	landscape_time = HBoxContainer.new()
+	landscape_time.name = "TimeControls"
+	landscape_time.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	landscape_time.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	landscape_time.size_flags_stretch_ratio = 0.28
+	landscape_time.add_theme_constant_override("separation", 12)
+	landscape_bottom.add_child(landscape_time)
+	advance_button.reparent(landscape_time)
+	advance_button.text = "⌛\nAGE UP"
+	advance_button.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	advance_button.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	_style_age_button()
+
+	var time_panel := PanelContainer.new()
+	time_panel.name = "DatePanel"
+	time_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	time_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	landscape_time.add_child(time_panel)
+	var time_margin := MarginContainer.new()
+	time_margin.add_theme_constant_override("margin_left", 16)
+	time_margin.add_theme_constant_override("margin_top", 12)
+	time_margin.add_theme_constant_override("margin_right", 16)
+	time_margin.add_theme_constant_override("margin_bottom", 12)
+	time_panel.add_child(time_margin)
+	var date_column := VBoxContainer.new()
+	date_column.alignment = BoxContainer.ALIGNMENT_CENTER
+	date_column.add_theme_constant_override("separation", 10)
+	time_margin.add_child(date_column)
+	season_label = Label.new()
+	season_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	season_label.add_theme_color_override("font_color", Color(0.72, 0.62, 0.42))
+	season_label.add_theme_font_size_override("font_size", 18)
+	date_column.add_child(season_label)
+	next_year_label = Label.new()
+	next_year_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	next_year_label.add_theme_color_override("font_color", Color(0.92, 0.78, 0.48))
+	next_year_label.add_theme_font_size_override("font_size", 22)
+	date_column.add_child(next_year_label)
+	_refresh_time_panel()
+
+
+func _style_age_button() -> void:
+	var normal := StyleBoxFlat.new()
+	normal.bg_color = Color(0.58, 0.4, 0.14, 1.0)
+	normal.border_color = Color(0.92, 0.72, 0.32, 1.0)
+	normal.set_border_width_all(3)
+	normal.set_corner_radius_all(70)
+	var hover := normal.duplicate() as StyleBoxFlat
+	hover.bg_color = Color(0.68, 0.49, 0.2, 1.0)
+	var pressed := normal.duplicate() as StyleBoxFlat
+	pressed.bg_color = Color(0.45, 0.29, 0.1, 1.0)
+	advance_button.add_theme_stylebox_override("normal", normal)
+	advance_button.add_theme_stylebox_override("hover", hover)
+	advance_button.add_theme_stylebox_override("pressed", pressed)
+	advance_button.add_theme_stylebox_override("focus", hover)
+	advance_button.add_theme_color_override("font_color", Color(0.96, 0.84, 0.58))
+	advance_button.add_theme_font_size_override("font_size", 22)
+
+
+func _style_decision_panel() -> void:
+	var parchment := StyleBoxFlat.new()
+	parchment.bg_color = Color(0.72, 0.63, 0.47, 0.98)
+	parchment.border_color = Color(0.25, 0.16, 0.07, 1.0)
+	parchment.set_border_width_all(4)
+	parchment.set_corner_radius_all(6)
+	parchment.shadow_color = Color(0.0, 0.0, 0.0, 0.72)
+	parchment.shadow_size = 14
+	decision_panel.add_theme_stylebox_override("panel", parchment)
+	var ink := Color(0.16, 0.09, 0.035, 1.0)
+	%DecisionTitle.add_theme_color_override("font_color", ink)
+	%DecisionDescription.add_theme_color_override("font_color", ink)
+	$DecisionOverlay/Center/DecisionPanel/Margin/Content/ChoicePrompt.add_theme_color_override("font_color", Color(0.28, 0.17, 0.07, 1.0))
+	$DecisionOverlay/Center/DecisionPanel/Margin/Content/Eyebrow.add_theme_color_override("font_color", Color(0.34, 0.22, 0.1, 1.0))
+
+
+func _refresh_time_panel() -> void:
+	if season_label == null or next_year_label == null:
+		return
+	season_label.text = "%s\nCURRENT YEAR  •  %s" % [_season_name(TimeManager.current_date.month), TimeManager.year_label()]
+	next_year_label.text = "NEXT YEAR\n%d AD" % (TimeManager.current_date.year + 1)
+
+
+func _season_name(month: int) -> String:
+	if month in [3, 4, 5]:
+		return "SPRING"
+	if month in [6, 7, 8]:
+		return "SUMMER"
+	if month in [9, 10, 11]:
+		return "AUTUMN"
+	return "WINTER"
 
 
 func _advance_year() -> void:
@@ -267,6 +444,8 @@ func _refresh_character_display() -> void:
 	birthplace_label.text = "%s  •  %s" % [birthplace, TimeManager.year_label()]
 	age_value.text = str(character_age)
 	activities_button.disabled = character_age < 16
+	map_context_title.text = "%s  •  %s" % [str(HOMELAND_REGION.get(homeland, "YOUR HOMELAND")), TimeManager.year_label()]
+	_refresh_time_panel()
 
 
 func _choose_upbringing(button: Button) -> void:
@@ -312,7 +491,7 @@ func _show_decision(event: Dictionary) -> void:
 	%DecisionDescription.text = str(event.description)
 	return_purse_button.text = str(event.choices[0].text)
 	keep_purse_button.text = str(event.choices[1].text)
-	decision_art.texture = location_art.texture
+	decision_art.texture = character_backdrop.texture
 	_reveal_overlay(decision_overlay)
 	advance_button.disabled = true
 
@@ -393,6 +572,7 @@ func _begin_battle(rival_name: String) -> void:
 	battle_art.texture = location_art.texture
 	battle_title_value.text = "BATTLE AGAINST THE %s" % rival_name.to_upper()
 	_reveal_overlay(battle_overlay)
+	battle_scroll.set_deferred("scroll_vertical", 0)
 	advance_button.disabled = true
 	_show_battle_beat()
 
@@ -727,6 +907,7 @@ func _open_character() -> void:
 	character_details_value.text = "DYNASTY  •  %s  •  PRESTIGE %d\nLINEAGE  •  %s\n\nFATHER  •  %s\nMOTHER  •  %s\n\nCULTURE  •  %s    FAITH  •  %s\nBORN  •  %s  •  %s" % [context.dynasty, context.prestige, context.lineage, context.father, context.mother, context.culture, context.faith, context.birth_season, context.family_origin]
 	character_development_value.text = "UPBRINGING  •  %s\nAPPRENTICESHIP  •  %s\nOCCUPATION EXPERIENCE  •  %d\nTRADE REPUTATION  •  %d" % [upbringing, apprenticeship, occupation_experience, trade_reputation]
 	_reveal_overlay(character_overlay)
+	character_scroll.set_deferred("scroll_vertical", 0)
 
 
 func _open_activities() -> void:
@@ -734,6 +915,7 @@ func _open_activities() -> void:
 	_rebuild_market_rows()
 	market_message.text = "Buy locally now; future travel will let you seek better selling prices."
 	_reveal_overlay(activities_overlay)
+	activities_scroll.set_deferred("scroll_vertical", 0)
 
 
 func _rebuild_market_rows() -> void:
@@ -877,20 +1059,22 @@ func _perform_local_action(action_id: String) -> void:
 
 func _apply_layout() -> void:
 	var canvas := Vector2(get_window().content_scale_size)
-	if canvas.x <= 0.0: canvas = Vector2(1080, 1920)
-	var horizontal_edge := clampf(canvas.x * 0.04, 26.0, 48.0)
-	var vertical_edge := clampf(canvas.y * 0.012, 16.0, 24.0)
+	if canvas.x <= 0.0: canvas = Vector2(1920, 1080)
+	var horizontal_edge := clampf(canvas.x * 0.035, 48.0, 84.0)
+	var top_edge := clampf(canvas.y * 0.022, 22.0, 34.0)
+	var bottom_edge := clampf(canvas.y * 0.034, 32.0, 46.0)
 	safe_area.add_theme_constant_override("margin_left", roundi(horizontal_edge))
 	safe_area.add_theme_constant_override("margin_right", roundi(horizontal_edge))
-	safe_area.add_theme_constant_override("margin_top", roundi(vertical_edge))
-	safe_area.add_theme_constant_override("margin_bottom", roundi(vertical_edge))
-	var width := clampf((canvas.x - horizontal_edge * 2.0) * 0.96, 600.0, 920.0)
+	safe_area.add_theme_constant_override("margin_top", roundi(top_edge))
+	safe_area.add_theme_constant_override("margin_bottom", roundi(bottom_edge))
+	var width := clampf((canvas.x - horizontal_edge * 2.0) * 0.985, 1100.0, 2240.0)
 	composition.custom_minimum_size.x = width
-	portrait.custom_minimum_size = Vector2(width * 0.23, width * 0.26)
-	location_panel.custom_minimum_size.y = clampf(canvas.y * 0.07, 110.0, 145.0)
-	chronicle_scroll.custom_minimum_size.y = clampf(canvas.y * 0.12, 210.0, 280.0)
-	advance_button.custom_minimum_size = Vector2(width * 0.62, clampf(canvas.y * 0.045, 72.0, 86.0))
-	name_label.add_theme_font_size_override("font_size", roundi(clampf(width * 0.047, 34.0, 44.0)))
+	portrait.custom_minimum_size = Vector2.ONE * clampf(canvas.x * 0.075, 132.0, 156.0)
+	location_panel.custom_minimum_size.y = clampf(canvas.y * 0.48, 440.0, 560.0)
+	chronicle_scroll.custom_minimum_size.y = clampf(canvas.y * 0.1, 96.0, 120.0)
+	var age_button_size := clampf(canvas.y * 0.125, 124.0, 142.0)
+	advance_button.custom_minimum_size = Vector2.ONE * age_button_size
+	name_label.add_theme_font_size_override("font_size", roundi(clampf(canvas.x * 0.019, 30.0, 38.0)))
 	for button in find_children("*", "Button", true, false):
 		(button as Button).pivot_offset = (button as Button).size * 0.5
 
@@ -901,12 +1085,28 @@ func _setup_background() -> void:
 
 
 func _setup_location_banner() -> void:
-	var art_path := str(HOMELAND_ART.get(homeland, HOMELAND_ART["RASHIDUN CALIPHATE"]))
-	if ResourceLoader.exists(art_path):
-		location_art.texture = load(art_path)
-		character_backdrop.texture = location_art.texture
+	var map_path := str(HOMELAND_MAP.get(homeland, HOMELAND_MAP["RASHIDUN CALIPHATE"]))
+	if ResourceLoader.exists(map_path):
+		location_art.texture = load(map_path)
+		location_art.self_modulate = Color(1.32, 1.2, 1.02, 1.0)
+	var backdrop_path := str(HOMELAND_ART.get(homeland, HOMELAND_ART["RASHIDUN CALIPHATE"]))
+	if ResourceLoader.exists(backdrop_path):
+		character_backdrop.texture = load(backdrop_path)
 	var region := str(HOMELAND_REGION.get(homeland, "YOUR HOMELAND"))
+	map_realm_title.text = homeland
+	map_context_title.text = "%s  •  %s" % [region, TimeManager.year_label()]
+	player_map_marker.text = "◆  %s\nCURRENT LOCATION" % birthplace.to_upper()
 	location_caption.text = "%s  •  %s\nA living settlement shaped by households, markets, faith and power." % [birthplace.to_upper(), region]
+
+
+func _position_map_marker() -> void:
+	if player_map_marker == null or location_panel.size.x <= 0.0:
+		return
+	var normalized: Vector2 = MAP_MARKER_POSITION.get(birthplace, Vector2(0.5, 0.5))
+	player_map_marker.position = Vector2(
+		location_panel.size.x * normalized.x - player_map_marker.size.x * 0.5,
+		location_panel.size.y * normalized.y - player_map_marker.size.y * 0.5
+	)
 
 
 func _reveal_overlay(overlay: Control) -> void:
