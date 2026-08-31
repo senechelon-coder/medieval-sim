@@ -38,15 +38,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Center" type="CenterContainer" parent="SafeArea"]
+[node name="Center" type="MarginContainer" parent="SafeArea"]
 layout_mode = 2
 
 [node name="Composition" type="VBoxContainer" parent="SafeArea/Center"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
-size_flags_vertical = 4
-theme_override_constants/separation = 12
+size_flags_vertical = 3
+theme_override_constants/separation = 8
 
 [node name="TopHUD" type="PanelContainer" parent="SafeArea/Center/Composition"]
 layout_mode = 2
@@ -98,7 +98,7 @@ size_flags_horizontal = 4
 script = ExtResource("3")
 
 [node name="CharacterPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
-custom_minimum_size = Vector2(0, 270)
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
 clip_contents = true
 
@@ -119,9 +119,9 @@ color = Color(0.025, 0.016, 0.01, 0.8)
 [node name="Margin" type="MarginContainer" parent="SafeArea/Center/Composition/CharacterPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 24
-theme_override_constants/margin_top = 24
+theme_override_constants/margin_top = 16
 theme_override_constants/margin_right = 24
-theme_override_constants/margin_bottom = 24
+theme_override_constants/margin_bottom = 16
 
 [node name="Row" type="HBoxContainer" parent="SafeArea/Center/Composition/CharacterPanel/Margin"]
 layout_mode = 2
@@ -129,7 +129,7 @@ theme_override_constants/separation = 22
 
 [node name="Portrait" type="Control" parent="SafeArea/Center/Composition/CharacterPanel/Margin/Row"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(220, 260)
+custom_minimum_size = Vector2(190, 210)
 layout_mode = 2
 script = ExtResource("4")
 
@@ -163,7 +163,7 @@ theme_type_variation = &"VersionLabel"
 text = "Medina  •  632 AD"
 
 [node name="LocationPanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
-custom_minimum_size = Vector2(0, 168)
+custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 clip_contents = true
 
@@ -208,9 +208,9 @@ layout_mode = 2
 [node name="StatsMargin" type="MarginContainer" parent="SafeArea/Center/Composition/StatsPanel"]
 layout_mode = 2
 theme_override_constants/margin_left = 18
-theme_override_constants/margin_top = 12
+theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 18
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_bottom = 8
 
 [node name="Stats" type="GridContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin"]
 layout_mode = 2
@@ -285,10 +285,12 @@ horizontal_alignment = 1
 [node name="ChroniclePanel" type="PanelContainer" parent="SafeArea/Center/Composition"]
 custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="ChronicleScroll" type="ScrollContainer" parent="SafeArea/Center/Composition/ChroniclePanel"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 3
 horizontal_scroll_mode = 0
 
 [node name="EventPlaceholder" type="RichTextLabel" parent="SafeArea/Center/Composition/ChroniclePanel/ChronicleScroll"]
@@ -740,17 +742,21 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.01, 0.008, 0.012, 0.94)
 
-[node name="Center" type="CenterContainer" parent="WorldOverlay"]
+[node name="Center" type="ScrollContainer" parent="WorldOverlay"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 1
+scroll_deadzone = 12
 
 [node name="Panel" type="PanelContainer" parent="WorldOverlay/Center"]
 custom_minimum_size = Vector2(820, 0)
 layout_mode = 2
+size_flags_horizontal = 4
 
 [node name="Margin" type="MarginContainer" parent="WorldOverlay/Center/Panel"]
 layout_mode = 2

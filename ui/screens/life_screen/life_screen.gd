@@ -125,6 +125,7 @@ var button_tweens: Dictionary = {}
 @onready var close_activities_button: Button = %CloseActivitiesButton
 @onready var world_button: Button = %World
 @onready var world_overlay: Control = %WorldOverlay
+@onready var world_scroll: ScrollContainer = $WorldOverlay/Center
 @onready var world_realm_value: Label = %WorldRealmValue
 @onready var world_province_value: Label = %WorldProvinceValue
 @onready var world_settlement_value: Label = %WorldSettlementValue
@@ -635,7 +636,7 @@ func _save_and_return_to_menu() -> void:
 	get_tree().change_scene_to_file(MAIN_MENU_SCENE)
 
 
-func _open_world() -> void:
+func _open_world(reset_scroll := true) -> void:
 	var context := WorldState.get_home_context()
 	if context.is_empty():
 		return
@@ -662,6 +663,8 @@ func _open_world() -> void:
 	travel_message.text = ""
 	_rebuild_travel_rows()
 	_reveal_overlay(world_overlay)
+	if reset_scroll:
+		world_scroll.set_deferred("scroll_vertical", 0)
 
 
 func _rebuild_travel_rows() -> void:
@@ -711,7 +714,7 @@ func _begin_travel(destination_id: String) -> void:
 	_refresh_stats()
 	_refresh_character_display()
 	SaveManager.save_game()
-	_open_world()
+	_open_world(false)
 	travel_message.text = "You have arrived in %s." % result.destination
 
 
@@ -875,15 +878,18 @@ func _perform_local_action(action_id: String) -> void:
 func _apply_layout() -> void:
 	var canvas := Vector2(get_window().content_scale_size)
 	if canvas.x <= 0.0: canvas = Vector2(1080, 1920)
-	var edge := clampf(canvas.x * 0.045, 26.0, 54.0)
-	for side in [&"margin_left", &"margin_top", &"margin_right", &"margin_bottom"]:
-		safe_area.add_theme_constant_override(side, roundi(edge))
-	var width := clampf((canvas.x - edge * 2.0) * 0.92, 600.0, 880.0)
+	var horizontal_edge := clampf(canvas.x * 0.04, 26.0, 48.0)
+	var vertical_edge := clampf(canvas.y * 0.012, 16.0, 24.0)
+	safe_area.add_theme_constant_override("margin_left", roundi(horizontal_edge))
+	safe_area.add_theme_constant_override("margin_right", roundi(horizontal_edge))
+	safe_area.add_theme_constant_override("margin_top", roundi(vertical_edge))
+	safe_area.add_theme_constant_override("margin_bottom", roundi(vertical_edge))
+	var width := clampf((canvas.x - horizontal_edge * 2.0) * 0.96, 600.0, 920.0)
 	composition.custom_minimum_size.x = width
-	portrait.custom_minimum_size = Vector2(width * 0.27, width * 0.32)
-	location_panel.custom_minimum_size.y = clampf(canvas.y * 0.09, 150.0, 190.0)
-	chronicle_scroll.custom_minimum_size.y = clampf(canvas.y * 0.105, 190.0, 250.0)
-	advance_button.custom_minimum_size = Vector2(width * 0.62, clampf(canvas.y * 0.052, 76.0, 98.0))
+	portrait.custom_minimum_size = Vector2(width * 0.23, width * 0.26)
+	location_panel.custom_minimum_size.y = clampf(canvas.y * 0.07, 110.0, 145.0)
+	chronicle_scroll.custom_minimum_size.y = clampf(canvas.y * 0.12, 210.0, 280.0)
+	advance_button.custom_minimum_size = Vector2(width * 0.62, clampf(canvas.y * 0.045, 72.0, 86.0))
 	name_label.add_theme_font_size_override("font_size", roundi(clampf(width * 0.047, 34.0, 44.0)))
 	for button in find_children("*", "Button", true, false):
 		(button as Button).pivot_offset = (button as Button).size * 0.5
