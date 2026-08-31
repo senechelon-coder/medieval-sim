@@ -225,6 +225,7 @@ func _ready() -> void:
 	advance_button.disabled = false
 	advance_button.text = "AGE UP"
 	advance_button.pressed.connect(_advance_year)
+	_style_age_button()
 	for button in upbringing_buttons:
 		button.pressed.connect(_choose_upbringing.bind(button))
 	return_purse_button.pressed.connect(_resolve_decision.bind(0))
