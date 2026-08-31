@@ -1151,10 +1151,22 @@ func _position_map_marker() -> void:
 
 
 func _reveal_overlay(overlay: Control) -> void:
+	_force_full_rect(overlay)
+	var shade := overlay.get_node_or_null("Shade")
+	if shade is Control:
+		_force_full_rect(shade)
 	overlay.modulate.a = 0.0
 	overlay.show()
 	var tween := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property(overlay, "modulate:a", 1.0, 0.14)
+
+
+func _force_full_rect(control: Control) -> void:
+	control.set_anchors_preset(Control.PRESET_FULL_RECT)
+	control.offset_left = 0.0
+	control.offset_top = 0.0
+	control.offset_right = 0.0
+	control.offset_bottom = 0.0
 
 
 func _bind_button_feedback() -> void:
