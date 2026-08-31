@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3]
+[gd_scene load_steps=13 format=3]
 
 [ext_resource type="Script" path="res://ui/screens/life_screen/life_screen.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2"]
@@ -27,6 +27,16 @@ content_margin_right = 14.0
 content_margin_bottom = 8.0
 shadow_color = Color(0, 0, 0, 0.4)
 shadow_size = 3
+
+[sub_resource type="Gradient" id="Gradient_edge_fade"]
+colors = PackedColorArray(0.018, 0.012, 0.007, 0.8, 0.018, 0.012, 0.007, 0.0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_edge_fade"]
+gradient = SubResource("Gradient_edge_fade")
+width = 64
+height = 64
+fill_from = Vector2(0, 0)
+fill_to = Vector2(1, 0)
 
 [node name="LifeScreen" type="Control"]
 anchors_preset = 15
@@ -574,6 +584,7 @@ text = "Child"
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 clip_contents = true
+theme_override_styles/panel = SubResource("StyleBoxFlat_header_frame")
 
 [node name="Art" type="TextureRect" parent="SafeArea/Center/Composition/LocationPanel"]
 unique_name_in_owner = true
@@ -583,26 +594,48 @@ texture = ExtResource("6_location")
 expand_mode = 1
 stretch_mode = 6
 
-[node name="MapHeaderShade" type="ColorRect" parent="SafeArea/Center/Composition/LocationPanel"]
+[node name="LeftShade" type="TextureRect" parent="SafeArea/Center/Composition/LocationPanel"]
 layout_mode = 1
 anchors_preset = 10
+anchor_right = 0.46
+offset_bottom = 60.0
+grow_horizontal = 2
+mouse_filter = 2
+texture = SubResource("GradientTexture2D_edge_fade")
+expand_mode = 1
+stretch_mode = 1
+
+[node name="RightShade" type="TextureRect" parent="SafeArea/Center/Composition/LocationPanel"]
+layout_mode = 1
+anchors_preset = 10
+anchor_left = 0.54
 anchor_right = 1.0
 offset_bottom = 60.0
 grow_horizontal = 2
 mouse_filter = 2
-color = Color(0.025, 0.016, 0.01, 0.62)
+texture = SubResource("GradientTexture2D_edge_fade")
+expand_mode = 1
+stretch_mode = 1
+flip_h = true
 
 [node name="MapRealmTitle" type="Label" parent="SafeArea/Center/Composition/LocationPanel"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 10
 anchor_right = 0.5
-offset_left = 22.0
+offset_left = 30.0
+offset_right = -6.0
 offset_bottom = 60.0
 grow_horizontal = 2
 theme_type_variation = &"FieldLabel"
-theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.96, 0.89, 0.72, 1)
+theme_override_colors/font_shadow_color = Color(0.0, 0.0, 0.0, 0.85)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 24
 text = "RASHIDUN CALIPHATE"
+clip_text = true
 vertical_alignment = 1
 
 [node name="MapContextTitle" type="Label" parent="SafeArea/Center/Composition/LocationPanel"]
@@ -611,12 +644,19 @@ layout_mode = 1
 anchors_preset = 10
 anchor_left = 0.5
 anchor_right = 1.0
-offset_right = -22.0
+offset_left = 6.0
+offset_right = -30.0
 offset_bottom = 60.0
 grow_horizontal = 2
 theme_type_variation = &"VersionLabel"
-theme_override_font_sizes/font_size = 20
+theme_override_colors/font_color = Color(0.89, 0.82, 0.65, 0.98)
+theme_override_colors/font_shadow_color = Color(0.0, 0.0, 0.0, 0.85)
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/shadow_offset_y = 2
+theme_override_constants/shadow_outline_size = 3
+theme_override_font_sizes/font_size = 22
 text = "ARABIA  •  632 AD"
+clip_text = true
 horizontal_alignment = 2
 vertical_alignment = 1
 
