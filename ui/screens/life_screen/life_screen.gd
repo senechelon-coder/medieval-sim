@@ -1152,9 +1152,10 @@ func _position_map_marker() -> void:
 
 func _reveal_overlay(overlay: Control) -> void:
 	_force_full_rect(overlay)
-	var shade := overlay.get_node_or_null("Shade")
-	if shade is Control:
-		_force_full_rect(shade)
+	for child_name in [&"Shade", &"Center"]:
+		var child := overlay.get_node_or_null(NodePath(child_name))
+		if child is Control:
+			_force_full_rect(child)
 	overlay.modulate.a = 0.0
 	overlay.show()
 	var tween := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
