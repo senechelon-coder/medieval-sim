@@ -1157,7 +1157,7 @@ func _reveal_overlay(overlay: Control) -> void:
 		var child := overlay.get_node_or_null(NodePath(child_name))
 		if child is Control:
 			_force_full_rect(child)
-	_sync_panel_center.call_deferred(overlay)
+	_sync_panel_center(overlay)
 	overlay.modulate.a = 0.0
 	overlay.show()
 	var tween := create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
@@ -1170,9 +1170,12 @@ func _sync_panel_center(overlay: Control) -> void:
 		return
 	var panel_center := center.get_node_or_null(NodePath("PanelCenter"))
 	if panel_center is Control:
+		_apply_panel_center_size(center, panel_center)
+
+
+func _apply_panel_center_size(center: Control, panel_center: Control) -> void:
+	if panel_center.custom_minimum_size != center.size:
 		panel_center.custom_minimum_size = center.size
-		if not center.resized.is_connected(_sync_panel_center.bind(overlay)):
-			center.resized.connect(_sync_panel_center.bind(overlay))
 
 
 func _force_full_rect(control: Control) -> void:
