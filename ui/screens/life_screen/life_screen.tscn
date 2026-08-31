@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://ui/screens/life_screen/life_screen.gd" id="1"]
 [ext_resource type="Theme" path="res://ui/theme/medieval_theme.tres" id="2"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" path="res://ui/screens/life_screen/stat_bar.gd" id="5"]
 [ext_resource type="Texture2D" path="res://art/locations/medina_632_life_v1.png" id="6_location"]
 [ext_resource type="Texture2D" path="res://art/maps/factions_632_v1.png" id="7_world_map"]
+[ext_resource type="Script" path="res://ui/screens/life_screen/stat_icon.gd" id="8"]
 
 [node name="LifeScreen" type="Control"]
 anchors_preset = 15
@@ -276,65 +277,119 @@ theme_override_constants/h_separation = 24
 theme_override_constants/v_separation = 10
 columns = 2
 
-[node name="Age" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+[node name="AgeRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 8
+[node name="AgeIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/AgeRow"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("8")
+icon_type = "age"
+[node name="Age" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/AgeRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-text = "◉  AGE"
+text = "AGE"
 [node name="AgeValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "1"
 horizontal_alignment = 2
-[node name="Health" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+[node name="HealthRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 8
+[node name="HealthIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthRow"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("8")
+icon_type = "health"
+[node name="Health" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-text = "♥  HEALTH"
-[node name="HealthRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+text = "HEALTH"
+[node name="HealthValueRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 10
-[node name="HealthBar" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthRow"]
+[node name="HealthBar" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthValueRow"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(90, 14)
 layout_mode = 2
 size_flags_vertical = 4
 script = ExtResource("5")
-[node name="HealthValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthRow"]
+[node name="HealthValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/HealthValueRow"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "90%"
 horizontal_alignment = 2
-[node name="Wealth" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+[node name="WealthRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 8
+[node name="WealthIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/WealthRow"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("8")
+icon_type = "wealth"
+[node name="Wealth" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/WealthRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-text = "◆  WEALTH"
+text = "WEALTH"
 [node name="WealthValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "10"
 horizontal_alignment = 2
-[node name="Standing" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+[node name="StandingRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 8
+[node name="StandingIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/StandingRow"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("8")
+icon_type = "standing"
+[node name="Standing" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/StandingRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-text = "♟  SOCIAL STANDING"
+text = "SOCIAL STANDING"
 [node name="StandingValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Unknown"
 horizontal_alignment = 2
-[node name="Trait" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+[node name="TraitRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 8
+[node name="TraitIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/TraitRow"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("8")
+icon_type = "trait"
+[node name="Trait" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/TraitRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-text = "✦  TRAIT"
+text = "TRAIT"
 [node name="TraitValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Undeveloped"
 horizontal_alignment = 2
-[node name="Occupation" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+[node name="OccupationRow" type="HBoxContainer" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
+layout_mode = 2
+theme_override_constants/separation = 8
+[node name="OccupationIcon" type="Control" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/OccupationRow"]
+custom_minimum_size = Vector2(20, 20)
+layout_mode = 2
+size_flags_vertical = 4
+script = ExtResource("8")
+icon_type = "occupation"
+[node name="Occupation" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats/OccupationRow"]
 layout_mode = 2
 theme_type_variation = &"FieldLabel"
-text = "⚒  OCCUPATION"
+text = "OCCUPATION"
 [node name="OccupationValue" type="Label" parent="SafeArea/Center/Composition/StatsPanel/StatsMargin/Stats"]
 unique_name_in_owner = true
 layout_mode = 2
