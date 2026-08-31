@@ -207,7 +207,6 @@ func _ready() -> void:
 	if not _ensure_character_state():
 		return
 	_load_character_state()
-	_build_landscape_layout()
 	_style_decision_panel()
 	_setup_background()
 	_setup_location_banner()
@@ -1134,7 +1133,7 @@ func _setup_location_banner() -> void:
 	if ResourceLoader.exists(backdrop_path):
 		character_backdrop.texture = load(backdrop_path)
 	var region := str(HOMELAND_REGION.get(homeland, "YOUR HOMELAND"))
-	map_realm_title.text = homeland
+	map_realm_title.text = birthplace.to_upper()
 	map_context_title.text = "%s  •  %s" % [region, TimeManager.year_label()]
 	player_map_marker.text = "◆  %s\nCURRENT LOCATION" % birthplace.to_upper()
 	location_caption.text = "%s  •  %s\nA living settlement shaped by households, markets, faith and power." % [birthplace.to_upper(), region]
