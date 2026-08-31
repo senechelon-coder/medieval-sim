@@ -22,7 +22,7 @@ func show_message(text: String) -> void:
 func _apply_responsive_size() -> void:
 	var canvas_size := Vector2(get_window().content_scale_size)
 	if canvas_size.x <= 0.0 or canvas_size.y <= 0.0:
-		canvas_size = Vector2(1080.0, 1920.0)
+		canvas_size = Vector2(1920.0, 1080.0)
 	panel_container.custom_minimum_size = Vector2(
 		clampf(canvas_size.x * 0.76, 560.0, 820.0),
 		clampf(canvas_size.y * 0.19, 280.0, 380.0)

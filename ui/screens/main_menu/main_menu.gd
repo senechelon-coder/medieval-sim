@@ -128,7 +128,7 @@ func _apply_responsive_layout() -> void:
 	var available_height := viewport_size.y - edge_padding * 2.0
 	# The menu is deliberately narrower and denser than the in-game panels.
 	# This mirrors the tall, premium manuscript composition in the reference.
-	var button_width := clampf(available_width * 0.68, minf(320.0, available_width), 760.0)
+	var button_width := clampf(available_width * 0.68, minf(320.0, available_width), 900.0)
 	var button_height := clampf(available_height * 0.047, 58.0, 92.0)
 	var button_gap := clampf(button_height * 0.13, 8.0, 14.0)
 	var button_font_size := roundi(clampf(button_height * 0.30, 18.0, 28.0))
